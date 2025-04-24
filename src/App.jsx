@@ -54,7 +54,7 @@ export default class App extends Component {
   fetchServices = async () => {
     try {
       this.setState({ loading: true });
-      const response = await fetch('http://77.83.173.253:44556/services/', {
+      const response = await fetch('https://87.120.36.97:44556/services/', {
         headers: { 'accept': 'application/json' }
       });
 
@@ -84,7 +84,7 @@ export default class App extends Component {
   fetchCompanies = async () => {
     try {
       this.setState({ loadingCompanies: true });
-      const response = await fetch('http://77.83.173.253:44556/companies/', {
+      const response = await fetch('https://87.120.36.97:44556/companies/', {
         headers: { 'accept': 'application/json' }
       });
 
@@ -269,7 +269,7 @@ export default class App extends Component {
       console.log('Отправляемые данные:', registrationData);
       
       // Отправляем запрос на регистрацию
-      const response = await fetch('http://77.83.173.253:44556/register_master/', {
+      const response = await fetch('https://87.120.36.97:44556/register_master/', {
         method: 'POST',
         headers: { 
           'accept': 'application/json',

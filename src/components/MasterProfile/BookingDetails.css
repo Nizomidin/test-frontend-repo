@@ -1,0 +1,190 @@
+.booking-details {
+  background-color: white;
+  border-radius: 8px;
+  box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+  padding: 20px;
+}
+
+.booking-details-header {
+  display: flex;
+  align-items: center;
+  margin-bottom: 20px;
+  gap: 15px;
+}
+
+.back-button {
+  background: none;
+  border: none;
+  padding: 5px 10px;
+  font-size: 1rem;
+  color: #4a90e2;
+  cursor: pointer;
+  transition: color 0.2s;
+}
+
+.back-button:hover {
+  color: #3a7bc8;
+}
+
+.booking-details-header h2 {
+  margin: 0;
+  color: #333;
+  font-weight: 500;
+}
+
+.booking-info-container {
+  display: flex;
+  flex-direction: column;
+  gap: 20px;
+}
+
+.booking-info-card {
+  background-color: #f9f9f9;
+  border-radius: 8px;
+  padding: 20px;
+}
+
+.info-row {
+  display: grid;
+  grid-template-columns: 120px 1fr;
+  margin-bottom: 12px;
+  align-items: baseline;
+}
+
+.info-row.notes {
+  grid-template-columns: 120px 1fr;
+  align-items: start;
+}
+
+.info-label {
+  color: #777;
+  font-weight: 500;
+  font-size: 0.95rem;
+}
+
+.info-value {
+  color: #333;
+  font-size: 1rem;
+}
+
+.booking-actions {
+  display: flex;
+  justify-content: flex-end;
+  gap: 10px;
+}
+
+.edit-button, .delete-button {
+  padding: 8px 16px;
+  border-radius: 4px;
+  cursor: pointer;
+  font-weight: 500;
+  transition: background-color 0.2s;
+}
+
+.edit-button {
+  background-color: #fff;
+  border: 1px solid #4a90e2;
+  color: #4a90e2;
+}
+
+.edit-button:hover {
+  background-color: #f0f7ff;
+}
+
+.delete-button {
+  background-color: #fff;
+  border: 1px solid #e74c3c;
+  color: #e74c3c;
+}
+
+.delete-button:hover {
+  background-color: #fff5f5;
+}
+
+/* Стили для формы редактирования */
+.booking-edit-form {
+  display: flex;
+  flex-direction: column;
+  gap: 15px;
+}
+
+.form-group {
+  display: grid;
+  grid-template-columns: 120px 1fr;
+  align-items: center;
+  gap: 10px;
+}
+
+.form-group label {
+  color: #777;
+  font-weight: 500;
+}
+
+.form-group input, .form-group textarea {
+  width: 100%;
+  padding: 8px 10px;
+  border: 1px solid #ddd;
+  border-radius: 4px;
+  font-size: 0.95rem;
+}
+
+.form-group textarea {
+  resize: vertical;
+  min-height: 80px;
+}
+
+.form-actions {
+  display: flex;
+  justify-content: flex-end;
+  margin-top: 10px;
+  gap: 10px;
+}
+
+.cancel-button, .save-button {
+  padding: 8px 16px;
+  border-radius: 4px;
+  cursor: pointer;
+  font-weight: 500;
+  transition: background-color 0.2s;
+}
+
+.cancel-button {
+  background-color: #fff;
+  border: 1px solid #ddd;
+  color: #777;
+}
+
+.cancel-button:hover {
+  background-color: #f9f9f9;
+}
+
+.save-button {
+  background-color: #4a90e2;
+  border: 1px solid #4a90e2;
+  color: white;
+}
+
+.save-button:hover {
+  background-color: #3a7bc8;
+}
+
+@media (max-width: 576px) {
+  .form-group {
+    grid-template-columns: 1fr;
+  }
+  
+  .booking-details-header {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 10px;
+  }
+  
+  .booking-actions {
+    justify-content: space-between;
+  }
+  
+  .edit-button, .delete-button {
+    flex: 1;
+    text-align: center;
+  }
+}

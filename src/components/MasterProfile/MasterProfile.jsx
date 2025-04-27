@@ -1,0 +1,315 @@
+import React, { useState, useEffect } from "react";
+import { useParams } from "react-router-dom";
+import "./MasterProfile.css";
+import MasterCalendar from "./MasterCalendar";
+import BookingDetails from "./BookingDetails";
+import BlockTimeForm from "./BlockTimeForm";
+import WorkScheduleForm from "./WorkScheduleForm";
+import { useToast } from "../Toast/ToastContext";
+
+const API_BASE = "https://api.kuchizu.online";
+
+function MasterProfile() {
+  const { masterId } = useParams(); // Получаем ID мастера из URL
+  const [masterData, setMasterData] = useState(null);
+  const [bookings, setBookings] = useState([]);
+  const [selectedDate, setSelectedDate] = useState(new Date());
+  const [selectedBooking, setSelectedBooking] = useState(null);
+  const [error, setError] = useState(null);
+  const [isDayOff, setIsDayOff] = useState(false); // Новое состояние для отслеживания выходного дня
+  const [showBlockTimeForm, setShowBlockTimeForm] = useState(false);
+  const [showWorkScheduleForm, setShowWorkScheduleForm] = useState(false);
+  const [view, setView] = useState("calendar"); // 'calendar' или 'details'
+  const { showSuccess, showError } = useToast(); // Получаем функции для показа тостов
+
+  useEffect(() => {
+    // Загрузка данных мастера
+    const fetchMasterData = async () => {
+      try {
+        if (!masterId) {
+          throw new Error("Не удалось определить ID мастера");
+        }
+        console.log('url', `${API_BASE}/masters/${masterId}`)
+        const res = await fetch(`${API_BASE}/masters/${masterId}`, {
+          headers: {
+            accept: "application/json"
+          },
+        });
+
+        if (!res.ok) throw new Error("Не удалось загрузить данные мастера");
+
+        const data = await res.json();
+        setMasterData(data);
+
+        // Загружаем доступное время мастера на текущую дату
+        const today = new Date();
+        const formattedDate = today.toISOString().split('T')[0]; // Формат YYYY-MM-DD
+        await fetchAvailableTimes(masterId, formattedDate);
+      } catch (err) {
+        console.error("Ошибка при загрузке данных мастера:", err);
+        setError(err.message);
+      }
+    };
+
+    fetchMasterData();
+  }, [masterId]);
+
+  // Загрузка доступного времени мастера
+  const fetchAvailableTimes = async (masterId, date) => {
+    try {
+      // Используем правильный формат URL для API
+      const res = await fetch(`${API_BASE}/masters/${masterId}/available?date=${date}`, {
+        headers: {
+          accept: "application/json"
+        },
+      });
+
+      if (!res.ok) {
+        // Проверяем, если это ошибка о выходном дне
+        if (res.status === 404 || res.status === 400) {
+          const errorData = await res.json();
+          if (errorData.detail && errorData.detail.includes("master is off on this day")) {
+            // Устанавливаем флаг выходного дня
+            setBookings([]);
+            setIsDayOff(true); // Устанавливаем флаг выходного дня
+            setError(null); // Сбрасываем обычную ошибку
+            return;
+          }
+        }
+        throw new Error("Не удалось загрузить доступное время");
+      }
+
+      const data = await res.json();
+      // Обрабатываем полученные данные о доступном времени
+      setBookings(data.available_times || []);
+      setIsDayOff(false); // Сбрасываем флаг выходного дня
+      setError(null); // Сбрасываем ошибку, если она была
+    } catch (err) {
+      console.error("Ошибка при загрузке доступного времени:", err);
+      setError(err.message);
+      setIsDayOff(false); // Сбрасываем флаг выходного дня при других ошибках
+    }
+  };
+
+  // Загрузка записей мастера
+  const fetchBookings = async (masterId) => {
+    try {
+      const res = await fetch(`${API_BASE}/masters/${masterId}/bookings`, {
+        headers: {
+          accept: "application/json"
+        },
+      });
+
+      if (!res.ok) throw new Error("Не удалось загрузить записи");
+
+      const data = await res.json();
+      setBookings(data.bookings || []);
+    } catch (err) {
+      console.error("Ошибка при загрузке записей:", err);
+      setError(err.message);
+    }
+  };
+
+  // Обработчик удаления записи
+  const handleDeleteBooking = async (bookingId) => {
+    if (!window.confirm("Вы уверены, что хотите удалить эту запись?")) {
+      return;
+    }
+
+    try {
+        const res = await fetch(`${API_BASE}/appointments/${bookingId}`, {
+        method: "DELETE",
+        headers: {
+          accept: "application/json"
+        },
+      });
+
+      if (!res.ok) throw new Error("Не удалось удалить запись");
+
+      // Обновляем список записей
+      setBookings(bookings.filter((booking) => booking.id !== bookingId));
+
+      // Если это была выбранная запись, сбрасываем выбор
+      if (selectedBooking && selectedBooking.id === bookingId) {
+        setSelectedBooking(null);
+        setView("calendar");
+      }
+
+      showSuccess("Запись успешно удалена");
+    } catch (err) {
+      console.error("Ошибка при удалении записи:", err);
+      showError(`Ошибка при удалении записи: ${err.message}`);
+    }
+  };
+
+  // Обработчик изменения времени записи
+  const handleUpdateBooking = async (bookingId, updatedData) => {
+    try {
+      const res = await fetch(`${API_BASE}/appointments/${bookingId}`, {
+        method: "PATCH",
+        headers: {
+          "Content-Type": "application/json",
+          accept: "application/json"
+        },
+        body: JSON.stringify(updatedData),
+      });
+
+      if (!res.ok) throw new Error("Не удалось обновить запись");
+
+      const updatedBooking = await res.json();
+
+      // Обновляем список записей
+      setBookings(
+        bookings.map((booking) =>
+          booking.id === bookingId ? updatedBooking : booking
+        )
+      );
+
+      // Обновляем выбранную запись, если она была изменена
+      if (selectedBooking && selectedBooking.id === bookingId) {
+        setSelectedBooking(updatedBooking);
+      }
+
+      showSuccess("Запись успешно обновлена");
+    } catch (err) {
+      console.error("Ошибка при обновлении записи:", err);
+      showError(`Ошибка при обновлении записи: ${err.message}`);
+    }
+  };
+
+  // Обработчик блокировки времени (личная запись мастера)
+  const handleBlockTime = async (blockData) => {
+    try {
+      const res = await fetch(`${API_BASE}/appointments`, {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+          accept: "application/json"
+        },
+        body: JSON.stringify({
+          ...blockData,
+          master_id: masterId,
+        }),
+      });
+
+      if (!res.ok) throw new Error("Не удалось заблокировать время");
+
+      const newBlockedTime = await res.json();
+
+      // Добавляем новую блокировку в список записей
+      setBookings([...bookings, newBlockedTime]);
+
+      setShowBlockTimeForm(false);
+      showSuccess("Время успешно заблокировано");
+    } catch (err) {
+      console.error("Ошибка при блокировке времени:", err);
+      showError(`Ошибка при блокировке времени: ${err.message}`);
+    }
+  };
+
+  // Функция выбора записи для просмотра деталей
+  const handleSelectBooking = (booking) => {
+    setSelectedBooking(booking);
+    setView("details");
+  };
+
+  // Обновленный обработчик изменения даты в календаре
+  const handleDateChange = (newDate) => {
+    setSelectedDate(newDate);
+    // Форматируем дату в YYYY-MM-DD для API
+    const formattedDate = newDate.toISOString().split('T')[0];
+    // Загружаем данные о доступном времени для выбранной даты
+    fetchAvailableTimes(masterId, formattedDate);
+  };
+
+  // Возврат к календарю из деталей записи
+  const handleBackToCalendar = () => {
+    setView("calendar");
+    setSelectedBooking(null);
+  };
+
+  if (error) {
+    return <div className="master-profile error">Ошибка: {error}</div>;
+  }
+
+  if (!masterData) {
+    return (
+      <div className="master-profile error">
+        Не удалось загрузить данные мастера
+      </div>
+    );
+  }
+
+  return (
+    <div className="master-profile">
+      <div className="master-header">
+        <div className="master-info">
+          <h1>Личный кабинет мастера</h1>
+          <h2>
+            {masterData.first_name} {masterData.last_name}
+          </h2>
+          <p>{masterData.service_category}</p>
+        </div>
+        <div className="master-actions">
+          <button
+            className="block-time-btn"
+            onClick={() => setShowBlockTimeForm(true)}
+          >
+            Заблокировать время
+          </button>
+          <button
+            className="work-schedule-btn"
+            onClick={() => setShowWorkScheduleForm(true)}
+          >
+            Редактировать график работы
+          </button>
+        </div>
+      </div>
+
+      {view === "calendar" ? (
+        <div className="calendar-container">
+          <MasterCalendar
+            bookings={bookings}
+            selectedDate={selectedDate}
+            onDateChange={handleDateChange}
+            onSelectBooking={handleSelectBooking}
+            isDayOff={isDayOff} // Передаем информацию о выходном дне
+            master_id={masterId}
+          />
+        </div>
+      ) : (
+        <div className="booking-details-container">
+          <BookingDetails
+            booking={selectedBooking}
+            onBack={handleBackToCalendar}
+            onDelete={handleDeleteBooking}
+            onUpdate={handleUpdateBooking}
+            masterId={masterId}
+          />
+        </div>
+      )}
+
+      {showBlockTimeForm && (
+        <div className="overlay">
+          <BlockTimeForm
+            onSubmit={handleBlockTime}
+            onCancel={() => setShowBlockTimeForm(false)}
+            selectedDate={selectedDate}
+            masterId={masterId}
+          />
+        </div>
+      )}
+
+      {showWorkScheduleForm && (
+        <div className="overlay">
+          <WorkScheduleForm
+            masterId={masterId}
+            onCancel={() => setShowWorkScheduleForm(false)}
+          />
+        </div>
+      )}
+    </div>
+  );
+}
+
+export default MasterProfile;

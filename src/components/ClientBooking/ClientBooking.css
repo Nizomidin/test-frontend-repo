@@ -1,0 +1,78 @@
+.client-booking-container {
+    max-width: 1200px;
+    margin: 0 auto;
+    padding: 20px;
+    font-family: Arial, sans-serif;
+}
+
+.client-booking-header {
+    margin-bottom: 30px;
+    text-align: center;
+}
+
+.client-booking-header h1 {
+    margin-bottom: 20px;
+    color: #333;
+}
+
+.tabs {
+    display: flex;
+    justify-content: center;
+    margin-bottom: 20px;
+    border-bottom: 1px solid #ddd;
+}
+
+.tab {
+    padding: 10px 20px;
+    margin: 0 10px;
+    background: none;
+    border: none;
+    border-bottom: 3px solid transparent;
+    cursor: pointer;
+    font-size: 16px;
+    font-weight: 500;
+    color: #555;
+    transition: all 0.3s;
+}
+
+.tab:hover {
+    color: #007bff;
+}
+
+.tab.active {
+    border-bottom: 3px solid #007bff;
+    color: #007bff;
+}
+
+.client-booking-content {
+    min-height: 400px;
+    background-color: #fff;
+    border-radius: 8px;
+    box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+    padding: 20px;
+}
+
+.loading, .error-message {
+    text-align: center;
+    padding: 40px;
+    font-size: 18px;
+}
+
+.error-message {
+    color: #dc3545;
+}
+
+@media (max-width: 768px) {
+    .client-booking-container {
+        padding: 10px;
+    }
+    
+    .tab {
+        padding: 8px 12px;
+        font-size: 14px;
+    }
+    
+    .client-booking-content {
+        padding: 15px;
+    }
+}

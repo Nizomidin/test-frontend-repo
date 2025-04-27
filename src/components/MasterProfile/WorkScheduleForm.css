@@ -1,0 +1,315 @@
+.work-schedule-form {
+  background-color: #fff;
+  border-radius: 16px;
+  box-shadow: 0 6px 30px rgba(0, 0, 0, 0.12);
+  padding: 30px;
+  max-width: 650px;
+  width: 100%;
+  margin: 10vh auto;
+  box-sizing: border-box;
+  transition: all 0.3s ease;
+  animation: fadeIn 0.4s ease-out;
+  max-height: 80vh;
+  overflow-y: auto;
+}
+@keyframes fadeIn {
+  from {
+    opacity: 0;
+    transform: translateY(-10px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+.form-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 24px;
+  padding-bottom: 16px;
+  border-bottom: 2px solid #f0f0f0;
+}
+.form-header h2 {
+  margin: 0;
+  font-size: 1.8rem;
+  font-weight: 600;
+  color: #222;
+}
+.close-button {
+  background: none;
+  border: none;
+  font-size: 1.6rem;
+  cursor: pointer;
+  color: #777;
+  padding: 6px 12px;
+  border-radius: 50%;
+  transition: all 0.3s ease;
+}
+.close-button:hover {
+  color: #e74c3c;
+  background-color: rgba(231, 76, 60, 0.1);
+  transform: scale(1.1);
+}
+
+.schedule-grid {
+  display: grid;
+  grid-template-columns: 1.5fr repeat(2, 1fr);
+  gap: 20px 24px;
+  margin-bottom: 30px;
+}
+.schedule-header {
+  grid-column: span 3;
+  display: grid;
+  grid-template-columns: 1.5fr repeat(2, 1fr);
+  font-weight: 600;
+  color: #34495e;
+  border-bottom: 2px solid #f0f0f0;
+  padding-bottom: 10px;
+  margin-bottom: 10px;
+}
+.schedule-header .day-label,
+.schedule-header .time-label {
+  padding: 0 10px;
+  font-size: 1.05rem;
+}
+.day-schedule {
+  display: grid;
+  grid-template-columns: 1.5fr repeat(2, 1fr);
+  gap: 15px;
+  align-items: center;
+  padding: 12px 0;
+  border-bottom: 1px solid #f5f5f5;
+  transition: background-color 0.2s ease;
+}
+.day-schedule:hover {
+  background-color: #f9f9f9;
+}
+.day-name {
+  font-weight: 500;
+  color: #2c3e50;
+  padding: 0 10px;
+}
+.time-input {
+  position: relative;
+  padding: 0 10px;
+}
+.time-input input {
+  width: 100%;
+  padding: 10px 14px;
+  border: 1px solid #ddd;
+  border-radius: 8px;
+  font-size: 1rem;
+  color: #333;
+  background-color: #f8f9fa;
+  transition: all 0.3s ease;
+}
+.time-input input:focus {
+  border-color: #3498db;
+  box-shadow: 0 0 0 2px rgba(52, 152, 219, 0.2);
+  background-color: #fff;
+  outline: none;
+}
+.time-input input:hover {
+  border-color: #bbb;
+}
+.time-input::after {
+  content: "🕒";
+  position: absolute;
+  right: 20px;
+  top: 50%;
+  transform: translateY(-50%);
+  font-size: 0.8rem;
+  color: #95a5a6;
+  pointer-events: none;
+}
+.loading-indicator {
+  grid-column: span 3;
+  margin-top: 5px;
+  padding: 5px 10px;
+  background-color: rgba(52, 152, 219, 0.1);
+  border-radius: 4px;
+  color: #3498db;
+  font-size: 0.9rem;
+  text-align: center;
+}
+.error-message {
+  grid-column: span 3;
+  margin-top: 8px;
+  padding: 8px 12px;
+  background-color: rgba(231, 76, 60, 0.08);
+  border-left: 3px solid #e74c3c;
+  border-radius: 6px;
+  color: #e74c3c;
+  font-size: 14px;
+}
+
+.form-actions {
+  display: flex;
+  justify-content: flex-end;
+  gap: 15px;
+  padding-top: 20px;
+  border-top: 1px solid #f0f0f0;
+}
+.save-button,
+.cancel-button {
+  padding: 12px 24px;
+  border-radius: 8px;
+  font-weight: 500;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  border: none;
+}
+.save-button {
+  background-color: #3498db;
+  color: #fff;
+  box-shadow: 0 2px 5px rgba(52, 152, 219, 0.3);
+}
+.save-button:hover {
+  background-color: #2980b9;
+  transform: translateY(-2px);
+  box-shadow: 0 4px 8px rgba(52, 152, 219, 0.4);
+}
+.save-button:active {
+  transform: translateY(0);
+  box-shadow: 0 1px 3px rgba(52, 152, 219, 0.4);
+}
+.cancel-button {
+  background-color: #f5f5f5;
+  color: #555;
+}
+.cancel-button:hover {
+  background-color: #e0e0e0;
+  color: #333;
+}
+
+/* Стили для контейнера выбора времени */
+.time-selects {
+  display: flex;
+  gap: 10px;
+  align-items: center;
+  width: 100%;
+}
+
+/* Стили для селекта времени */
+.time-select {
+  appearance: none;
+  background-color: #f8f9fa;
+  border: 1px solid #ddd;
+  border-radius: 8px;
+  color: #333;
+  cursor: pointer;
+  font-size: 1rem;
+  padding: 10px 14px;
+  transition: all 0.3s ease;
+  width: calc(50% - 5px);
+  position: relative;
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='16' height='16' viewBox='0 0 24 24' fill='none' stroke='%2395a5a6' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpolyline points='6 9 12 15 18 9'%3E%3C/polyline%3E%3C/svg%3E");
+  background-repeat: no-repeat;
+  background-position: right 10px center;
+  background-size: 16px;
+  padding-right: 30px;
+}
+
+.time-select:hover {
+  border-color: #bbb;
+}
+
+.time-select:focus {
+  border-color: #3498db;
+  box-shadow: 0 0 0 2px rgba(52, 152, 219, 0.2);
+  background-color: #fff;
+  outline: none;
+}
+
+/* Специфичные стили для часов и минут */
+.hours-select {
+  position: relative;
+}
+
+.minutes-select {
+  position: relative;
+}
+
+/* Добавляем символы часов и минут */
+.hours-select::after {
+  content: "ч";
+  position: absolute;
+  right: 35px;
+  top: 50%;
+  transform: translateY(-50%);
+  color: #95a5a6;
+  pointer-events: none;
+}
+
+.minutes-select::after {
+  content: "мин";
+  position: absolute;
+  right: 35px;
+  top: 50%;
+  transform: translateY(-50%);
+  color: #95a5a6;
+  pointer-events: none;
+}
+
+/* Tablet (<=767px): 2 columns */
+@media (max-width: 767px) {
+  .schedule-grid {
+    grid-template-columns: 1fr 1fr;
+  }
+  .schedule-header,
+  .day-schedule {
+    grid-template-columns: 1fr 1fr;
+  }
+  .schedule-header .time-label:nth-child(3),
+  .day-schedule .time-input:nth-child(3) {
+    display: none;
+  }
+}
+
+/* Mobile (<=480px): single column cards */
+@media (max-width: 480px) {
+  .schedule-grid {
+    grid-template-columns: 1fr;
+    gap: 10px;
+  }
+  .schedule-header {
+    display: none;
+  }
+  .day-schedule {
+    display: flex;
+    flex-direction: column;
+    padding: 12px;
+    border: 1px solid #eee;
+    border-radius: 8px;
+    background-color: #fafafa;
+  }
+  .day-name {
+    margin-bottom: 8px;
+    font-size: 1.1rem;
+    padding: 0;
+    border-bottom: 1px solid #eee;
+    padding-bottom: 8px;
+  }
+  .time-input {
+    display: flex;
+    align-items: center;
+    margin: 6px 0;
+  }
+  .time-input::before {
+    content: attr(data-label);
+    min-width: 80px;
+    font-size: 0.9rem;
+    color: #777;
+    margin-right: 10px;
+  }
+  .time-input input {
+    flex: 1;
+    margin: 0;
+  }
+  .loading-indicator,
+  .error-message {
+    grid-column: span 1;
+  }
+}

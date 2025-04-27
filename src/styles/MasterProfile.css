@@ -1,0 +1,108 @@
+/* Основной контейнер профиля мастера */
+.master-profile {
+  max-width: 1200px;
+  margin: 0 auto;
+  padding: 20px;
+  font-family: 'Roboto', sans-serif;
+}
+
+/* Заголовок профиля мастера */
+.master-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 30px;
+  padding-bottom: 15px;
+  border-bottom: 1px solid #e0e0e0;
+}
+
+.master-info h1 {
+  font-size: 1.8rem;
+  margin: 0 0 10px;
+  color: #333;
+}
+
+.master-info h2 {
+  font-size: 1.5rem;
+  font-weight: 500;
+  margin: 0 0 5px;
+  color: #4a90e2;
+}
+
+.master-info p {
+  font-size: 1rem;
+  color: #666;
+  margin: 0;
+}
+
+.master-actions .block-time-btn {
+  background-color: #4a90e2;
+  color: white;
+  border: none;
+  padding: 10px 15px;
+  border-radius: 5px;
+  cursor: pointer;
+  font-size: 0.9rem;
+  transition: background-color 0.3s;
+}
+
+.master-actions .block-time-btn:hover {
+  background-color: #3a7bc8;
+}
+
+/* Контейнеры для календаря и деталей записи */
+.calendar-container {
+  background: white;
+  border-radius: 8px;
+  box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+  padding: 20px;
+  margin-bottom: 20px;
+}
+
+.booking-details-container {
+  background: white;
+  border-radius: 8px;
+  box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+  padding: 20px;
+  margin-bottom: 20px;
+}
+
+/* Наложение для модальных окон */
+.overlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background-color: rgba(0, 0, 0, 0.5);
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  z-index: 1000;
+}
+
+/* Состояния загрузки и ошибки */
+.master-profile.loading,
+.master-profile.error {
+  text-align: center;
+  padding: 50px;
+  font-size: 1.2rem;
+  color: #666;
+}
+
+.master-profile.error {
+  color: #e74c3c;
+}
+
+/* Адаптивная верстка */
+@media (max-width: 768px) {
+  .master-header {
+    flex-direction: column;
+    align-items: flex-start;
+  }
+
+  .master-actions {
+    margin-top: 15px;
+    align-self: flex-start;
+  }
+}

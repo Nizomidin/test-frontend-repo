@@ -1,0 +1,242 @@
+.block-time-form-container {
+  margin: 0 auto;
+  background-color: white;
+  border-radius: 8px;
+  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.15);
+  z-index: 1010;
+  width: 90%;
+  padding: 10px; 
+  max-width: 600px; /* было 500px */
+}
+
+.block-time-form {
+  max-height: 120vh;
+  overflow-y: visible;
+}
+
+.form-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 20px;
+}
+
+.form-header h2 {
+  margin: 0;
+  color: #333;
+  font-size: 1.5rem;
+}
+
+.close-button {
+  background: none;
+  border: none;
+  font-size: 1.8rem;
+  cursor: pointer;
+  color: #999;
+  transition: color 0.2s;
+}
+
+.close-button:hover {
+  color: #333;
+}
+
+.form-group {
+  margin-bottom: 15px;
+}
+
+.form-group label {
+  display: block;
+  margin-bottom: 5px;
+  font-weight: 500;
+  color: #555;
+}
+
+.form-group input[type="text"],
+.form-group input[type="date"],
+.form-group input[type="time"],
+.form-group textarea {
+  width: 100%;
+  padding: 8px 12px;
+  border: 1px solid #ddd;
+  border-radius: 4px;
+  font-size: 1rem;
+  box-sizing: border-box; /* Добавлено для корректного расчета ширины */
+}
+
+.form-row {
+  display: flex;
+  gap: 15px;
+  width: 100%; /* Обеспечение полной ширины */
+  flex-wrap: wrap; /* Разрешить перенос на маленьких экранах */
+}
+
+.form-row .form-group {
+  flex: 1;
+  min-width: 0; /* Предотвращение перекрытия */
+  width: 100%; /* Гарантируем полную ширину */
+}
+
+/* Специфические стили для полей времени */
+.form-group input[type="time"] {
+  width: 100%;
+  min-width: 120px; /* Минимальная ширина для отображения времени */
+  appearance: textfield; /* Стандартизация внешнего вида */
+  box-sizing: border-box; /* Добавлено для корректного расчета ширины */
+}
+
+.form-actions {
+  display: flex;
+  justify-content: flex-end;
+  gap: 10px;
+  margin-top: 20px;
+}
+
+.cancel-btn,
+.submit-btn {
+  padding: 8px 16px;
+  border-radius: 4px;
+  font-size: 0.95rem;
+  cursor: pointer;
+  transition: background-color 0.2s, transform 0.1s;
+}
+
+.cancel-btn {
+  background-color: #f5f5f5;
+  border: 1px solid #ddd;
+  color: #555;
+}
+
+.cancel-btn:hover {
+  background-color: #e8e8e8;
+}
+
+.submit-btn {
+  background-color: #4a90e2;
+  border: none;
+  color: white;
+}
+
+.submit-btn:hover {
+  background-color: #3a7bc8;
+}
+
+.submit-btn:active,
+.cancel-btn:active {
+  transform: translateY(1px);
+}
+
+@media (max-width: 768px) {
+  .block-time-form-container {
+    width: 90%;
+    max-width: 450px;
+  }
+
+  .form-row {
+    flex-direction: column;
+    gap: 10px;
+  }
+}
+
+@media (min-width: 768px) {
+  /* Стили для больших экранов */
+  .form-row .form-group {
+    flex-basis: calc(50% - 15px); /* Задаем ширину с учетом отступа */
+    max-width: calc(50% - 15px);
+  }
+
+  .form-group input[type="time"] {
+    width: 100%;
+    max-width: 100%;
+  }
+}
+/* Контейнер доступных слотов: сетка с гибкой шириной */
+.available-time-slots {
+  /* display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: 8px;
+  margin: 10px 0;
+  max-height: 300px; 
+  overflow-y: auto;
+  padding-right: 4px; */
+  display: grid;
+  /* меньше минимум — больше карточек в ряд */
+  grid-template-columns: repeat(auto-fill, minmax(100px, 1fr));
+  gap: 6px; /* было 8px */
+  max-height: 300px;
+  overflow-y: auto;
+  padding-right: 4px;
+}
+
+/* Одиночный слот */
+.time-slot {
+  border: 1px solid #ddd;
+  border-radius: 4px;
+  cursor: pointer;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  background-color: #fafafa;
+  transition: background-color 0.2s, border-color 0.2s;
+  min-height: 70px; 
+  justify-content: center;
+  text-align: center; 
+  padding: 6px 8px; 
+  min-height: 60px; /* было 70px */
+  font-size: 0.85rem; /* уменьшили общий размер шрифта */
+  justify-content: center;
+}
+
+/* Hover-эффект для слота */
+.time-slot:hover {
+  background-color: #f0f8ff;
+  border-color: #b3d4fc;
+}
+
+/* Выбранный слот */
+.time-slot.selected {
+  background-color: #4a90e2;
+  border-color: #4a90e2;
+  color: #fff;
+}
+
+/* Время в слоте (первый ряд) */
+.slot-time {
+  font-weight: 600;
+  margin-bottom: 4px;
+}
+
+/* Название услуги в слоте (второй ряд) */
+.slot-service {
+  font-size: 0.875rem;
+  color: inherit; /* унаследует цвет при selected */
+  text-align: center;
+}
+
+/* Если нужно добавить небольшой отступ между селектом и слотами */
+.form-group + .available-time-slots {
+  margin-top: 5px;
+}
+@media (max-width: 992px) {
+  /* чуть уже форма на планшетах */
+  .block-time-form-container {
+    max-width: 500px;
+  }
+  /* два слота в ряд */
+  .available-time-slots {
+    grid-template-columns: repeat(2, 1fr);
+  }
+}
+
+@media (max-width: 576px) {
+  /* на мобилках — один столбец */
+  .available-time-slots {
+    grid-template-columns: 1fr;
+    gap: 4px;
+    max-height: 250px;
+  }
+  .time-slot {
+    padding: 5px 6px;
+    min-height: 50px;
+    font-size: 0.8rem;
+  }
+}

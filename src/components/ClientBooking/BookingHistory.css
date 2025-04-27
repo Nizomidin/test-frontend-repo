@@ -1,0 +1,150 @@
+.booking-history-container {
+  padding: 20px;
+  background-color: #fff;
+  border-radius: 8px;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+  margin-top: 20px;
+}
+
+.booking-history-container h2 {
+  color: #333;
+  margin-bottom: 20px;
+  font-size: 1.5rem;
+  border-bottom: 1px solid #eee;
+  padding-bottom: 10px;
+}
+
+.filter-tabs {
+  display: flex;
+  gap: 10px;
+  margin-bottom: 20px;
+  flex-wrap: wrap;
+}
+
+.filter-tab {
+  background-color: #f0f0f0;
+  border: none;
+  padding: 8px 16px;
+  border-radius: 4px;
+  cursor: pointer;
+  transition: all 0.2s;
+  font-weight: 500;
+}
+
+.filter-tab:hover {
+  background-color: #e0e0e0;
+}
+
+.filter-tab.active {
+  background-color: #4a6eff;
+  color: white;
+}
+
+.bookings-list {
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+}
+
+.booking-card {
+  border: 1px solid #eee;
+  border-radius: 8px;
+  padding: 16px;
+  display: grid;
+  grid-template-columns: 2fr 3fr 1fr auto;
+  gap: 16px;
+  align-items: center;
+  transition: all 0.2s;
+}
+
+.booking-card:hover {
+  box-shadow: 0 2px 12px rgba(0, 0, 0, 0.1);
+}
+
+.booking-service h3 {
+  margin: 0 0 5px;
+  color: #333;
+  font-size: 1.2rem;
+}
+
+.booking-category {
+  color: #666;
+  margin: 0;
+  font-size: 0.9rem;
+}
+
+.booking-details {
+  display: flex;
+  flex-direction: column;
+  gap: 5px;
+}
+
+.booking-details p {
+  margin: 0;
+  color: #444;
+}
+
+.label {
+  font-weight: 500;
+  color: #666;
+  margin-right: 5px;
+}
+
+.booking-status.status-confirmed {
+  color: #4CAF50;
+}
+
+.booking-status.status-pending {
+  color: #FF9800;
+}
+
+.booking-status.status-canceled {
+  color: #F44336;
+}
+
+.booking-status.status-completed {
+  color: #2196F3;
+}
+
+.booking-price {
+  font-weight: 500;
+  font-size: 1.1rem;
+  text-align: right;
+  color: #333;
+}
+
+.cancel-booking-btn {
+  background-color: #ff4d4d;
+  color: white;
+  border: none;
+  padding: 8px 12px;
+  border-radius: 4px;
+  cursor: pointer;
+  transition: all 0.2s;
+  font-size: 0.9rem;
+}
+
+.cancel-booking-btn:hover {
+  background-color: #e04444;
+}
+
+.loading, .error-message, .no-bookings {
+  text-align: center;
+  padding: 20px;
+  color: #666;
+}
+
+.error-message {
+  color: #f44336;
+}
+
+@media (max-width: 768px) {
+  .booking-card {
+    grid-template-columns: 1fr;
+    padding: 12px;
+  }
+  
+  .booking-price {
+    text-align: left;
+  }
+}

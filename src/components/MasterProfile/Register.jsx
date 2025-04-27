@@ -1,5 +1,6 @@
 // src/components/MasterProfile/Register.jsx
 import React, { useState, useEffect, useRef } from "react";
+import { useNavigate } from "react-router-dom";
 import "../../styles/Register.css";
 
 const API_BASE = "https://api.kuchizu.online";
@@ -297,6 +298,7 @@ function Step2({
 
 // Главный компонент регистрации
 export default function Register() {
+  const navigate = useNavigate(); // Добавляем хук для навигации
   const [step, setStep] = useState(1);
   const [formData, setFormData] = useState({
     firstName: "",
@@ -321,6 +323,7 @@ export default function Register() {
   const [submitting, setSubmitting] = useState(false);
   const [error, setError] = useState(null);
   const [registrationSuccess, setRegistrationSuccess] = useState(false);
+  const [masterId, setMasterId] = useState(null); // Добавляем состояние для хранения ID мастера
 
   useEffect(() => {
     fetchCompanies();
@@ -449,7 +452,16 @@ export default function Register() {
         const err = await res.json();
         throw new Error(err.detail || "Ошибка регистрации");
       }
+      
+      // Получаем ответ от сервера с ID мастера
+      const data = await res.json();
+      setMasterId(data.master_id);
       setRegistrationSuccess(true);
+      
+      // Редирект на страницу мастера через 1.5 секунды
+      setTimeout(() => {
+        navigate(`/master/${data.master_id}`);
+      }, 1500);
     } catch (err) {
       console.error("Ошибка при регистрации:", err);
       setError(err.message);
@@ -462,6 +474,15 @@ export default function Register() {
     return (
       <div className="form-container success-container">
         <h2>Регистрация успешно завершена!</h2>
+        <p>Перенаправление на страницу мастера...</p>
+        {masterId && (
+          <button 
+            className="submit-button" 
+            onClick={() => navigate(`/master/${masterId}`)}
+          >
+            Перейти в профиль
+          </button>
+        )}
       </div>
     );
   }

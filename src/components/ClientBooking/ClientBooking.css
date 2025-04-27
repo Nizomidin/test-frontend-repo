@@ -13,6 +13,7 @@
 .client-booking-header h1 {
     margin-bottom: 20px;
     color: #333;
+    font-size: 1.8rem;
 }
 
 .tabs {
@@ -20,6 +21,7 @@
     justify-content: center;
     margin-bottom: 20px;
     border-bottom: 1px solid #ddd;
+    flex-wrap: wrap; /* Добавлено для переноса вкладок на маленьких экранах */
 }
 
 .tab {
@@ -62,17 +64,83 @@
     color: #dc3545;
 }
 
+@media (max-width: 992px) {
+    .client-booking-container {
+        max-width: 90%;
+    }
+    
+    .client-booking-header h1 {
+        font-size: 1.7rem;
+    }
+}
+
 @media (max-width: 768px) {
     .client-booking-container {
-        padding: 10px;
+        padding: 15px;
+        max-width: 95%;
+    }
+    
+    .client-booking-header h1 {
+        font-size: 1.5rem;
+        margin-bottom: 15px;
+    }
+    
+    .tabs {
+        margin-bottom: 15px;
     }
     
     .tab {
-        padding: 8px 12px;
+        padding: 8px 15px;
         font-size: 14px;
+        margin: 0 5px;
     }
     
     .client-booking-content {
         padding: 15px;
+        min-height: 300px;
+    }
+    
+    .loading, .error-message {
+        padding: 30px;
+        font-size: 16px;
+    }
+}
+
+@media (max-width: 576px) {
+    .client-booking-container {
+        padding: 10px;
+        max-width: 100%;
+    }
+    
+    .client-booking-header {
+        margin-bottom: 20px;
+    }
+    
+    .client-booking-header h1 {
+        font-size: 1.3rem;
+        margin-bottom: 10px;
+    }
+    
+    .tabs {
+        margin-bottom: 10px;
+        padding-bottom: 5px;
+    }
+    
+    .tab {
+        padding: 6px 10px;
+        font-size: 13px;
+        margin: 0 3px 5px;
+    }
+    
+    .client-booking-content {
+        padding: 12px;
+        border-radius: 6px;
+        box-shadow: 0 1px 6px rgba(0, 0, 0, 0.1);
+        min-height: 250px;
+    }
+    
+    .loading, .error-message {
+        padding: 20px;
+        font-size: 14px;
     }
 }

@@ -305,7 +305,7 @@ function MasterCalendar({
                       (booking.is_personal
                         ? "Личная запись"
                         : booking.is_blocked
-                        ? "Заблокировано"
+                        ? "Забронировано"
                         : "Нет данных")}
                   </div>
                   {booking.comment && (
@@ -325,9 +325,6 @@ function MasterCalendar({
       <div className="calendar-controls">
         <button onClick={prevDay} className="calendar-nav-btn">
           ←
-        </button>
-        <button onClick={goToToday} className="today-btn">
-          Сегодня
         </button>
         <button onClick={nextDay} className="calendar-nav-btn">
           →

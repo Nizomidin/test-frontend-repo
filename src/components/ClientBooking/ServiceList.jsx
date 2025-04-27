@@ -1,48 +1,46 @@
 import React from 'react';
 import './ServiceList.css';
 
-const ServiceList = ({ services, onSelectService }) => {
+const ServiceList = ({ services, onSelectService, masterInfo }) => {
   if (!services || services.length === 0) {
     return (
       <div className="empty-services-message">
-        <p>Услуги не найдены. Попробуйте изменить параметры фильтра.</p>
+        <p>Услуги не найдены.</p>
       </div>
     );
   }
 
   return (
     <div className="service-list">
+      {masterInfo && (
+        <div className="master-info">
+          <div className="master-details">
+            <h2>{`${masterInfo.first_name} ${masterInfo.last_name}`}</h2>
+          </div>
+        </div>
+      )}
+      
       <h3>Доступные услуги</h3>
       <div className="services-grid">
         {services.map(service => (
           <div 
             key={service.id} 
-            className="service-card card" 
+            className="service-card" 
             onClick={() => onSelectService(service)}
           >
-            {service.imageUrl && (
-              <div className="service-image">
-                <img src={service.imageUrl} alt={service.name} />
-              </div>
-            )}
             <div className="service-info">
-              <h4>{service.name}</h4>
-              <div className="service-meta">
-                <span className="service-category">{service.category}</span>
-                <span className="service-duration">{service.duration} мин.</span>
-              </div>
-              <p className="service-description">{service.description}</p>
-              <div className="service-price">
-                <strong>{service.price} ₽</strong>
+              <h4>{service.service_name}</h4>
+              <div className="service-duration">
+                <span>{service.duration} мин.</span>
               </div>
               <button 
-                className="btn btn-primary book-button"
+                className="btn book-button"
                 onClick={(e) => {
                   e.stopPropagation(); // Предотвращаем двойной вызов из-за onClick на родителе
                   onSelectService(service);
                 }}
               >
-                Забронировать
+                Выбрать
               </button>
             </div>
           </div>

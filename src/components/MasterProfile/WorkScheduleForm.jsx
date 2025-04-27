@@ -42,7 +42,7 @@ export default function WorkScheduleForm({ masterId, onSubmit, onCancel }) {
     }
     return options;
   };
-  
+
   const hoursOptions = generateHoursOptions();
   const minutesOptions = generateMinutesOptions();
 
@@ -61,7 +61,7 @@ export default function WorkScheduleForm({ masterId, onSubmit, onCancel }) {
         });
         setSchedule(obj);
       } catch (err) {
-        setGlobalError("Не удалось загрузить график");
+        setGlobalError("У вас не установлен график");
         console.error(err);
       }
     })();
@@ -77,7 +77,7 @@ export default function WorkScheduleForm({ masterId, onSubmit, onCancel }) {
           method: "PUT",
           headers: { "Content-Type": "application/json" },
           body: JSON.stringify({
-            [day]: times
+            [day]: times,
           }),
         }
       );
@@ -87,6 +87,9 @@ export default function WorkScheduleForm({ masterId, onSubmit, onCancel }) {
       }
       // Обновляем расписание локально после успешного сохранения
       setSchedule((s) => ({ ...s, [day]: times }));
+
+      // Перезагружаем страницу для отображения актуальных данных
+      window.location.reload();
     } catch (err) {
       setErrorDays((e) => ({ ...e, [day]: err.message }));
     } finally {
@@ -96,14 +99,14 @@ export default function WorkScheduleForm({ masterId, onSubmit, onCancel }) {
 
   const handleTimeChange = (day, timeIndex, type, value) => {
     const newTimes = [...schedule[day]];
-    const [hours, minutes] = newTimes[timeIndex].split(':');
-    
-    if (type === 'hours') {
+    const [hours, minutes] = newTimes[timeIndex].split(":");
+
+    if (type === "hours") {
       newTimes[timeIndex] = `${value}:${minutes}`;
     } else {
       newTimes[timeIndex] = `${hours}:${value}`;
     }
-    
+
     setSchedule((s) => ({ ...s, [day]: newTimes }));
     updateDay(day, newTimes);
   };
@@ -117,9 +120,9 @@ export default function WorkScheduleForm({ masterId, onSubmit, onCancel }) {
     <div className="work-schedule-form">
       <div className="form-header">
         <h2>График работы мастера</h2>
-        <button 
-          type="button" 
-          className="close-button" 
+        <button
+          type="button"
+          className="close-button"
           onClick={onCancel}
           aria-label="Закрыть"
         >
@@ -143,8 +146,10 @@ export default function WorkScheduleForm({ masterId, onSubmit, onCancel }) {
                 <div className="time-selects">
                   <select
                     className="time-select hours-select"
-                    value={schedule[day]?.[0]?.split(':')[0] || "00"}
-                    onChange={(e) => handleTimeChange(day, 0, 'hours', e.target.value)}
+                    value={schedule[day]?.[0]?.split(":")[0] || "00"}
+                    onChange={(e) =>
+                      handleTimeChange(day, 0, "hours", e.target.value)
+                    }
                     aria-label="Часы начала"
                   >
                     {hoursOptions.map((hour) => (
@@ -156,8 +161,10 @@ export default function WorkScheduleForm({ masterId, onSubmit, onCancel }) {
                   <span className="time-separator">:</span>
                   <select
                     className="time-select minutes-select"
-                    value={schedule[day]?.[0]?.split(':')[1] || "00"}
-                    onChange={(e) => handleTimeChange(day, 0, 'minutes', e.target.value)}
+                    value={schedule[day]?.[0]?.split(":")[1] || "00"}
+                    onChange={(e) =>
+                      handleTimeChange(day, 0, "minutes", e.target.value)
+                    }
                     aria-label="Минуты начала"
                   >
                     {minutesOptions.map((minute) => (
@@ -172,8 +179,10 @@ export default function WorkScheduleForm({ masterId, onSubmit, onCancel }) {
                 <div className="time-selects">
                   <select
                     className="time-select hours-select"
-                    value={schedule[day]?.[1]?.split(':')[0] || "00"}
-                    onChange={(e) => handleTimeChange(day, 1, 'hours', e.target.value)}
+                    value={schedule[day]?.[1]?.split(":")[0] || "00"}
+                    onChange={(e) =>
+                      handleTimeChange(day, 1, "hours", e.target.value)
+                    }
                     aria-label="Часы окончания"
                   >
                     {hoursOptions.map((hour) => (
@@ -185,8 +194,10 @@ export default function WorkScheduleForm({ masterId, onSubmit, onCancel }) {
                   <span className="time-separator">:</span>
                   <select
                     className="time-select minutes-select"
-                    value={schedule[day]?.[1]?.split(':')[1] || "00"}
-                    onChange={(e) => handleTimeChange(day, 1, 'minutes', e.target.value)}
+                    value={schedule[day]?.[1]?.split(":")[1] || "00"}
+                    onChange={(e) =>
+                      handleTimeChange(day, 1, "minutes", e.target.value)
+                    }
                     aria-label="Минуты окончания"
                   >
                     {minutesOptions.map((minute) => (

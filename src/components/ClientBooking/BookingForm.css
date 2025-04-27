@@ -1,0 +1,319 @@
+.booking-form-container {
+  background-color: white;
+  border-radius: 12px;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.08);
+  padding: 30px;
+  max-width: 800px;
+  margin: 0 auto;
+}
+
+.booking-form {
+  display: flex;
+  flex-direction: column;
+  gap: 24px;
+}
+
+.selected-service-summary {
+  background-color: #f7f9fc;
+  border-radius: 8px;
+  padding: 16px;
+  margin-bottom: 20px;
+  border-left: 4px solid #4a90e2;
+}
+
+.selected-service-summary h3 {
+  margin-top: 0;
+  margin-bottom: 8px;
+  color: #333;
+  font-size: 18px;
+}
+
+.selected-service-summary p {
+  margin: 5px 0;
+  color: #555;
+  font-size: 14px;
+}
+
+.form-section {
+  background-color: #fafafa;
+  border-radius: 8px;
+  padding: 20px;
+  margin-bottom: 10px;
+}
+
+.form-section h3 {
+  margin-top: 0;
+  margin-bottom: 15px;
+  font-size: 16px;
+  color: #333;
+  border-bottom: 1px solid #eee;
+  padding-bottom: 8px;
+}
+
+.form-group {
+  margin-bottom: 16px;
+}
+
+.form-group:last-child {
+  margin-bottom: 0;
+}
+
+.form-group label {
+  display: block;
+  margin-bottom: 6px;
+  font-weight: 500;
+  color: #444;
+  font-size: 14px;
+}
+
+.form-group input,
+.form-group select,
+.form-group textarea {
+  width: 100%;
+  padding: 10px 12px;
+  border: 1px solid #ddd;
+  border-radius: 6px;
+  font-size: 15px;
+  transition: border-color 0.2s;
+}
+
+.form-group input:focus,
+.form-group select:focus,
+.form-group textarea:focus {
+  border-color: #4a90e2;
+  outline: none;
+}
+
+.form-group textarea {
+  resize: vertical;
+  min-height: 80px;
+}
+
+/* Стили для временных слотов */
+.time-slots {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+  margin-top: 10px;
+  max-height: 200px; /* Устанавливаем максимальную высоту для блока */
+  overflow-y: auto; /* Включаем вертикальный скролл */
+  padding-right: 5px; /* Дополнительный отступ справа для скролла */
+  scrollbar-width: thin; /* Для Firefox - тонкий скроллбар */
+  scrollbar-color: #b0b0b0 #f0f0f0; /* Для Firefox - цвет скроллбара */
+}
+
+/* Стилизация скроллбара для WebKit (Chrome, Safari) */
+.time-slots::-webkit-scrollbar {
+  width: 6px;
+}
+
+.time-slots::-webkit-scrollbar-track {
+  background: #f0f0f0;
+  border-radius: 3px;
+}
+
+.time-slots::-webkit-scrollbar-thumb {
+  background-color: #b0b0b0;
+  border-radius: 3px;
+}
+
+.time-slots::-webkit-scrollbar-thumb:hover {
+  background: #888;
+}
+
+.time-slot {
+  background-color: white;
+  border: 1px solid #ddd;
+  border-radius: 6px;
+  padding: 8px 12px;
+  cursor: pointer;
+  font-size: 14px;
+  transition: all 0.2s;
+}
+
+.time-slot:hover {
+  background-color: #f0f8ff;
+  border-color: #4a90e2;
+}
+
+.time-slot.selected {
+  background-color: #4a90e2;
+  border-color: #4a90e2;
+  color: white;
+  font-weight: 500;
+}
+
+/* Кнопки действий */
+.form-actions {
+  display: flex;
+  justify-content: space-between;
+  margin-top: 10px;
+}
+
+.btn {
+  padding: 12px 20px;
+  border-radius: 6px;
+  font-size: 15px;
+  font-weight: 500;
+  cursor: pointer;
+  transition: background-color 0.2s;
+  border: none;
+}
+
+.cancel-btn {
+  background-color: #f5f5f5;
+  color: #555;
+}
+
+.cancel-btn:hover {
+  background-color: #e8e8e8;
+}
+
+.submit-btn {
+  background-color: #4a90e2;
+  color: white;
+}
+
+.submit-btn:hover {
+  background-color: #3a7bc8;
+}
+
+/* Стили для автоматически заполненных полей */
+.field-autofilled {
+  background-color: #f7f9fc;
+  border-left: 3px solid #4a90e2;
+}
+
+/* Стили для полей только для чтения */
+input[readonly],
+textarea[readonly],
+select[readonly] {
+  background-color: #f2f2f2;
+  color: #666;
+  cursor: default;
+  border-color: #ddd;
+  box-shadow: none;
+  opacity: 0.9;
+}
+
+input[readonly]:focus,
+textarea[readonly]:focus,
+select[readonly]:focus {
+  border-color: #ddd;
+  outline: none;
+  box-shadow: none;
+}
+
+/* Комбинированный стиль для автозаполненных readonly полей */
+.field-autofilled[readonly] {
+  background-color: #f2f7fc;
+  border-left: 3px solid #4a90e2;
+  color: #4d6a88;
+}
+
+/* Стили для сообщения о загрузке */
+.loading-message {
+  color: #4a90e2;
+  text-align: center;
+  padding: 15px;
+  font-style: italic;
+  background-color: #f7fbff;
+  border-radius: 6px;
+  margin-bottom: 15px;
+  border: 1px solid #e0eeff;
+}
+
+/* Стили для отключенной кнопки */
+.btn:disabled {
+  background-color: #cccccc;
+  color: #666666;
+  cursor: not-allowed;
+  opacity: 0.7;
+}
+
+/* Адаптивные стили для разных размеров экранов */
+@media (max-width: 992px) {
+  .booking-form-container {
+    padding: 25px;
+    max-width: 700px;
+  }
+}
+
+@media (max-width: 768px) {
+  .booking-form-container {
+    padding: 20px;
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.06);
+  }
+
+  .form-section {
+    padding: 15px;
+  }
+
+  .time-slots {
+    gap: 6px;
+  }
+
+  .time-slot {
+    padding: 6px 10px;
+    font-size: 13px;
+  }
+}
+
+@media (max-width: 576px) {
+  .booking-form-container {
+    padding: 15px;
+    border-radius: 8px;
+  }
+
+  .booking-form {
+    gap: 16px;
+  }
+
+  .form-section {
+    padding: 12px;
+  }
+
+  .form-section h3 {
+    font-size: 15px;
+    margin-bottom: 12px;
+  }
+
+  .form-group label {
+    font-size: 13px;
+  }
+
+  .form-group input,
+  .form-group select,
+  .form-group textarea {
+    padding: 8px 10px;
+    font-size: 14px;
+  }
+
+  .time-slots {
+    flex-direction: column;
+    gap: 5px;
+  }
+
+  .time-slot {
+    width: 100%;
+    text-align: center;
+  }
+
+  .form-actions {
+    flex-direction: column;
+    gap: 10px;
+  }
+
+  .btn {
+    width: 100%;
+    padding: 10px;
+  }
+
+  .cancel-btn {
+    order: 2;
+  }
+
+  .submit-btn {
+    order: 1;
+  }
+}

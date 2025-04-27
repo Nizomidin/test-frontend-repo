@@ -44,6 +44,8 @@ function BookingDetails({ booking, masterId, onBack, onDelete, onUpdate }) {
   useEffect(() => {
     if (!masterId) return;
     setServicesLoading(true);
+    
+    // Загружаем все услуги
     fetch('https://api.kuchizu.online/services', {
       headers: { accept: 'application/json' }
     })
@@ -52,8 +54,10 @@ function BookingDetails({ booking, masterId, onBack, onDelete, onUpdate }) {
         return res.json();
       })
       .then(data => {
+        // Фильтруем услуги для конкретного мастера
         const filteredServices = data.filter(svc => svc.master_id === masterId);
         setServices(filteredServices);
+        console.log(`Загружено ${filteredServices.length} услуг мастера ${masterId}`);
         
         // Если есть booking и service_id, но нет соответствующего service_name,
         // найдем его среди загруженных услуг
@@ -163,7 +167,7 @@ function BookingDetails({ booking, masterId, onBack, onDelete, onUpdate }) {
         <button className="back-button" onClick={onBack}>← Назад</button>
         <h2>
           {booking.is_blocked
-            ? 'Заблокированное время'
+            ? 'Забронированное время'
             : booking.is_personal
             ? 'Личная запись'
             : 'Запись клиента'}

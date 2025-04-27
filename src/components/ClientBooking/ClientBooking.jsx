@@ -1,22 +1,32 @@
 import React, { useState, useEffect } from 'react';
-import { useNavigate, useParams } from 'react-router-dom';
-import ServiceFilter from './ServiceFilter';
+import { useNavigate, useParams, useLocation } from 'react-router-dom';
 import ServiceList from './ServiceList';
 import BookingForm from './BookingForm';
 import BookingHistory from './BookingHistory';
 import './ClientBooking.css';
+import { useToast } from '../Toast/ToastContext';
 
 function ClientBooking({ apiBase }) {
     const [services, setServices] = useState([]);
-    const [filteredServices, setFilteredServices] = useState([]);
     const [loading, setLoading] = useState(true);
     const [error, setError] = useState(null);
     const [selectedService, setSelectedService] = useState(null);
     const [activeTab, setActiveTab] = useState('services'); // 'services' или 'history'
+    const [masterInfo, setMasterInfo] = useState(null);
     const navigate = useNavigate();
-    const { masterId, clientId } = useParams();
+    const { clientId } = useParams();
+    const location = useLocation();
+    const { showError } = useToast();
+    
+    // Получаем master_id из query-параметров URL
+    const getMasterId = () => {
+        const searchParams = new URLSearchParams(location.search);
+        return searchParams.get('master_id');
+    };
+    
+    const masterId = getMasterId();
 
-    // Получаем ID клиента только из URL
+    // Получаем ID клиента из URL
     const getClientId = () => {
         if (clientId) return clientId;
         // Если clientId не передан в URL, перенаправляем на страницу регистрации
@@ -24,18 +34,50 @@ function ClientBooking({ apiBase }) {
         return null;
     };
 
-    // Загрузка доступных услуг
+    useEffect(() => {
+        // Проверяем наличие master_id
+        if (!masterId) {
+            showError('Отсутствует ID мастера. Перенаправление на главную страницу.');
+            navigate('/');
+            return;
+        }
+    }, [masterId, navigate, showError]);
+
+    // Загрузка данных о мастере
+    useEffect(() => {
+        const fetchMasterInfo = async () => {
+            if (!masterId) return;
+
+            try {
+                const response = await fetch(`${apiBase}/masters/${masterId}`, {
+                    headers: { 'accept': 'application/json' }
+                });
+
+                if (!response.ok) {
+                    throw new Error(`Ошибка при загрузке данных о мастере: ${response.status}`);
+                }
+
+                const masterData = await response.json();
+                setMasterInfo(masterData);
+            } catch (err) {
+                console.error('Не удалось загрузить информацию о мастере:', err);
+                // Не показываем ошибку пользователю, просто продолжаем без информации о мастере
+            }
+        };
+
+        fetchMasterInfo();
+    }, [apiBase, masterId]);
+
+    // Загрузка доступных услуг мастера
     useEffect(() => {
         const fetchServices = async () => {
             const id = getClientId();
-            if (!id) return;
+            if (!id || !masterId) return;
 
             try {
                 setLoading(true);
-                // Если указан masterId, загружаем только услуги этого мастера
-                const endpoint = masterId 
-                    ? `${apiBase}/services?masterId=${masterId}` 
-                    : `${apiBase}/services`;
+                // Загружаем все услуги
+                const endpoint = `${apiBase}/services`;
 
                 const response = await fetch(endpoint);
 
@@ -43,9 +85,13 @@ function ClientBooking({ apiBase }) {
                     throw new Error(`Ошибка: ${response.status}`);
                 }
 
-                const data = await response.json();
-                setServices(data);
-                setFilteredServices(data);
+                const allServices = await response.json();
+                
+                // Фильтруем услуги только для нужного мастера
+                const filteredServices = allServices.filter(service => service.master_id === masterId);
+                
+                setServices(filteredServices);
+                console.log(`Загружено ${filteredServices.length} услуг мастера ${masterId}`);
             } catch (err) {
                 console.error('Ошибка при загрузке услуг:', err);
                 setError('Не удалось загрузить услуги. Пожалуйста, попробуйте снова позже.');
@@ -56,41 +102,6 @@ function ClientBooking({ apiBase }) {
 
         fetchServices();
     }, [apiBase, navigate, clientId, masterId]);
-
-    // Обработчик фильтрации услуг
-    const handleFilterChange = (filters) => {
-        let filtered = [...services];
-
-        // Фильтрация по категории
-        if (filters.category) {
-            filtered = filtered.filter(service => service.category === filters.category);
-        }
-
-        // Фильтрация по поиску
-        if (filters.search) {
-            const searchLower = filters.search.toLowerCase();
-            filtered = filtered.filter(service => 
-                service.name.toLowerCase().includes(searchLower) || 
-                service.description.toLowerCase().includes(searchLower)
-            );
-        }
-
-        // Фильтрация по длительности
-        if (filters.duration) {
-            const duration = parseInt(filters.duration);
-            if (duration === 30) {
-                filtered = filtered.filter(service => service.duration <= 30);
-            } else if (duration === 60) {
-                filtered = filtered.filter(service => service.duration > 30 && service.duration <= 60);
-            } else if (duration === 90) {
-                filtered = filtered.filter(service => service.duration > 60 && service.duration <= 90);
-            } else if (duration === 120) {
-                filtered = filtered.filter(service => service.duration > 90);
-            }
-        }
-
-        setFilteredServices(filtered);
-    };
 
     // Обработчик выбора услуги
     const handleServiceSelect = (service) => {
@@ -148,30 +159,32 @@ function ClientBooking({ apiBase }) {
 
             <div className="client-booking-content">
                 {activeTab === 'services' && !selectedService && (
-                    <>
-                        <ServiceFilter onFilterChange={handleFilterChange} />
-                        <ServiceList 
-                            services={filteredServices} 
-                            onServiceSelect={handleServiceSelect} 
-                            masterId={masterId}
-                        />
-                    </>
+                    <ServiceList 
+                        services={services} 
+                        onSelectService={handleServiceSelect}
+                        masterInfo={masterInfo}
+                    />
                 )}
 
                 {activeTab === 'services' && selectedService && (
                     <BookingForm 
-                        service={selectedService} 
-                        apiBase={apiBase} 
-                        clientId={getClientId()} 
-                        onSuccess={goToHistory}
+                        selectedService={selectedService} 
                         onCancel={backToServices}
+                        onSubmit={(bookingData) => {
+                            // Здесь будет обработка формы бронирования
+                            console.log('Booking data:', bookingData);
+                            goToHistory(); // После успешного бронирования переходим в историю
+                        }}
+                        masterId={masterId}
+                        masterInfo={masterInfo}
                     />
                 )}
 
                 {activeTab === 'history' && (
                     <BookingHistory 
                         apiBase={apiBase} 
-                        clientId={getClientId()} 
+                        clientId={getClientId()}
+                        masterId={masterId}
                     />
                 )}
             </div>

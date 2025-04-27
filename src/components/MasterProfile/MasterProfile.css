@@ -35,6 +35,12 @@
   margin: 0;
 }
 
+/* Контейнер для кнопок действий */
+.master-actions {
+  display: flex;
+  gap: 10px; /* Используем gap вместо margin для лучшего расположения */
+}
+
 .master-actions .block-time-btn {
   background-color: #4a90e2;
   color: white;
@@ -44,6 +50,7 @@
   cursor: pointer;
   font-size: 0.9rem;
   transition: background-color 0.3s;
+  white-space: nowrap; /* Предотвращает перенос текста на новую строку */
 }
 
 .master-actions .block-time-btn:hover {
@@ -52,19 +59,19 @@
 
 /* Стили для кнопки редактирования графика работы */
 .master-actions .work-schedule-btn {
-  background-color: #5cb85c;  /* Зеленый цвет для отличия от кнопки блокировки времени */
+  background-color: #5cb85c;
   color: white;
   border: none;
   padding: 10px 15px;
   border-radius: 5px;
   cursor: pointer;
   font-size: 0.9rem;
-  margin-left: 10px;  /* Отступ от соседней кнопки */
   transition: background-color 0.3s;
+  white-space: nowrap; /* Предотвращает перенос текста на новую строку */
 }
 
 .master-actions .work-schedule-btn:hover {
-  background-color: #4cae4c;  /* Более темный оттенок зелёного при наведении */
+  background-color: #4cae4c;
 }
 
 /* Контейнеры для календаря и деталей записи */
@@ -120,7 +127,30 @@
 
   .master-actions {
     margin-top: 15px;
-    align-self: flex-start;
+    width: 100%; /* Занимаем всю доступную ширину */
+    flex-direction: row; /* Убедимся, что кнопки в ряд */
+    justify-content: flex-start; /* Выравниваем кнопки по левому краю */
+  }
+  
+  /* Уменьшаем шрифт кнопок на мобильных */
+  .master-actions .block-time-btn,
+  .master-actions .work-schedule-btn {
+    font-size: 0.85rem;
+    padding: 8px 12px;
+  }
+}
+
+@media (max-width: 480px) {
+  .master-actions {
+    flex-direction: column;
+    gap: 8px;
+    width: 100%;
+  }
+  
+  .master-actions .block-time-btn,
+  .master-actions .work-schedule-btn {
+    width: 100%; /* Кнопки занимают всю ширину на маленьких экранах */
+    text-align: center; /* Центрируем текст кнопок */
   }
 }
 

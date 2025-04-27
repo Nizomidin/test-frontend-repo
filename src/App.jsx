@@ -30,9 +30,7 @@ function App() {
             {/* Маршрут для профиля мастера без указания ID (используется ID из localStorage) */}
             <Route path="/master" element={<MasterProfile apiBase={API_BASE} />} />
             
-            {/* Маршрут для клиентского бронирования */}
-            <Route path="/booking" element={<ClientBooking apiBase={API_BASE} />} />
-            <Route path="/booking/:masterId" element={<ClientBooking apiBase={API_BASE} />} />
+            {/* Маршрут для клиентского бронирования - только через ссылку с clientId и master_id в query параметре */}
             <Route path="/booking/client/:clientId" element={<ClientBooking apiBase={API_BASE} />} />
             <Route path="/test" element={<Test />} />
             

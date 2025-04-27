@@ -5,13 +5,16 @@
   box-shadow: 0 4px 20px rgba(0, 0, 0, 0.15);
   z-index: 1010;
   width: 90%;
-  padding: 10px; 
-  max-width: 600px; /* было 500px */
+  padding: 20px; 
+  max-width: 600px;
+  max-height: 90vh; /* Ограничение максимальной высоты */
+  overflow-y: auto; /* Добавление прокрутки при необходимости */
+  position: relative; /* Для правильного позиционирования крестика */
 }
 
 .block-time-form {
-  max-height: 120vh;
-  overflow-y: visible;
+  width: 100%;
+  position: relative; /* Для правильного позиционирования внутренних элементов */
 }
 
 .form-header {
@@ -19,6 +22,12 @@
   justify-content: space-between;
   align-items: center;
   margin-bottom: 20px;
+  position: sticky; /* Закрепляем заголовок */
+  top: 0;
+  background-color: white;
+  z-index: 5;
+  padding-bottom: 10px;
+  border-bottom: 1px solid #f0f0f0;
 }
 
 .form-header h2 {
@@ -34,6 +43,10 @@
   cursor: pointer;
   color: #999;
   transition: color 0.2s;
+  position: absolute;
+  right: 0;
+  top: 0;
+  z-index: 10; /* Обеспечивает отображение поверх других элементов */
 }
 
 .close-button:hover {
@@ -151,18 +164,11 @@
 }
 /* Контейнер доступных слотов: сетка с гибкой шириной */
 .available-time-slots {
-  /* display: grid;
-  grid-template-columns: repeat(2, 1fr);
-  gap: 8px;
-  margin: 10px 0;
-  max-height: 300px; 
-  overflow-y: auto;
-  padding-right: 4px; */
   display: grid;
   /* меньше минимум — больше карточек в ряд */
   grid-template-columns: repeat(auto-fill, minmax(100px, 1fr));
-  gap: 6px; /* было 8px */
-  max-height: 300px;
+  gap: 6px;
+  max-height: 200px; /* Уменьшили максимальную высоту */
   overflow-y: auto;
   padding-right: 4px;
 }

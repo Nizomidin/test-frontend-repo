@@ -110,6 +110,14 @@ function MasterProfile() {
     }
   };
 
+  // Функция обновления данных для текущего выбранного дня
+  const refreshCurrentDayData = () => {
+    // Форматируем текущую выбранную дату в формат YYYY-MM-DD для API
+    const formattedDate = selectedDate.toISOString().split('T')[0];
+    // Загружаем актуальные данные
+    fetchAvailableTimes(masterId, formattedDate);
+  };
+
   // Обработчик удаления записи
   const handleDeleteBooking = async (bookingId) => {
     if (!window.confirm("Вы уверены, что хотите удалить эту запись?")) {
@@ -126,16 +134,16 @@ function MasterProfile() {
 
       if (!res.ok) throw new Error("Не удалось удалить запись");
 
-      // Обновляем список записей
-      setBookings(bookings.filter((booking) => booking.id !== bookingId));
-
       // Если это была выбранная запись, сбрасываем выбор
       if (selectedBooking && selectedBooking.id === bookingId) {
         setSelectedBooking(null);
         setView("calendar");
       }
-
+      
       showSuccess("Запись успешно удалена");
+      
+      // Автоматическое обновление страницы
+      window.location.reload();
     } catch (err) {
       console.error("Ошибка при удалении записи:", err);
       showError(`Ошибка при удалении записи: ${err.message}`);
@@ -157,20 +165,15 @@ function MasterProfile() {
       if (!res.ok) throw new Error("Не удалось обновить запись");
 
       const updatedBooking = await res.json();
-
-      // Обновляем список записей
-      setBookings(
-        bookings.map((booking) =>
-          booking.id === bookingId ? updatedBooking : booking
-        )
-      );
-
       // Обновляем выбранную запись, если она была изменена
       if (selectedBooking && selectedBooking.id === bookingId) {
         setSelectedBooking(updatedBooking);
       }
 
       showSuccess("Запись успешно обновлена");
+      
+      // Автоматическое обновление страницы
+      window.location.reload();
     } catch (err) {
       console.error("Ошибка при обновлении записи:", err);
       showError(`Ошибка при обновлении записи: ${err.message}`);
@@ -192,18 +195,16 @@ function MasterProfile() {
         }),
       });
 
-      if (!res.ok) throw new Error("Не удалось заблокировать время");
-
-      const newBlockedTime = await res.json();
-
-      // Добавляем новую блокировку в список записей
-      setBookings([...bookings, newBlockedTime]);
+      if (!res.ok) throw new Error("Не удалось забронировать время");
 
       setShowBlockTimeForm(false);
-      showSuccess("Время успешно заблокировано");
+      showSuccess("Время успешно забронировано");
+      
+      // Автоматически обновляем страницу для отображения актуальных данных
+      window.location.reload();
     } catch (err) {
-      console.error("Ошибка при блокировке времени:", err);
-      showError(`Ошибка при блокировке времени: ${err.message}`);
+      console.error("Ошибка при брони времени:", err);
+      showError(`Ошибка при брони времени: ${err.message}`);
     }
   };
 
@@ -234,8 +235,8 @@ function MasterProfile() {
 
   if (!masterData) {
     return (
-      <div className="master-profile error">
-        Не удалось загрузить данные мастера
+      <div className="master-profile loading">
+        Загрузка данных...
       </div>
     );
   }
@@ -244,7 +245,6 @@ function MasterProfile() {
     <div className="master-profile">
       <div className="master-header">
         <div className="master-info">
-          <h1>Личный кабинет мастера</h1>
           <h2>
             {masterData.first_name} {masterData.last_name}
           </h2>
@@ -255,7 +255,7 @@ function MasterProfile() {
             className="block-time-btn"
             onClick={() => setShowBlockTimeForm(true)}
           >
-            Заблокировать время
+            Забронировать время
           </button>
           <button
             className="work-schedule-btn"

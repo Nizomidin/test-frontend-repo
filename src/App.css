@@ -441,6 +441,7 @@ label {
 }
 
 .form-group label {
+  color: #4a90e2;
   display: block;
   margin-bottom: 5px;
 }

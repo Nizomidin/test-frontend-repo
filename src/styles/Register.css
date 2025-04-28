@@ -212,26 +212,30 @@
   flex-direction: column;
   align-items: center;
 }
-
 .photo-circle {
-  width: 150px;
-  height: 150px;
+  width: 120px;
+  height: 120px;
   border-radius: 50%;
   background-color: #f0f0f0;
   border: 2px dashed #aaa;
   display: flex;
-  flex-direction: column;
-  justify-content: center;
   align-items: center;
-  cursor: pointer;
+  justify-content: center;
   overflow: hidden;
-  transition: all 0.3s;
-  margin: 10px auto;
+  cursor: pointer;
+  margin: 0 auto 12px;
+  transition: border-color 0.3s, background-color 0.3s;
 }
-
 .photo-circle:hover {
   border-color: #4a90e2;
   background-color: #f8f8f8;
+}
+.photo-circle img,
+.photo-preview-image {
+  display: block;
+  width: 100%;
+  height: 100%;
+  object-fit: contain; /* Изменено с 'cover' на 'contain', чтобы изображение полностью помещалось в круг */
 }
 
 .photo-placeholder {
@@ -280,7 +284,8 @@
 }
 
 /* Улучшенные стили для service-name и service-duration */
-.service-name, .service-duration {
+.service-name,
+.service-duration {
   flex: 1 1 auto;
   min-width: 150px;
   margin-bottom: 0;
@@ -288,7 +293,8 @@
   flex-direction: column;
 }
 
-.service-name label, .service-duration label {
+.service-name label,
+.service-duration label {
   margin-bottom: 8px;
   font-weight: 500;
   color: #555;
@@ -612,11 +618,11 @@
   .form-container {
     padding: 15px;
   }
-  
+
   .service-item {
     padding: 12px;
   }
-  
+
   .form-group input,
   .form-group select,
   .input-with-prefix input,
@@ -625,7 +631,7 @@
     padding: 10px;
     font-size: 14px;
   }
-  
+
   .back-button,
   .submit-button {
     padding: 12px 15px;

@@ -45,14 +45,10 @@ function Step1({ data, onChange, onNext, telegramReadOnly, firstNameReadOnly, la
     if (
       !firstName ||
       !lastName ||
-      !telegramHandle ||
       !phoneNumber ||
       !password
     ) {
       return setErr("Пожалуйста, заполните все обязательные поля");
-    }
-    if (!isTelegramValid(telegramHandle)) {
-      return setErr("Ник в Телеграм 5–32 символа: буквы, цифры и «_»");
     }
     if (!isPhoneValid(phoneNumber)) {
       return setErr("Номер телефона должен быть ровно 9 цифр");

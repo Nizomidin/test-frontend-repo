@@ -91,8 +91,6 @@ function Step1({ data, onChange, onNext, telegramReadOnly, firstNameReadOnly, la
           name="firstName" 
           value={data.firstName} 
           onChange={onChange} 
-          readOnly={firstNameReadOnly}
-          style={firstNameReadOnly ? { backgroundColor: "#f0f0f0" } : {}}
         />
       </div>
       <div className="form-group">
@@ -101,8 +99,6 @@ function Step1({ data, onChange, onNext, telegramReadOnly, firstNameReadOnly, la
           name="lastName" 
           value={data.lastName} 
           onChange={onChange} 
-          readOnly={lastNameReadOnly}
-          style={lastNameReadOnly ? { backgroundColor: "#f0f0f0" } : {}}
         />
       </div>
       <div className="form-group">
@@ -336,6 +332,9 @@ export default function Register() {
   
   // Извлекаем параметры из URL при загрузке компонента
   const urlParams = getUrlParams();
+
+  // Извлекаем telegram_id сразу при инициализации, чтобы гарантировать его наличие
+  const initialTelegramId = urlParams.telegram_id !== "null" && urlParams.telegram_id ? urlParams.telegram_id : null;
   
   const [formData, setFormData] = useState({
     firstName: urlParams.first_name !== "null" ? urlParams.first_name || "" : "",
@@ -350,6 +349,7 @@ export default function Register() {
     isAddressLocked: false,
     photoBase64: "",
     photoPreview: "",
+    telegram_id: initialTelegramId, // Добавляем telegram_id прямо в formData
   });
   const [services, setServices] = useState([{ serviceName: "", duration: 30 }]);
   const [companies, setCompanies] = useState([]);
@@ -366,15 +366,25 @@ export default function Register() {
   useEffect(() => {
     if (urlParams.telegram_username && urlParams.telegram_username !== "null") {
       setTelegramReadOnly(true);
-      setTelegramId(urlParams.telegram_id !== "null" ? urlParams.telegram_id : null);
+      const telegram_id = urlParams.telegram_id !== "null" ? urlParams.telegram_id : null;
+      setTelegramId(telegram_id);
+      // Добавляем telegram_id в formData
+      setFormData(prevData => ({
+        ...prevData,
+        telegram_id: telegram_id
+      }));
     }
-    
     if (urlParams.first_name && urlParams.first_name !== "null") {
       setFirstNameReadOnly(true);
     }
     
     if (urlParams.last_name && urlParams.last_name !== "null") {
       setLastNameReadOnly(true);
+    }
+    
+    // Всегда устанавливаем telegram_id из URL параметров, если он доступен
+    if (urlParams.telegram_id && urlParams.telegram_id !== "null") {
+      setTelegramId(urlParams.telegram_id);
     }
   }, [urlParams.telegram_username, urlParams.telegram_id, urlParams.first_name, urlParams.last_name]);
 
@@ -501,9 +511,9 @@ export default function Register() {
         })),
       };
       
-      // Если есть telegram_id, добавляем его в payload
-      if (telegramId) {
-        payload.telegram_id = telegramId;
+      // Всегда добавляем telegram_id из formData, если он есть
+      if (formData.telegram_id) {
+        payload.telegram_id = formData.telegram_id;
       }
       
       const res = await fetch(`${API_BASE}/masters/`, {
@@ -521,12 +531,12 @@ export default function Register() {
       
       // Получаем ответ от сервера с ID мастера
       const data = await res.json();
-      setMasterId(data.master_id);
+      setMasterId(data.id);
       setRegistrationSuccess(true);
       
       // Редирект на страницу мастера через 1.5 секунды
       setTimeout(() => {
-        navigate(`/master/${data.master_id}`);
+        navigate(`/master/${data.id}`);
       }, 1500);
     } catch (err) {
       console.error("Ошибка при регистрации:", err);

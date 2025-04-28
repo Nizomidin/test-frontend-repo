@@ -261,15 +261,10 @@
 .service-item {
   display: flex;
   flex-wrap: wrap;
-  gap: 15px;
-  align-items: flex-start;
-  padding: 20px;
-  background-color: #f9f9f9;
-  border-radius: 8px;
-  margin-bottom: 15px;
-  position: relative;
+  gap: 16px;
+  padding: 12px 0;
+  border-bottom: 1px solid #e0e0e0;
 }
-
 .service-name {
   flex: 2;
   margin-bottom: 0;
@@ -284,10 +279,36 @@
   flex-direction: column;
 }
 
+/* Улучшенные стили для service-name и service-duration */
+.service-name, .service-duration {
+  flex: 1 1 auto;
+  min-width: 150px;
+  margin-bottom: 0;
+  display: flex;
+  flex-direction: column;
+}
+
 .service-name label, .service-duration label {
   margin-bottom: 8px;
   font-weight: 500;
   color: #555;
+}
+
+.service-name input,
+.service-duration input {
+  width: 100%;
+  padding: 12px 15px;
+  border: 1px solid #ddd;
+  border-radius: 6px;
+  font-size: 16px;
+  transition: border-color 0.3s, box-shadow 0.3s;
+}
+
+.service-name input:focus,
+.service-duration input:focus {
+  border-color: #4a90e2;
+  outline: none;
+  box-shadow: 0 0 0 2px rgba(74, 144, 226, 0.2);
 }
 
 .remove-service-btn {
@@ -295,11 +316,13 @@
   color: white;
   border: none;
   border-radius: 6px;
-  padding: 8px 16px;
+  padding: 10px 16px;
   cursor: pointer;
   font-size: 14px;
   transition: background-color 0.3s;
   height: 46px;
+  align-self: flex-end;
+  margin-top: auto;
 }
 
 .remove-service-btn:hover {
@@ -332,6 +355,20 @@
   margin-top: 30px;
 }
 
+.buttons-group button {
+  flex: 1;
+  padding: 14px 20px;
+  border: none;
+  border-radius: 6px;
+  font-size: 16px;
+  font-weight: 500;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+  text-align: center;
+}
+
+/* Улучшенные стили для кнопок регистрации */
 .back-button {
   flex: 1;
   padding: 14px 20px;
@@ -342,11 +379,15 @@
   font-size: 16px;
   font-weight: 500;
   cursor: pointer;
-  transition: background-color 0.3s;
+  transition: all 0.3s ease;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+  text-align: center;
 }
 
 .back-button:hover {
   background-color: #d5d5d5;
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+  transform: translateY(-1px);
 }
 
 .submit-button {
@@ -359,14 +400,17 @@
   font-size: 16px;
   font-weight: 500;
   cursor: pointer;
-  transition: background-color 0.3s;
+  transition: all 0.3s ease;
+  box-shadow: 0 2px 4px rgba(74, 144, 226, 0.3);
+  text-align: center;
 }
 
 .submit-button:hover {
   background-color: #3a7bc8;
+  box-shadow: 0 4px 8px rgba(74, 144, 226, 0.4);
+  transform: translateY(-1px);
 }
 
-/* Стили для сообщений об успехе и ошибках */
 .success-container {
   display: flex;
   flex-direction: column;
@@ -541,6 +585,13 @@
     flex-direction: column;
   }
 
+  .service-name,
+  .service-duration {
+    flex: 1 0 100%;
+    min-width: unset;
+    margin-bottom: 15px;
+  }
+
   .remove-service-btn {
     width: 100%;
     margin-top: 10px;
@@ -553,5 +604,31 @@
   .back-button,
   .submit-button {
     width: 100%;
+  }
+}
+
+/* Добавляем стили для сверхмалых экранов */
+@media (max-width: 480px) {
+  .form-container {
+    padding: 15px;
+  }
+  
+  .service-item {
+    padding: 12px;
+  }
+  
+  .form-group input,
+  .form-group select,
+  .input-with-prefix input,
+  .input-with-prefix select,
+  .input-with-prefix-field {
+    padding: 10px;
+    font-size: 14px;
+  }
+  
+  .back-button,
+  .submit-button {
+    padding: 12px 15px;
+    font-size: 14px;
   }
 }

@@ -431,11 +431,6 @@ export default function Register() {
     const { name, value } = e.target;
     
     // Предотвращаем изменения полей, если они в режиме только для чтения
-    if ((name === "firstName" && firstNameReadOnly) || 
-        (name === "lastName" && lastNameReadOnly)) {
-      return;
-    }
-    
     if (name === "serviceCategory") {
       setFormData((fd) => ({ ...fd, serviceCategory: value }));
       const filtered = companies.filter((c) => c.service_area_id === value);

@@ -1,14 +1,11 @@
 .work-schedule-form {
   background-color: #fff;
-  border-radius: 16px;
-  box-shadow: 0 6px 30px rgba(0, 0, 0, 0.12);
-  padding: 30px;
-  max-width: 650px;
-  width: 100%;
-  margin: 10vh auto;
-  box-sizing: border-box;
-  transition: all 0.3s ease;
-  animation: fadeIn 0.4s ease-out;
+  border-radius: 8px;
+  box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+  padding: 20px;
+  max-width: 600px;
+  margin: 0 auto;
+  position: relative;
   max-height: 80vh;
   overflow-y: auto;
 }
@@ -27,52 +24,54 @@
   display: flex;
   justify-content: space-between;
   align-items: center;
-  margin-bottom: 24px;
-  padding-bottom: 16px;
-  border-bottom: 2px solid #f0f0f0;
+  margin-bottom: 20px;
+  border-bottom: 1px solid #eee;
+  padding-bottom: 10px;
 }
 .form-header h2 {
   margin: 0;
-  font-size: 1.8rem;
-  font-weight: 600;
-  color: #222;
+  font-size: 20px;
+  color: #333;
 }
 .close-button {
   background: none;
   border: none;
-  font-size: 1.6rem;
+  font-size: 24px;
+  color: #999;
   cursor: pointer;
-  color: #777;
-  padding: 6px 12px;
-  border-radius: 50%;
-  transition: all 0.3s ease;
+  padding: 0 5px;
 }
 .close-button:hover {
-  color: #e74c3c;
-  background-color: rgba(231, 76, 60, 0.1);
-  transform: scale(1.1);
+  color: #333;
 }
 
 .schedule-grid {
   display: grid;
-  grid-template-columns: 1.5fr repeat(2, 1fr);
-  gap: 20px 24px;
-  margin-bottom: 30px;
+  grid-template-columns: 1fr 1fr 1fr 0.7fr;
+  gap: 10px;
+  margin-bottom: 20px;
 }
 .schedule-header {
-  grid-column: span 3;
+  grid-column: 1 / -1;
   display: grid;
-  grid-template-columns: 1.5fr repeat(2, 1fr);
-  font-weight: 600;
-  color: #34495e;
-  border-bottom: 2px solid #f0f0f0;
-  padding-bottom: 10px;
+  grid-template-columns: 1fr 1fr 1fr 0.7fr;
+  gap: 10px;
+  font-weight: bold;
+  border-bottom: 1px solid #eee;
+  padding-bottom: 8px;
   margin-bottom: 10px;
 }
 .schedule-header .day-label,
 .schedule-header .time-label {
   padding: 0 10px;
   font-size: 1.05rem;
+}
+.day-label,
+.time-label,
+.dayoff-label {
+  font-size: 14px;
+  color: #666;
+  text-align: center;
 }
 .day-schedule {
   display: grid;
@@ -125,91 +124,73 @@
   pointer-events: none;
 }
 .loading-indicator {
-  grid-column: span 3;
+  color: #2196f3;
+  font-size: 14px;
   margin-top: 5px;
-  padding: 5px 10px;
-  background-color: rgba(52, 152, 219, 0.1);
-  border-radius: 4px;
-  color: #3498db;
-  font-size: 0.9rem;
-  text-align: center;
+  grid-column: 1 / -1;
 }
 .error-message {
-  grid-column: span 3;
-  margin-top: 8px;
-  padding: 8px 12px;
-  background-color: rgba(231, 76, 60, 0.08);
-  border-left: 3px solid #e74c3c;
-  border-radius: 6px;
-  color: #e74c3c;
+  color: #d32f2f;
   font-size: 14px;
+  margin-top: 5px;
+  grid-column: 1 / -1;
 }
 
 .form-actions {
   display: flex;
   justify-content: flex-end;
-  gap: 15px;
-  padding-top: 20px;
-  border-top: 1px solid #f0f0f0;
+  gap: 10px;
+  margin-top: 20px;
 }
 .save-button,
 .cancel-button {
-  padding: 12px 24px;
-  border-radius: 8px;
+  padding: 10px 20px;
+  border-radius: 4px;
   font-weight: 500;
   cursor: pointer;
   transition: all 0.2s ease;
   border: none;
 }
 .save-button {
-  background-color: #3498db;
-  color: #fff;
-  box-shadow: 0 2px 5px rgba(52, 152, 219, 0.3);
+  background-color: #4caf50;
+  color: white;
 }
 .save-button:hover {
-  background-color: #2980b9;
-  transform: translateY(-2px);
-  box-shadow: 0 4px 8px rgba(52, 152, 219, 0.4);
+  background-color: #45a049;
 }
-.save-button:active {
-  transform: translateY(0);
-  box-shadow: 0 1px 3px rgba(52, 152, 219, 0.4);
+.save-button:disabled {
+  background-color: #cccccc;
+  cursor: not-allowed;
 }
 .cancel-button {
-  background-color: #f5f5f5;
-  color: #555;
+  background-color: #f1f1f1;
+  color: #333;
 }
 .cancel-button:hover {
-  background-color: #e0e0e0;
-  color: #333;
+  background-color: #e1e1e1;
 }
 
 /* Стили для контейнера выбора времени */
 .time-selects {
   display: flex;
-  gap: 10px;
   align-items: center;
+  background-color: #f5f5f5;
+  border-radius: 4px;
+  padding: 5px;
   width: 100%;
 }
 
 /* Стили для селекта времени */
 .time-select {
   appearance: none;
-  background-color: #f8f9fa;
-  border: 1px solid #ddd;
-  border-radius: 8px;
-  color: #333;
+  background: transparent;
+  border: none;
+  padding: 5px;
+  width: 100%;
+  font-size: 14px;
   cursor: pointer;
-  font-size: 1rem;
-  padding: 10px 14px;
-  transition: all 0.3s ease;
-  width: calc(50% - 5px);
-  position: relative;
-  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='16' height='16' viewBox='0 0 24 24' fill='none' stroke='%2395a5a6' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpolyline points='6 9 12 15 18 9'%3E%3C/polyline%3E%3C/svg%3E");
-  background-repeat: no-repeat;
-  background-position: right 10px center;
-  background-size: 16px;
-  padding-right: 30px;
+  color: #333;
+  text-align: center;
 }
 
 .time-select:hover {
@@ -225,10 +206,12 @@
 
 /* Специфичные стили для часов и минут */
 .hours-select {
+  width: 45%;
   position: relative;
 }
 
 .minutes-select {
+  width: 45%;
   position: relative;
 }
 
@@ -311,5 +294,105 @@
   .loading-indicator,
   .error-message {
     grid-column: span 1;
+  }
+}
+
+/* Стили для чекбоксов выходных дней */
+.dayoff-checkbox-container {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+.dayoff-checkbox {
+  position: relative;
+  display: block;
+  width: 22px;
+  height: 22px;
+  cursor: pointer;
+}
+
+.dayoff-checkbox input {
+  position: absolute;
+  opacity: 0;
+  cursor: pointer;
+  height: 0;
+  width: 0;
+}
+
+.dayoff-checkmark {
+  position: absolute;
+  top: 0;
+  left: 0;
+  height: 22px;
+  width: 22px;
+  background-color: #f5f5f5;
+  border: 1px solid #ccc;
+  border-radius: 4px;
+  transition: all 0.2s ease;
+}
+
+/* Когда чекбокс отмечен */
+.dayoff-checkbox input:checked ~ .dayoff-checkmark {
+  background-color: #4caf50;
+  border-color: #4caf50;
+}
+
+/* Создаем галочку/индикатор (скрытую, когда не отмечено) */
+.dayoff-checkmark:after {
+  content: "";
+  position: absolute;
+  display: none;
+}
+
+/* Отображаем галочку, когда отмечено */
+.dayoff-checkbox input:checked ~ .dayoff-checkmark:after {
+  display: block;
+}
+
+/* Стиль галочки */
+.dayoff-checkbox .dayoff-checkmark:after {
+  left: 8px;
+  top: 4px;
+  width: 5px;
+  height: 10px;
+  border: solid white;
+  border-width: 0 2px 2px 0;
+  transform: rotate(45deg);
+}
+
+/* Затененные элементы для выходных дней */
+select:disabled {
+  opacity: 0.6;
+  background-color: #e9e9e9;
+}
+@media (max-width: 480px) {
+  /* Показываем подпись «Выходной» перед самим чекбоксом */
+  .dayoff-checkbox-container {
+    display: flex;
+    align-items: center;
+    justify-content: flex-start; /* текст + чекбокс слева */
+    margin-bottom: 8px;
+    position: relative;
+  }
+  .dayoff-checkbox-container::before {
+    content: "Выходной";
+    font-size: 0.9rem;
+    color: #777;
+    margin-right: 10px;
+    flex-shrink: 0;
+  }
+
+  /* Сами квадратики чуть больше для тапа */
+  .dayoff-checkbox,
+  .dayoff-checkmark {
+    width: 22px;
+    height: 22px;
+  }
+  .dayoff-checkbox .dayoff-checkmark:after {
+    left: 8px;
+    top: 5px;
+    width: 5px;
+    height: 9px;
   }
 }

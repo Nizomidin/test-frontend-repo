@@ -3,17 +3,26 @@ import './BookingForm.css';
 import './EditBookingForm.css';
 import { useToast } from '../Toast/ToastContext';
 
-const EditBookingForm = ({ booking, service, master, availableTimeSlots, loadingTimeSlots, onSave, onCancel }) => {
-  const [selectedTime, setSelectedTime] = useState('');
-  const [comment, setComment] = useState(booking.comment || '');
-  const { showWarning } = useToast();
+const EditBookingForm = ({ booking = {}, service, master, availableTimeSlots, loadingTimeSlots, onSave, onCancel, onDateChange }) => {
+  // Извлекаем дату из booking.appointment_datetime (формат: "YYYY-MM-DD HH:MM")
+  let originalDateStr = '';
+  let timeStr = '';
   
-  // Извлекаем дату из booking.appointment_time (формат: "YYYY-MM-DD HH:MM")
-  const [dateStr] = booking.appointment_time.split(' ');
-  const [timeStr] = booking.appointment_time.split(' ').slice(1);
+  if (booking && booking.appointment_datetime) {
+    const parts = booking.appointment_datetime.split(' ');
+    originalDateStr = parts[0] || '';
+    timeStr = parts[1] || '';
+  }
+
+  const [selectedTime, setSelectedTime] = useState('');
+  const [selectedDate, setSelectedDate] = useState(originalDateStr);
+  const [comment, setComment] = useState((booking && booking.comment) || '');
+  const { showWarning } = useToast();
   
   // Форматирование даты для отображения
   const formatDateForDisplay = (dateStr) => {
+    if (!dateStr) return 'Дата не указана';
+    
     const date = new Date(dateStr);
     return date.toLocaleDateString('ru-RU', {
       day: 'numeric',
@@ -26,10 +35,25 @@ const EditBookingForm = ({ booking, service, master, availableTimeSlots, loading
     setSelectedTime(slot.start_time);
   };
   
+  const handleDateChange = (e) => {
+    const newDate = e.target.value;
+    setSelectedDate(newDate);
+    // Если дата изменилась, нам нужно запросить новые доступные слоты
+    if (onDateChange && newDate !== originalDateStr) {
+      onDateChange(newDate);
+      // Сбрасываем выбранное время, так как на новую дату будут другие слоты
+      setSelectedTime('');
+    }
+  };
+  
   const handleSubmit = (e) => {
     e.preventDefault();
     
-    if (!selectedTime && !comment.trim() && comment === booking.comment) {
+    const dateChanged = selectedDate !== originalDateStr;
+    const timeChanged = selectedTime !== '';
+    const commentChanged = comment !== (booking && booking.comment);
+    
+    if (!dateChanged && !timeChanged && !commentChanged) {
       showWarning('Вы не внесли никаких изменений');
       return;
     }
@@ -37,7 +61,7 @@ const EditBookingForm = ({ booking, service, master, availableTimeSlots, loading
     // Формируем измененные данные бронирования
     const updatedBooking = {
       ...booking,
-      appointment_time: selectedTime ? `${dateStr} ${selectedTime}` : booking.appointment_time,
+      appointment_datetime: `${selectedDate} ${selectedTime || timeStr}`,
       comment: comment
     };
     
@@ -50,12 +74,28 @@ const EditBookingForm = ({ booking, service, master, availableTimeSlots, loading
       
       <div className="selected-service-summary">
         <h3>{service ? service.service_name : 'Услуга не найдена'}</h3>
-        <p>Дата: {formatDateForDisplay(dateStr)}</p>
+        <p>Дата: {formatDateForDisplay(originalDateStr)}</p>
         {service && <p>Продолжительность: {service.duration} мин</p>}
         {master && <p>Мастер: {master.first_name} {master.last_name}</p>}
       </div>
       
       <form onSubmit={handleSubmit} className="booking-form">
+        <div className="form-section">
+          <h3>Изменить дату записи</h3>
+          
+          <div className="form-group">
+            <label htmlFor="appointment-date">Дата</label>
+            <input
+              type="date"
+              id="appointment-date"
+              name="appointment-date"
+              value={selectedDate}
+              onChange={handleDateChange}
+              min={new Date().toISOString().split('T')[0]}
+            />
+          </div>
+        </div>
+        
         <div className="form-section">
           <h3>Изменить время записи</h3>
           
@@ -113,7 +153,7 @@ const EditBookingForm = ({ booking, service, master, availableTimeSlots, loading
           <button 
             type="submit" 
             className="btn submit-btn"
-            disabled={!selectedTime && comment === booking.comment}
+            disabled={!selectedDate && !selectedTime && comment === booking.comment}
           >
             Сохранить изменения
           </button>

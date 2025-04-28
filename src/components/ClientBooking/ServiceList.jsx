@@ -1,5 +1,30 @@
-import React from 'react';
+import React, { useState } from 'react';
 import './ServiceList.css';
+
+const API_BASE = "https://api.kuchizu.online";
+
+// Компонент фото мастера с запасным вариантом, если фото нет
+const MasterPhoto = ({ photoUrl, name }) => {
+  const [hasError, setHasError] = useState(false);
+  const fullPhotoUrl = photoUrl ? `${API_BASE}${photoUrl}` : null;
+
+  return (
+    <div className="master-photo-container">
+      {!hasError && fullPhotoUrl ? (
+        <img 
+          src={fullPhotoUrl} 
+          alt={name} 
+          className="master-photo" 
+          onError={() => setHasError(true)}
+        />
+      ) : (
+        <div className="master-photo-placeholder">
+          <span>{name && name[0]}</span>
+        </div>
+      )}
+    </div>
+  );
+};
 
 const ServiceList = ({ services, onSelectService, masterInfo }) => {
   if (!services || services.length === 0) {
@@ -14,8 +39,15 @@ const ServiceList = ({ services, onSelectService, masterInfo }) => {
     <div className="service-list">
       {masterInfo && (
         <div className="master-info">
+          <MasterPhoto 
+            photoUrl={masterInfo.photo_url}
+            name={`${masterInfo.first_name} ${masterInfo.last_name}`}
+          />
           <div className="master-details">
             <h2>{`${masterInfo.first_name} ${masterInfo.last_name}`}</h2>
+            {masterInfo.service_category && (
+              <p className="master-specialty">{masterInfo.service_category}</p>
+            )}
           </div>
         </div>
       )}

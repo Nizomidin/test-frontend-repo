@@ -1,5 +1,6 @@
 import React, { useState, useEffect } from "react";
 import "./WorkScheduleForm.css";
+import { useToast } from "../Toast/ToastContext";
 
 export default function WorkScheduleForm({ masterId, onSubmit, onCancel }) {
   const dayLabels = {
@@ -24,6 +25,8 @@ export default function WorkScheduleForm({ masterId, onSubmit, onCancel }) {
   const [loadingDays, setLoadingDays] = useState({});
   const [errorDays, setErrorDays] = useState({});
   const [globalError, setGlobalError] = useState("");
+  const [loading, setLoading] = useState(false);
+  const { showSuccess, showError } = useToast();
 
   // Генерация опций для часов (0-23)
   const generateHoursOptions = () => {
@@ -98,6 +101,13 @@ export default function WorkScheduleForm({ masterId, onSubmit, onCancel }) {
   };
 
   const handleTimeChange = (day, timeIndex, type, value) => {
+    // Проверяем, существует ли schedule[day] и является ли он массивом
+    if (!schedule[day] || !Array.isArray(schedule[day])) {
+      // Если нет, создаем массив с двумя значениями по умолчанию
+      setSchedule(prev => ({ ...prev, [day]: ["08:00", "20:00"] }));
+      return;
+    }
+    
     const newTimes = [...schedule[day]];
     const [hours, minutes] = newTimes[timeIndex].split(":");
 
@@ -107,13 +117,55 @@ export default function WorkScheduleForm({ masterId, onSubmit, onCancel }) {
       newTimes[timeIndex] = `${hours}:${value}`;
     }
 
+    // Обновляем только локальное состояние, без вызова updateDay
     setSchedule((s) => ({ ...s, [day]: newTimes }));
-    updateDay(day, newTimes);
+    // Удаление updateDay(day, newTimes); - больше не сохраняем при каждом изменении
+  };
+
+  const saveAllSchedule = async () => {
+    if (!masterId) return;
+    
+    setLoading(true);
+    setGlobalError("");
+    
+    try {
+      // Подготавливаем данные для отправки
+      const scheduleData = {};
+      Object.entries(schedule).forEach(([day, times]) => {
+        scheduleData[day] = times;
+      });
+      
+      const res = await fetch(
+        `https://api.kuchizu.online/masters/${masterId}/hours`,
+        {
+          method: "PUT",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify(scheduleData),
+        }
+      );
+      
+      if (!res.ok) {
+        const err = await res.json();
+        throw new Error(err.detail?.[0]?.msg || res.statusText);
+      }
+      
+      showSuccess("График работы успешно сохранен");
+      
+      if (onSubmit) {
+        onSubmit(schedule);
+      }
+    } catch (err) {
+      setGlobalError("Ошибка при сохранении графика: " + err.message);
+      showError("Не удалось сохранить график работы");
+      console.error("Ошибка при сохранении графика:", err);
+    } finally {
+      setLoading(false);
+    }
   };
 
   const handleSubmit = (e) => {
     e.preventDefault();
-    onSubmit(schedule);
+    saveAllSchedule();
   };
 
   return (
@@ -219,6 +271,14 @@ export default function WorkScheduleForm({ masterId, onSubmit, onCancel }) {
         </div>
 
         <div className="form-actions">
+          <button 
+            type="submit" 
+            className="save-button"
+            disabled={loading}
+            onClick={handleSubmit}
+          >
+            {loading ? "Сохранение..." : "Сохранить"}
+          </button>
           <button type="button" className="cancel-button" onClick={onCancel}>
             Закрыть
           </button>

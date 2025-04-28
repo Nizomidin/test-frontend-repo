@@ -9,6 +9,29 @@ import { useToast } from "../Toast/ToastContext";
 
 const API_BASE = "https://api.kuchizu.online";
 
+// Компонент фото мастера с запасным вариантом, если фото нет
+const MasterPhoto = ({ photoUrl, name }) => {
+  const [hasError, setHasError] = useState(false);
+  const fullPhotoUrl = photoUrl ? `${API_BASE}${photoUrl}` : null;
+
+  return (
+    <div className="master-photo-container">
+      {!hasError && fullPhotoUrl ? (
+        <img 
+          src={fullPhotoUrl} 
+          alt={name} 
+          className="master-photo" 
+          onError={() => setHasError(true)}
+        />
+      ) : (
+        <div className="master-photo-placeholder">
+          <span>{name && name[0]}</span>
+        </div>
+      )}
+    </div>
+  );
+};
+
 function MasterProfile() {
   const { masterId } = useParams(); // Получаем ID мастера из URL
   const [masterData, setMasterData] = useState(null);
@@ -66,15 +89,18 @@ function MasterProfile() {
 
       if (!res.ok) {
         // Проверяем, если это ошибка о выходном дне
-        if (res.status === 404 || res.status === 400) {
-          const errorData = await res.json();
-          if (errorData.detail && errorData.detail.includes("master is off on this day")) {
-            // Устанавливаем флаг выходного дня
-            setBookings([]);
-            setIsDayOff(true); // Устанавливаем флаг выходного дня
-            setError(null); // Сбрасываем обычную ошибку
-            return;
-          }
+        const errorData = await res.json();
+        
+        if ((res.status === 404 || res.status === 400) && 
+            errorData.detail && 
+            (errorData.detail.includes("master is off on this day") || 
+             errorData.detail.includes("HTTPException(404, 'master is off on this day')"))) {
+          // Устанавливаем флаг выходного дня
+          setBookings([]);
+          setIsDayOff(true); // Устанавливаем флаг выходного дня
+          setError(null); // Сбрасываем обычную ошибку
+          console.log("У мастера выходной в этот день");
+          return;
         }
         throw new Error("Не удалось загрузить доступное время");
       }
@@ -244,11 +270,34 @@ function MasterProfile() {
   return (
     <div className="master-profile">
       <div className="master-header">
-        <div className="master-info">
-          <h2>
-            {masterData.first_name} {masterData.last_name}
-          </h2>
-          <p>{masterData.service_category}</p>
+        <div className="master-info-container">
+          <MasterPhoto 
+            photoUrl={masterData.photo_url} 
+            name={`${masterData.first_name} ${masterData.last_name}`} 
+          />
+          <div className="master-info">
+            <h2>
+              {masterData.first_name} {masterData.last_name}
+            </h2>
+            <p className="service-category">{masterData.service_category}</p>
+            <div className="master-contacts">
+              {masterData.telegram_username && (
+                <p className="contact-info">
+                  <span className="contact-label">Telegram:</span> {masterData.telegram_username}
+                </p>
+              )}
+              {masterData.phone_number && (
+                <p className="contact-info">
+                  <span className="contact-label">Телефон:</span> {masterData.phone_number}
+                </p>
+              )}
+              {masterData.address && (
+                <p className="contact-info">
+                  <span className="contact-label">Адрес:</span> {masterData.address}
+                </p>
+              )}
+            </div>
+          </div>
         </div>
         <div className="master-actions">
           <button

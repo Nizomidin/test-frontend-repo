@@ -21,7 +21,7 @@ function BookingDetails({ booking, masterId, onBack, onDelete, onUpdate }) {
   useEffect(() => {
     if (!booking) return;
 
-    const dt = new Date(booking.start_time || Date.now());
+    const dt = new Date(booking.appointment_datetime || Date.now());
     const yy = dt.getFullYear();
     const mm = String(dt.getMonth() + 1).padStart(2, '0');
     const dd = String(dt.getDate()).padStart(2, '0');
@@ -84,10 +84,26 @@ function BookingDetails({ booking, masterId, onBack, onDelete, onUpdate }) {
       { headers: { accept: 'application/json' } }
     )
       .then(res => {
-        if (!res.ok) throw new Error('Ошибка загрузки слотов');
+        if (!res.ok) {
+          // Если код ответа 404 и сообщение об ошибке указывает на выходной день
+          if (res.status === 404) {
+            return res.json().then(errorData => {
+              if (errorData.detail && errorData.detail.includes('выходной')) {
+                // Возвращаем пустой массив слотов
+                return [];
+              }
+              throw new Error('Ошибка загрузки слотов');
+            });
+          }
+          throw new Error('Ошибка загрузки слотов');
+        }
         return res.json();
       })
       .then(data => {
+        if (!Array.isArray(data)) {
+          setAvailableTimeSlots([]);
+          return;
+        }
         const svc = services.find(s => s.id === editData.service_id);
         setAvailableTimeSlots(
           svc
@@ -95,7 +111,10 @@ function BookingDetails({ booking, masterId, onBack, onDelete, onUpdate }) {
             : []
         );
       })
-      .catch(console.error)
+      .catch(error => {
+        console.error(error);
+        setAvailableTimeSlots([]);
+      })
       .finally(() => setSlotsLoading(false));
   }, [editData.service_id, editData.date, masterId, services]);
 
@@ -142,7 +161,7 @@ function BookingDetails({ booking, masterId, onBack, onDelete, onUpdate }) {
     const appointment_datetime = `${editData.date} ${editData.startTime}`;
     onUpdate(booking.id, {
       service_id: editData.service_id,
-      appointment_time: appointment_datetime,
+      appointment_datetime: appointment_datetime,
       comment: editData.notes
     });
     
@@ -159,7 +178,7 @@ function BookingDetails({ booking, masterId, onBack, onDelete, onUpdate }) {
       day: 'numeric', month: 'long', year: 'numeric',
       hour: '2-digit', minute: '2-digit'
     });
-  const startDisplay = booking.start_time ? fmt(booking.start_time) : '—';
+  const startDisplay = booking.appointment_datetime ? fmt(booking.appointment_datetime) : '—';
   
   return (
     <div className="booking-details">
@@ -308,10 +327,10 @@ function BookingDetails({ booking, masterId, onBack, onDelete, onUpdate }) {
               <span className="info-label">Начало:</span>
               <span className="info-value">{startDisplay}</span>
             </div>
-            {booking.notes && (
+            {booking.comment && (
               <div className="info-row notes">
                 <span className="info-label">Примечания:</span>
-                <span className="info-value">{booking.notes}</span>
+                <span className="info-value">{booking.comment}</span>
               </div>
             )}
           </div>

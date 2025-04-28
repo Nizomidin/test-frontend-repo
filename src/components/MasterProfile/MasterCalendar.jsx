@@ -59,7 +59,6 @@ function MasterCalendar({
             serviceNamesMap[serviceId] = serviceName;
           }
         }
-        
         setServiceNames(serviceNamesMap);
         setApiBookings(filteredData);
       } catch (err) {
@@ -78,10 +77,11 @@ function MasterCalendar({
     ...(propBookings || []),
     ...apiBookings.map((booking) => ({
       id: booking.id,
-      client_name: `Клиент #${booking.client_id}`,
+      client_name: booking.client_name,
       service_id: booking.service_id,
       service_name: serviceNames[booking.service_id] || "Услуга",
-      start_time: booking.appointment_time,
+      appointment_datetime: booking.appointment_datetime,
+      start_time: booking.appointment_datetime, // Для обратной совместимости
       is_blocked: booking.status === "blocked",
       is_personal: booking.status === "personal",
       comment: booking.comment,
@@ -133,7 +133,13 @@ function MasterCalendar({
   // Получение записей для определенного дня
   const getDayBookings = (date) => {
     return allBookings.filter((booking) => {
-      const bookingDate = new Date(booking.date || booking.start_time);
+      // Проверяем наличие разных полей с датой (date, start_time, appointment_datetime)
+      const dateField = booking.date || booking.start_time || booking.appointment_datetime || 
+                       (booking.original_data && booking.original_data.appointment_datetime);
+      
+      if (!dateField) return false;
+      
+      const bookingDate = new Date(dateField);
       return (
         bookingDate.getDate() === date.getDate() &&
         bookingDate.getMonth() === date.getMonth() &&

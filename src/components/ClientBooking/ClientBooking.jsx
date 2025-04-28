@@ -6,6 +6,97 @@ import BookingHistory from './BookingHistory';
 import './ClientBooking.css';
 import { useToast } from '../Toast/ToastContext';
 
+// Компонент фото клиента с запасным вариантом
+const ClientPhoto = ({ photoUrl, name }) => {
+  const [hasError, setHasError] = useState(false);
+  const fullPhotoUrl = photoUrl ? `${photoUrl.startsWith('http') ? '' : 'https://api.kuchizu.online'}${photoUrl}` : null;
+
+  return (
+    <div className="client-photo-container">
+      {!hasError && fullPhotoUrl ? (
+        <>
+        <img 
+          src={fullPhotoUrl} 
+          alt={name} 
+          className="client-photo" 
+          onError={() => setHasError(true)}
+        />
+        </>
+      ) : (
+        <div className="client-photo-placeholder">
+          <span>{name}</span>
+        </div>
+      )}
+    </div>
+  );
+};
+
+// Компонент для загрузки фотографии клиента
+const ClientPhotoUpload = ({ apiBase, clientId, onPhotoUpdate }) => {
+  const [uploading, setUploading] = useState(false);
+  const { showSuccess, showError } = useToast();
+  const fileInputRef = React.createRef();
+
+  const handleFileChange = async (event) => {
+    const file = event.target.files[0];
+    if (!file) return;
+
+    // Проверяем тип файла
+    if (!file.type.startsWith('image/')) {
+      showError('Пожалуйста, выберите изображение');
+      return;
+    }
+
+    // Проверяем размер файла (не более 5МБ)
+    if (file.size > 5 * 1024 * 1024) {
+      showError('Размер файла не должен превышать 5МБ');
+      return;
+    }
+
+    const formData = new FormData();
+    formData.append('photo', file);
+
+    try {
+      setUploading(true);
+      const response = await fetch(`${apiBase}/clients/${clientId}/photo`, {
+        method: 'POST',
+        body: formData,
+      });
+
+      if (!response.ok) {
+        throw new Error(`Ошибка при загрузке фото: ${response.status}`);
+      }
+
+      const data = await response.json();
+      showSuccess('Фотография успешно загружена');
+      if (onPhotoUpdate) {
+        onPhotoUpdate(data.photo_url);
+      }
+    } catch (err) {
+      console.error('Ошибка при загрузке фото:', err);
+      showError('Не удалось загрузить фотографию. Пожалуйста, попробуйте снова.');
+    } finally {
+      setUploading(false);
+    }
+  };
+
+  const triggerFileDialog = () => {
+    fileInputRef.current.click();
+  };
+
+  return (
+    <div className="client-photo-upload">
+      <input
+        type="file"
+        accept="image/*"
+        onChange={handleFileChange}
+        ref={fileInputRef}
+        style={{ display: 'none' }}
+      />
+    </div>
+  );
+};
+
 function ClientBooking({ apiBase }) {
     const [services, setServices] = useState([]);
     const [loading, setLoading] = useState(true);
@@ -13,6 +104,7 @@ function ClientBooking({ apiBase }) {
     const [selectedService, setSelectedService] = useState(null);
     const [activeTab, setActiveTab] = useState('services'); // 'services' или 'history'
     const [masterInfo, setMasterInfo] = useState(null);
+    const [clientInfo, setClientInfo] = useState(null);
     const navigate = useNavigate();
     const { clientId } = useParams();
     const location = useLocation();
@@ -42,6 +134,32 @@ function ClientBooking({ apiBase }) {
             return;
         }
     }, [masterId, navigate, showError]);
+
+    // Загрузка данных о клиенте
+    useEffect(() => {
+        const fetchClientInfo = async () => {
+            const id = getClientId();
+            if (!id) return;
+
+            try {
+                const response = await fetch(`${apiBase}/clients/${id}`, {
+                    headers: { 'accept': 'application/json' }
+                });
+
+                if (!response.ok) {
+                    throw new Error(`Ошибка при загрузке данных о клиенте: ${response.status}`);
+                }
+
+                const clientData = await response.json();
+                setClientInfo(clientData);
+            } catch (err) {
+                console.error('Не удалось загрузить информацию о клиенте:', err);
+                // Не показываем ошибку пользователю, продолжаем без информации о клиенте
+            }
+        };
+
+        fetchClientInfo();
+    }, [apiBase, clientId]);
 
     // Загрузка данных о мастере
     useEffect(() => {
@@ -77,7 +195,7 @@ function ClientBooking({ apiBase }) {
             try {
                 setLoading(true);
                 // Загружаем все услуги
-                const endpoint = `${apiBase}/services`;
+                const endpoint = `${apiBase}/services?master_id=${masterId}`;
 
                 const response = await fetch(endpoint);
 
@@ -88,8 +206,7 @@ function ClientBooking({ apiBase }) {
                 const allServices = await response.json();
                 
                 // Фильтруем услуги только для нужного мастера
-                const filteredServices = allServices.filter(service => service.master_id === masterId);
-                
+                const filteredServices = allServices;
                 setServices(filteredServices);
                 console.log(`Загружено ${filteredServices.length} услуг мастера ${masterId}`);
             } catch (err) {
@@ -141,6 +258,27 @@ function ClientBooking({ apiBase }) {
         <div className="client-booking-container">
             <div className="client-booking-header">
                 <h1>Онлайн-бронирование</h1>
+                {clientInfo && (
+                    <div className="client-info">
+                        <ClientPhoto 
+                            photoUrl={clientInfo.photo_url} 
+                            name={clientInfo.first_name || 'Клиент'}
+                        />
+                        <ClientPhotoUpload 
+                            apiBase={apiBase} 
+                            clientId={clientId} 
+                            onPhotoUpdate={(newPhotoUrl) => {
+                                setClientInfo((prevInfo) => ({
+                                    ...prevInfo,
+                                    photo_url: newPhotoUrl,
+                                }));
+                            }}
+                        />
+                        <div className="client-name">
+                            {clientInfo.first_name + ' ' + clientInfo.last_name}
+                        </div>
+                    </div>
+                )}
                 <div className="tabs">
                     <button 
                         className={`tab ${activeTab === 'services' ? 'active' : ''}`}
@@ -177,6 +315,7 @@ function ClientBooking({ apiBase }) {
                         }}
                         masterId={masterId}
                         masterInfo={masterInfo}
+                        clientInfo={clientInfo}
                     />
                 )}
 

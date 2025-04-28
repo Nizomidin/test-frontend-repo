@@ -46,8 +46,8 @@ const BookingHistory = ({ apiBase = 'https://api.kuchizu.online', clientId }) =>
     try {
       setLoadingTimeSlots(true);
       
-      // Получаем дату из строки booking.appointment_time
-      const [dateStr] = booking.appointment_time.split(' ');
+      // Получаем дату из строки booking.appointment_datetime
+      const [dateStr] = booking.appointment_datetime.split(' ');
       
       const response = await fetch(`${apiBase}/masters/${booking.master_id}/available?date=${dateStr}`, {
         headers: { 'accept': 'application/json' }
@@ -84,7 +84,7 @@ const BookingHistory = ({ apiBase = 'https://api.kuchizu.online', clientId }) =>
           'accept': 'application/json'
         },
         body: JSON.stringify({
-          appointment_time: editedBooking.appointment_time,
+          appointment_datetime: editedBooking.appointment_datetime,
           comment: editedBooking.comment
         })
       });
@@ -123,7 +123,7 @@ const BookingHistory = ({ apiBase = 'https://api.kuchizu.online', clientId }) =>
       if (booking.status !== 'booked') return booking;
 
       // Парсим дату и время записи
-      const [dateStr, timeStr] = booking.appointment_time.split(' ');
+      const [dateStr, timeStr] = booking.appointment_datetime.split(' ');
       const [year, month, day] = dateStr.split('-').map(Number);
       const [hours, minutes] = timeStr.split(':').map(Number);
       
@@ -319,8 +319,8 @@ const BookingHistory = ({ apiBase = 'https://api.kuchizu.online', clientId }) =>
   // Сортировка бронирований по дате (от новых к старым)
   const sortedBookings = [...filteredBookings].sort((a, b) => {
     // Преобразуем строки с датами в объекты Date для сравнения
-    const dateA = new Date(a.appointment_time.replace(' ', 'T'));
-    const dateB = new Date(b.appointment_time.replace(' ', 'T'));
+    const dateA = new Date(a.appointment_datetime.replace(' ', 'T'));
+    const dateB = new Date(b.appointment_datetime.replace(' ', 'T'));
     
     // Сортируем по убыванию (от новых к старым)
     return dateB - dateA;
@@ -338,6 +338,14 @@ const BookingHistory = ({ apiBase = 'https://api.kuchizu.online', clientId }) =>
 
   // Форматирование даты и времени
   const formatDateTime = (dateTimeStr) => {
+    // Проверка, что dateTimeStr существует и не равен null/undefined
+    if (!dateTimeStr) {
+      return {
+        date: 'Дата не указана',
+        time: 'Время не указано'
+      };
+    }
+  
     const [date, time] = dateTimeStr.split(' ');
     const dateObj = new Date(date);
     
@@ -428,7 +436,7 @@ const BookingHistory = ({ apiBase = 'https://api.kuchizu.online', clientId }) =>
           {sortedBookings.map(booking => {
             const service = services[booking.service_id];
             const master = masterInfo[booking.master_id] || {};
-            const { date, time } = formatDateTime(booking.appointment_time);
+            const { date, time } = formatDateTime(booking.appointment_datetime);
             
             return (
               <div key={booking.id} className="booking-card">

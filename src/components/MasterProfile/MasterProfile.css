@@ -10,10 +10,48 @@
 .master-header {
   display: flex;
   justify-content: space-between;
-  align-items: center;
+  align-items: flex-start;
+  flex-wrap: wrap;
   margin-bottom: 30px;
   padding-bottom: 15px;
   border-bottom: 1px solid #e0e0e0;
+  gap: 20px;
+}
+
+.master-info-container {
+  display: flex;
+  align-items: center;
+  gap: 20px;
+}
+
+/* Стили для контейнера фотографии */
+.master-photo-container {
+  width: 120px;
+  height: 120px;
+  border-radius: 50%;
+  overflow: hidden;
+  box-shadow: 0 3px 10px rgba(0, 0, 0, 0.1);
+  flex-shrink: 0;
+}
+
+/* Стили для фотографии */
+.master-photo {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+
+/* Стили для заполнителя фото (если фото отсутствует) */
+.master-photo-placeholder {
+  width: 100%;
+  height: 100%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background-color: #4a90e2;
+  color: white;
+  font-size: 3rem;
+  font-weight: bold;
 }
 
 .master-info h1 {
@@ -33,6 +71,28 @@
   font-size: 1rem;
   color: #666;
   margin: 0;
+}
+
+.service-category {
+  font-size: 1rem;
+  color: #666;
+  margin: 5px 0 10px;
+}
+
+/* Стили для контактной информации */
+.master-contacts {
+  margin-top: 10px;
+}
+
+.contact-info {
+  margin: 5px 0;
+  font-size: 0.95rem;
+  color: #555;
+}
+
+.contact-label {
+  font-weight: 500;
+  margin-right: 5px;
 }
 
 /* Контейнер для кнопок действий */
@@ -119,17 +179,29 @@
 }
 
 /* Адаптивная верстка */
-@media (max-width: 768px) {
+@media (max-width: 992px) {
   .master-header {
     flex-direction: column;
     align-items: flex-start;
   }
+  
+  .master-info-container {
+    width: 100%;
+  }
+}
 
+@media (max-width: 768px) {
+  .master-info-container {
+    flex-direction: column;
+    align-items: center;
+    text-align: center;
+  }
+  
   .master-actions {
     margin-top: 15px;
     width: 100%; /* Занимаем всю доступную ширину */
     flex-direction: row; /* Убедимся, что кнопки в ряд */
-    justify-content: flex-start; /* Выравниваем кнопки по левому краю */
+    justify-content: center; /* Выравниваем кнопки по центру */
   }
   
   /* Уменьшаем шрифт кнопок на мобильных */
@@ -138,9 +210,18 @@
     font-size: 0.85rem;
     padding: 8px 12px;
   }
+  
+  .master-info {
+    text-align: center;
+  }
 }
 
 @media (max-width: 480px) {
+  .master-photo-container {
+    width: 100px;
+    height: 100px;
+  }
+  
   .master-actions {
     flex-direction: column;
     gap: 8px;

@@ -1,6 +1,6 @@
 // src/components/MasterProfile/Register.jsx
 import React, { useState, useEffect, useRef } from "react";
-import { useNavigate } from "react-router-dom";
+import { useNavigate, useLocation } from "react-router-dom";
 import "../../styles/Register.css";
 
 const API_BASE = "https://api.kuchizu.online";
@@ -29,7 +29,7 @@ const DefaultUserAvatar = () => (
 );
 
 // Шаг 1: базовые данные
-function Step1({ data, onChange, onNext }) {
+function Step1({ data, onChange, onNext, telegramReadOnly, firstNameReadOnly, lastNameReadOnly }) {
   const [err, setErr] = useState("");
 
   const handleNext = () => {
@@ -63,13 +63,16 @@ function Step1({ data, onChange, onNext }) {
     onNext();
   };
 
-  const handleTel = (e) =>
+  const handleTel = (e) => {
+    if (telegramReadOnly) return; // Если поле только для чтения, не обрабатываем изменения
     onChange({
       target: {
         name: "telegramHandle",
         value: e.target.value.replace("@", ""),
       },
     });
+  };
+  
   const handlePhone = (e) =>
     onChange({
       target: {
@@ -84,11 +87,23 @@ function Step1({ data, onChange, onNext }) {
       {err && <div className="error-message">{err}</div>}
       <div className="form-group">
         <label>Имя</label>
-        <input name="firstName" value={data.firstName} onChange={onChange} />
+        <input 
+          name="firstName" 
+          value={data.firstName} 
+          onChange={onChange} 
+          readOnly={firstNameReadOnly}
+          style={firstNameReadOnly ? { backgroundColor: "#f0f0f0" } : {}}
+        />
       </div>
       <div className="form-group">
         <label>Фамилия</label>
-        <input name="lastName" value={data.lastName} onChange={onChange} />
+        <input 
+          name="lastName" 
+          value={data.lastName} 
+          onChange={onChange} 
+          readOnly={lastNameReadOnly}
+          style={lastNameReadOnly ? { backgroundColor: "#f0f0f0" } : {}}
+        />
       </div>
       <div className="form-group">
         <label>Ник в Телеграм</label>
@@ -97,8 +112,10 @@ function Step1({ data, onChange, onNext }) {
           <input
             name="telegramHandle"
             className="input-with-prefix-field"
-            value={data.telegramHandle}
+            value={(data.telegramHandle == 'null' ? "-": data.telegramHandle)}
             onChange={handleTel}
+            readOnly={telegramReadOnly}
+            style={telegramReadOnly ? { backgroundColor: "#f0f0f0" } : {}}
           />
         </div>
       </div>
@@ -299,11 +316,31 @@ function Step2({
 // Главный компонент регистрации
 export default function Register() {
   const navigate = useNavigate(); // Добавляем хук для навигации
+  const location = useLocation(); // Добавляем хук для получения URL параметров
   const [step, setStep] = useState(1);
+  const [telegramReadOnly, setTelegramReadOnly] = useState(false);
+  const [firstNameReadOnly, setFirstNameReadOnly] = useState(false);
+  const [lastNameReadOnly, setLastNameReadOnly] = useState(false);
+  const [telegramId, setTelegramId] = useState(null);
+  
+  // Получаем параметры из URL
+  const getUrlParams = () => {
+    const searchParams = new URLSearchParams(location.search);
+    return {
+      telegram_id: searchParams.get('telegram_id'),
+      telegram_username: searchParams.get('telegram_username'),
+      first_name: searchParams.get('first_name'),
+      last_name: searchParams.get('last_name')
+    };
+  };
+  
+  // Извлекаем параметры из URL при загрузке компонента
+  const urlParams = getUrlParams();
+  
   const [formData, setFormData] = useState({
-    firstName: "",
-    lastName: "",
-    telegramHandle: "",
+    firstName: urlParams.first_name !== "null" ? urlParams.first_name || "" : "",
+    lastName: urlParams.last_name !== "null" ? urlParams.last_name || "" : "",
+    telegramHandle: urlParams.telegram_username !== "null" ? urlParams.telegram_username || "" : "",
     phoneNumber: "",
     password: "",
     confirmPassword: "",
@@ -324,6 +361,22 @@ export default function Register() {
   const [error, setError] = useState(null);
   const [registrationSuccess, setRegistrationSuccess] = useState(false);
   const [masterId, setMasterId] = useState(null); // Добавляем состояние для хранения ID мастера
+
+  // Проверяем наличие параметров в URL и устанавливаем readOnly
+  useEffect(() => {
+    if (urlParams.telegram_username && urlParams.telegram_username !== "null") {
+      setTelegramReadOnly(true);
+      setTelegramId(urlParams.telegram_id !== "null" ? urlParams.telegram_id : null);
+    }
+    
+    if (urlParams.first_name && urlParams.first_name !== "null") {
+      setFirstNameReadOnly(true);
+    }
+    
+    if (urlParams.last_name && urlParams.last_name !== "null") {
+      setLastNameReadOnly(true);
+    }
+  }, [urlParams.telegram_username, urlParams.telegram_id, urlParams.first_name, urlParams.last_name]);
 
   useEffect(() => {
     fetchCompanies();
@@ -366,6 +419,13 @@ export default function Register() {
 
   const handleChange = (e) => {
     const { name, value } = e.target;
+    
+    // Предотвращаем изменения полей, если они в режиме только для чтения
+    if ((name === "firstName" && firstNameReadOnly) || 
+        (name === "lastName" && lastNameReadOnly)) {
+      return;
+    }
+    
     if (name === "serviceCategory") {
       setFormData((fd) => ({ ...fd, serviceCategory: value }));
       const filtered = companies.filter((c) => c.service_area_id === value);
@@ -440,6 +500,12 @@ export default function Register() {
           duration: s.duration,
         })),
       };
+      
+      // Если есть telegram_id, добавляем его в payload
+      if (telegramId) {
+        payload.telegram_id = telegramId;
+      }
+      
       const res = await fetch(`${API_BASE}/masters/`, {
         method: "POST",
         headers: {
@@ -500,6 +566,9 @@ export default function Register() {
             data={formData}
             onChange={handleChange}
             onNext={() => setStep(2)}
+            telegramReadOnly={telegramReadOnly}
+            firstNameReadOnly={firstNameReadOnly}
+            lastNameReadOnly={lastNameReadOnly}
           />
         ) : (
           <Step2

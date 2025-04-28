@@ -43,6 +43,11 @@ function BlockTimeForm({ onSubmit, onCancel, selectedDate, masterId }) {
       { headers: { accept: "application/json" } }
     )
       .then((res) => {
+        if (res.status === 400) {
+          // Если статус 404, значит у мастера выходной день
+          setAvailableTimeSlots([]);
+          return { slots: [] };
+        }
         if (!res.ok) throw new Error("Ошибка загрузки интервалов");
         return res.json();
       })
@@ -195,7 +200,7 @@ function BlockTimeForm({ onSubmit, onCancel, selectedDate, masterId }) {
               name="date"
               type="date"
               value={formData.date}
-              readOnly
+              
             />
           </div>
 

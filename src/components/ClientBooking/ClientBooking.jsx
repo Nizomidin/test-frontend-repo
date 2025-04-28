@@ -275,7 +275,7 @@ function ClientBooking({ apiBase }) {
                             }}
                         />
                         <div className="client-name">
-                            {clientInfo.first_name + ' ' + clientInfo.last_name}
+                            {clientInfo.first_name + ' ' + (clientInfo.last_name === null ? '': clientInfo.last_name)}
                         </div>
                     </div>
                 )}

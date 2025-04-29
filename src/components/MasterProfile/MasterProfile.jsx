@@ -12,7 +12,7 @@ const API_BASE = "https://api.kuchizu.online";
 // Компонент фото мастера с запасным вариантом, если фото нет
 const MasterPhoto = ({ photoUrl, name }) => {
   const [hasError, setHasError] = useState(false);
-  const fullPhotoUrl = photoUrl ? `${API_BASE}${photoUrl}` : null;
+  const fullPhotoUrl = photoUrl ? `${API_BASE}${photoUrl}` : '../public/logo.jpg';
 
   return (
     <div className="master-photo-container">
@@ -24,9 +24,12 @@ const MasterPhoto = ({ photoUrl, name }) => {
           onError={() => setHasError(true)}
         />
       ) : (
-        <div className="master-photo-placeholder">
-          <span>{name && name[0]}</span>
-        </div>
+        <img 
+          src={process.env.PUBLIC_URL + "/logo.jpg"} 
+          alt={name} 
+          className="master-photo" 
+          onError={() => setHasError(true)}
+        />
       )}
     </div>
   );

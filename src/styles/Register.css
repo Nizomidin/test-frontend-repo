@@ -269,14 +269,19 @@
   padding: 12px 0;
   border-bottom: 1px solid #e0e0e0;
 }
+.service-item-registration {
+  margin-top: 10px;
+  border: 2px solid #ededed;
+}
 .service-name {
+  margin-top: 10px;
   flex: 2;
   margin-bottom: 0;
   display: flex;
   flex-direction: column;
 }
 
-.service-duration {
+.service-register-duration {
   flex: 1;
   margin-bottom: 0;
   display: flex;
@@ -285,7 +290,7 @@
 
 /* Улучшенные стили для service-name и service-duration */
 .service-name,
-.service-duration {
+.service-register-duration {
   flex: 1 1 auto;
   min-width: 150px;
   margin-bottom: 0;
@@ -294,14 +299,14 @@
 }
 
 .service-name label,
-.service-duration label {
+.service-register-duration label {
   margin-bottom: 8px;
   font-weight: 500;
   color: #555;
 }
 
 .service-name input,
-.service-duration input {
+.service-register-duration input {
   width: 100%;
   padding: 12px 15px;
   border: 1px solid #ddd;
@@ -311,7 +316,7 @@
 }
 
 .service-name input:focus,
-.service-duration input:focus {
+.service-register-duration input:focus {
   border-color: #4a90e2;
   outline: none;
   box-shadow: 0 0 0 2px rgba(74, 144, 226, 0.2);
@@ -585,14 +590,14 @@
   }
 
   .service-name,
-  .service-duration {
+  .service-register-duration {
     flex: 1 0 100%;
     display: flex;
     flex-direction: column;
   }
 
   .service-name,
-  .service-duration {
+  .service-register-duration {
     flex: 1 0 100%;
     min-width: unset;
     margin-bottom: 15px;
@@ -636,5 +641,89 @@
   .submit-button {
     padding: 12px 15px;
     font-size: 14px;
+  }
+}
+.services-list {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+  gap: 16px;
+  padding: 0;
+  margin: 0;
+  list-style: none;
+}
+
+/* Карточка одной услуги */
+.service-item-registration {
+  display: grid;
+  grid-template-columns: 2fr 1fr auto;
+  align-items: center;
+  gap: 16px;
+  background-color: #fff;
+  border-radius: 8px;
+  padding: 16px;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.05);
+  transition: transform 0.2s, box-shadow 0.2s;
+}
+
+.service-item-registration:hover {
+  transform: translateY(-4px);
+  box-shadow: 0 8px 16px rgba(0, 0, 0, 0.1);
+}
+
+/* Поля внутри карточки */
+.service-name,
+.service-register-duration {
+  display: flex;
+  flex-direction: column;
+}
+
+.service-name label,
+.service-register-duration label {
+  margin-bottom: 6px;
+  font-size: 0.9rem;
+  color: #555;
+}
+
+.service-name input,
+.service-register-duration input {
+  padding: 10px;
+  border: 1px solid #ddd;
+  border-radius: 6px;
+  font-size: 1rem;
+  transition: border-color 0.2s, box-shadow 0.2s;
+}
+
+.service-name input:focus,
+.service-register-duration input:focus {
+  border-color: #4a90e2;
+  box-shadow: 0 0 0 2px rgba(74, 144, 226, 0.2);
+  outline: none;
+}
+
+/* Кнопка удаления */
+.remove-service-btn {
+  background-color: #ff6b6b;
+  color: #fff;
+  border: none;
+  border-radius: 6px;
+  padding: 10px 14px;
+  cursor: pointer;
+  font-size: 0.875rem;
+  transition: background-color 0.2s, transform 0.2s;
+}
+
+.remove-service-btn:hover {
+  background-color: #e14e4e;
+  transform: scale(1.05);
+}
+
+/* На очень маленьких экранах – одна колонка */
+@media (max-width: 480px) {
+  .service-item-registration {
+    grid-template-columns: 1fr;
+    grid-row-gap: 12px;
+  }
+  .remove-service-btn {
+    justify-self: end;
   }
 }

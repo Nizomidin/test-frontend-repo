@@ -45,7 +45,7 @@ function MasterCalendar({
         }
         const data = await response.json();
         const filteredData = data.filter(
-          (item) => item.master_id === master_id
+          (item) => item.master_id === master_id && item.status === 'booked'
         );
         
         // Получаем уникальные service_id из всех бронирований

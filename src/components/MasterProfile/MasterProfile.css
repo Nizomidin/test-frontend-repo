@@ -98,7 +98,8 @@
 /* Контейнер для кнопок действий */
 .master-actions {
   display: flex;
-  gap: 10px; /* Используем gap вместо margin для лучшего расположения */
+  flex-direction: column;
+  gap: 10px;
 }
 
 .master-actions .block-time-btn {
@@ -132,6 +133,35 @@
 
 .master-actions .work-schedule-btn:hover {
   background-color: #4cae4c;
+}
+
+.block-time-btn,
+.work-schedule-btn,
+.book-master-btn {
+  background-color: #4a90e2;
+  color: white;
+  border: none;
+  padding: 10px 15px;
+  border-radius: 5px;
+  cursor: pointer;
+  transition: background-color 0.3s ease;
+  font-weight: 500;
+  min-width: 200px;
+  text-align: center;
+}
+
+.block-time-btn:hover,
+.work-schedule-btn:hover,
+.book-master-btn:hover {
+  background-color: #357ABD;
+}
+
+.book-master-btn.active {
+  background-color: #2c5282;
+}
+
+.booking-manager-container {
+  margin-top: 30px;
 }
 
 /* Контейнеры для календаря и деталей записи */
@@ -214,6 +244,22 @@
   .master-info {
     text-align: center;
   }
+
+  .master-actions {
+    flex-direction: row;
+    flex-wrap: wrap;
+    justify-content: center;
+    width: 100%;
+    margin-top: 15px;
+  }
+  
+  .block-time-btn,
+  .work-schedule-btn,
+  .book-master-btn {
+    min-width: auto;
+    font-size: 0.9rem;
+    padding: 8px 12px;
+  }
 }
 
 @media (max-width: 480px) {
@@ -232,6 +278,17 @@
   .master-actions .work-schedule-btn {
     width: 100%; /* Кнопки занимают всю ширину на маленьких экранах */
     text-align: center; /* Центрируем текст кнопок */
+  }
+
+  .master-actions {
+    flex-direction: column;
+    width: 100%;
+  }
+  
+  .block-time-btn,
+  .work-schedule-btn,
+  .book-master-btn {
+    width: 100%;
   }
 }
 

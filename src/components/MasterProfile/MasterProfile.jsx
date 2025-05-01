@@ -5,6 +5,7 @@ import MasterCalendar from "./MasterCalendar";
 import BookingDetails from "./BookingDetails";
 import BlockTimeForm from "./BlockTimeForm";
 import WorkScheduleForm from "./WorkScheduleForm";
+import MasterBookingManager from "./MasterBookingManager";
 import { useToast } from "../Toast/ToastContext";
 
 const API_BASE = "https://api.kuchizu.online";
@@ -45,7 +46,8 @@ function MasterProfile() {
   const [isDayOff, setIsDayOff] = useState(false); // Новое состояние для отслеживания выходного дня
   const [showBlockTimeForm, setShowBlockTimeForm] = useState(false);
   const [showWorkScheduleForm, setShowWorkScheduleForm] = useState(false);
-  const [view, setView] = useState("calendar"); // 'calendar' или 'details'
+  const [showBookingManager, setShowBookingManager] = useState(false);
+  const [view, setView] = useState("calendar"); // 'calendar', 'details' или 'booking-manager'
   const { showSuccess, showError } = useToast(); // Получаем функции для показа тостов
 
   useEffect(() => {
@@ -243,6 +245,17 @@ function MasterProfile() {
     setView("details");
   };
 
+  // Обработчик переключения на менеджер бронирования других мастеров
+  const handleToggleBookingManager = () => {
+    if (view === "booking-manager") {
+      // Если уже на вкладке менеджера, возвращаемся к календарю
+      setView("calendar");
+    } else {
+      // Иначе переключаемся на менеджер бронирований
+      setView("booking-manager");
+    }
+  };
+
   // Обновленный обработчик изменения даты в календаре
   const handleDateChange = (newDate) => {
     setSelectedDate(newDate);
@@ -315,6 +328,12 @@ function MasterProfile() {
           >
             Редактировать график работы
           </button>
+          <button
+            className={`book-master-btn ${view === "booking-manager" ? "active" : ""}`}
+            onClick={handleToggleBookingManager}
+          >
+            {view === "booking-manager" ? "Вернуться к календарю" : "Запись к другим мастерам"}
+          </button>
         </div>
       </div>
 
@@ -329,7 +348,7 @@ function MasterProfile() {
             master_id={masterId}
           />
         </div>
-      ) : (
+      ) : view === "details" ? (
         <div className="booking-details-container">
           <BookingDetails
             booking={selectedBooking}
@@ -337,6 +356,12 @@ function MasterProfile() {
             onDelete={handleDeleteBooking}
             onUpdate={handleUpdateBooking}
             masterId={masterId}
+          />
+        </div>
+      ) : (
+        <div className="booking-manager-container">
+          <MasterBookingManager 
+            currentMasterId={masterId} 
           />
         </div>
       )}

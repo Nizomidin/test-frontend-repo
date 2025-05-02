@@ -48,6 +48,7 @@ function MasterProfile() {
   const [showWorkScheduleForm, setShowWorkScheduleForm] = useState(false);
   const [showBookingManager, setShowBookingManager] = useState(false);
   const [view, setView] = useState("calendar"); // 'calendar', 'details' или 'booking-manager'
+  const [isCompanyAdmin, setIsCompanyAdmin] = useState(false); // Состояние для проверки, является ли пользователь администратором компании
   const { showSuccess, showError } = useToast(); // Получаем функции для показа тостов
 
   useEffect(() => {
@@ -69,6 +70,11 @@ function MasterProfile() {
         const data = await res.json();
         setMasterData(data);
 
+        // Проверяем, является ли текущий пользователь администратором компании
+        if (data.company_id) {
+          await checkIsCompanyAdmin(data.company_id);
+        }
+
         // Загружаем доступное время мастера на текущую дату
         const today = new Date();
         const formattedDate = today.toISOString().split('T')[0]; // Формат YYYY-MM-DD
@@ -81,6 +87,37 @@ function MasterProfile() {
 
     fetchMasterData();
   }, [masterId]);
+
+  // Функция для проверки, является ли текущий пользователь админом компании
+  const checkIsCompanyAdmin = async (companyId) => {
+    try {
+      // Получаем информацию о компании
+      const res = await fetch(`${API_BASE}/companies/${companyId}`, {
+        headers: {
+          accept: "application/json"
+        }
+      });
+
+      if (!res.ok) throw new Error("Не удалось получить информацию о компании");
+
+      const companyData = await res.json();
+            
+      // Проверяем, является ли текущий пользователь администратором компании
+      if (masterId && companyData.admin_id && masterId === companyData.admin_id) {
+        setIsCompanyAdmin(true);
+        console.log("Пользователь является администратором компании");
+      } else {
+        setIsCompanyAdmin(false);
+        console.log("Пользователь не является администратором компании", {
+          masterId,
+          adminId: companyData.admin_id
+        });
+      }
+    } catch (err) {
+      console.error("Ошибка при проверке администратора компании:", err);
+      setIsCompanyAdmin(false);
+    }
+  };
 
   // Загрузка доступного времени мастера
   const fetchAvailableTimes = async (masterId, date) => {
@@ -328,12 +365,14 @@ function MasterProfile() {
           >
             Редактировать график работы
           </button>
-          <button
-            className={`book-master-btn ${view === "booking-manager" ? "active" : ""}`}
-            onClick={handleToggleBookingManager}
-          >
-            {view === "booking-manager" ? "Вернуться к календарю" : "Запись к другим мастерам"}
-          </button>
+          {isCompanyAdmin && (
+            <button
+              className={`book-master-btn ${view === "booking-manager" ? "active" : ""}`}
+              onClick={handleToggleBookingManager}
+            >
+              {view === "booking-manager" ? "Вернуться к календарю" : "Запись к другим мастерам"}
+            </button>
+          )}
         </div>
       </div>
 

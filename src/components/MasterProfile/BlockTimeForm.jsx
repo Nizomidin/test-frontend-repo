@@ -86,6 +86,39 @@ function BlockTimeForm({ onSubmit, onCancel, selectedDate, masterId }) {
   const handleChange = (e) => {
     const { name, value } = e.target;
 
+    // при смене даты – загружаем слоты на эту дату
+    if (name === "date") {
+      // Форматируем дату для API
+      const formattedDate = formatDateForApi(value);
+      
+      // Загружаем доступные слоты для новой даты
+      setLoading(true);
+      fetch(
+        `https://api.kuchizu.online/masters/${masterId}/available?date=${formattedDate}`,
+        { headers: { accept: "application/json" } }
+      )
+        .then((res) => {
+          if (res.status === 400) {
+            setAvailableTimeSlots([]);
+            return { slots: [] };
+          }
+          if (!res.ok) throw new Error("Ошибка загрузки интервалов");
+          return res.json();
+        })
+        .then((data) => setAvailableTimeSlots(data))
+        .catch(console.error)
+        .finally(() => setLoading(false));
+      
+      // Сбрасываем выбранный слот при смене даты
+      setSelectedTimeSlot(null);
+      setFormData((prev) => ({
+        ...prev,
+        date: value,
+        startTime: "",
+      }));
+      return;
+    }
+
     // при смене услуги — сбрасываем выбор слота и времени
     if (name === "service") {
       setSelectedTimeSlot(null);
@@ -200,8 +233,18 @@ function BlockTimeForm({ onSubmit, onCancel, selectedDate, masterId }) {
               name="date"
               type="date"
               value={formData.date}
-              
+              onChange={handleChange}
+              min={new Date().toISOString().split('T')[0]}
             />
+          </div>
+
+          {/* Выводим выбранную дату в более дружественном формате */}
+          <div className="selected-date">
+            Выбрана дата: {new Date(formData.date).toLocaleDateString('ru-RU', {
+              day: 'numeric',
+              month: 'long',
+              year: 'numeric'
+            })}
           </div>
 
           {/* Слоты времени */}

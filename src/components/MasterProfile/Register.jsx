@@ -343,7 +343,11 @@ const Register = () => {
     if (file) {
       const reader = new FileReader();
       reader.onloadend = () => {
-        setPhotoBase64(reader.result);
+        // Результат содержит "data:image/jpeg;base64,ДАННЫЕ"
+        // Нам нужно удалить начальный префикс и оставить только данные в base64
+        const base64String = reader.result;
+        const base64Data = base64String.split(',')[1]; // Получаем только данные после запятой
+        setPhotoBase64(base64Data);
       };
       reader.readAsDataURL(file);
     }
@@ -718,7 +722,7 @@ const Register = () => {
                 />
                 <div className="photo-preview" onClick={triggerPhotoUpload}>
                   {photoBase64 ? (
-                    <img src={photoBase64} alt="Preview" />
+                    <img src={`data:image/jpeg;base64,${photoBase64}`} alt="Preview" />
                   ) : (
                     <div className="photo-placeholder">
                       <FaUserCircle />

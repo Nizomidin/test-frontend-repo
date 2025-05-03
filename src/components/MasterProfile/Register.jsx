@@ -1,585 +1,784 @@
-// src/components/MasterProfile/Register.jsx
-import React, { useState, useEffect, useRef } from "react";
-import { useNavigate, useLocation } from "react-router-dom";
-import "../../styles/Register.css";
+import React, { useState, useEffect, useRef } from 'react';
+import { useNavigate, useLocation } from 'react-router-dom';
+import { FaExclamationCircle, FaCamera, FaInfoCircle, FaUserCircle, FaTrash } from 'react-icons/fa';
+import '../../styles/Register.css';
 
-const API_BASE = "https://api.kuchizu.online";
+const Register = () => {
+  const navigate = useNavigate();
+  const location = useLocation();
+  const searchParams = new URLSearchParams(location.search);
 
-// Валидация
-const isTelegramValid = (t) => /^[a-zA-Z0-9_]{5,32}$/.test(t);
-const isPhoneValid = (p) => /^\d{9}$/.test(p);
-
-// Заглушка-аватарка
-const DefaultUserAvatar = () => (
-  <img
-    src='#' 
-  />
-);
-
-// Шаг 1: базовые данные
-function Step1({ data, onChange, onNext, telegramReadOnly, firstNameReadOnly, lastNameReadOnly }) {
-  const [err, setErr] = useState("");
-
-  const handleNext = () => {
-    setErr("");
-    const {
-      firstName,
-      lastName,
-      telegramHandle,
-      phoneNumber,
-      password,
-      confirmPassword,
-    } = data;
-    if (
-      !firstName ||
-      !lastName ||
-      !phoneNumber ||
-      !password
-    ) {
-      return setErr("Пожалуйста, заполните все обязательные поля");
-    }
-    if (!isPhoneValid(phoneNumber)) {
-      return setErr("Номер телефона должен быть ровно 9 цифр");
-    }
-    if (password !== confirmPassword) {
-      return setErr("Пароли не совпадают");
-    }
-    onNext();
-  };
-
-  const handleTel = (e) => {
-    if (telegramReadOnly) return; // Если поле только для чтения, не обрабатываем изменения
-    onChange({
-      target: {
-        name: "telegramHandle",
-        value: e.target.value.replace("@", ""),
-      },
-    });
-  };
-  
-  const handlePhone = (e) =>
-    onChange({
-      target: {
-        name: "phoneNumber",
-        value: e.target.value.replace("+992", ""),
-      },
-    });
-
-  return (
-    <div className="form-container">
-      <h2>Регистрация мастера</h2>
-      {err && <div className="error-message">{err}</div>}
-      <div className="form-group">
-        <label>Имя</label>
-        <input 
-          name="firstName" 
-          value={data.firstName} 
-          onChange={onChange} 
-        />
-      </div>
-      <div className="form-group">
-        <label>Фамилия</label>
-        <input 
-          name="lastName" 
-          value={data.lastName} 
-          onChange={onChange} 
-        />
-      </div>
-      <div className="form-group">
-        <label>Ник в Телеграм</label>
-        <div className="input-with-prefix">
-          <span className="input-prefix">@</span>
-          <input
-            name="telegramHandle"
-            className="input-with-prefix-field"
-            value={(data.telegramHandle == 'null' ? "-": data.telegramHandle)}
-            onChange={handleTel}
-            readOnly={telegramReadOnly}
-            style={telegramReadOnly ? { backgroundColor: "#f0f0f0" } : {}}
-          />
-        </div>
-      </div>
-      <div className="form-group">
-        <label>Номер телефона</label>
-        <div className="input-with-prefix">
-          <span className="input-prefix">+992</span>
-          <input
-            name="phoneNumber"
-            className="input-with-prefix-field"
-            value={data.phoneNumber}
-            onChange={handlePhone}
-          />
-        </div>
-      </div>
-      <div className="form-group">
-        <label>Пароль</label>
-        <input
-          type="password"
-          name="password"
-          value={data.password}
-          onChange={onChange}
-        />
-      </div>
-      <div className="form-group">
-        <label>Подтвердите пароль</label>
-        <input
-          type="password"
-          name="confirmPassword"
-          value={data.confirmPassword}
-          onChange={onChange}
-        />
-      </div>
-      <button className="submit-button" onClick={handleNext}>
-        Создать аккаунт
-      </button>
-    </div>
-  );
-}
-
-// Шаг 2: профессиональная информация
-function Step2({
-  data,
-  serviceAreas,
-  filteredCompanies,
-  loadingCompanies,
-  loadingServiceAreas,
-  services,
-  onChange,
-  onCompanyChange,
-  onPhotoChange,
-  onAddService,
-  onRemoveService,
-  onServiceChange,
-  onBack,
-  onSubmit,
-  submitting,
-  error,
-}) {
-  const fileInput = useRef();
-
-  return (
-    <div className="form-container">
-      <h2>Профессиональная информация</h2>
-      {error && <div className="error-message">{error}</div>}
-
-      {/* Сфера услуг */}
-      <div className="form-group">
-        <label>Сфера услуг</label>
-        {loadingServiceAreas ? (
-          <p>Загрузка сфер услуг…</p>
-        ) : (
-          <select
-            name="serviceCategory"
-            value={data.serviceCategory}
-            onChange={onChange}
-          >
-            <option value="">Выберите сферу</option>
-            {serviceAreas.map((a) => (
-              <option key={a.id} value={a.id}>
-                {a.display_name || a.name}
-              </option>
-            ))}
-          </select>
-        )}
-      </div>
-
-      {/* Компания */}
-      <div className="form-group">
-        <label>Компания (опционально)</label>
-        {loadingCompanies ? (
-          <p>Загрузка компаний…</p>
-        ) : (
-          <select
-            name="companyId"
-            value={data.companyId}
-            onChange={onCompanyChange}
-          >
-            <option value={0}>-- Не указано --</option>
-            {filteredCompanies.map((c) => (
-              <option key={c.id} value={c.id}>
-                {c.name}
-              </option>
-            ))}
-          </select>
-        )}
-      </div>
-
-      {/* Адрес */}
-      <div className="form-group">
-        <label>Адрес</label>
-        <input
-          name="address"
-          value={data.address}
-          readOnly={data.isAddressLocked}
-          onChange={onChange}
-        />
-        {data.isAddressLocked && <small>Адрес подставлен из компании</small>}
-      </div>
-
-      {/* Фото */}
-      <div className="form-group photo-upload-container">
-        <label>Фотография (опционально)</label>
-        <div className="photo-circle" onClick={() => fileInput.current.click()}>
-          {data.photoPreview ? (
-            <img src={data.photoPreview} alt="preview" />
-          ) : (
-            <DefaultUserAvatar />
-          )}
-        </div>
-        <input
-          type="file"
-          ref={fileInput}
-          accept="image/*"
-          onChange={onPhotoChange}
-          className="hidden-file-input"
-        />
-      </div>
-
-      {/* Ваши услуги */}
-      <h3>Ваши услуги</h3>
-      {services.map((svc, idx) => (
-        <div className="service-item-registration" key={idx}>
-          <div className="form-group service-name">
-            <label>Название услуги</label>
-            <input
-              type="text"
-              placeholder="Введите название услуги"
-              value={svc.serviceName}
-              onChange={(e) =>
-                onServiceChange(idx, "serviceName", e.target.value)
-              }
-              required
-            />
-          </div>
-          <div className="form-group service-register-duration">
-            <label>Длительность</label>
-            <input
-              type="number"
-              min={1}
-              placeholder="минуты"
-              value={svc.duration}
-              onChange={(e) => {
-                const value = e.target.value ? parseInt(e.target.value, 10) : "";
-                onServiceChange(idx, "duration", value);
-              }}
-              required
-            />
-          </div>
-          {idx > 0 && (
-            <button
-              type="button"
-              className="remove-service-btn"
-              onClick={() => onRemoveService(idx)}
-            >
-              Удалить
-            </button>
-          )}
-        </div>
-      ))}
-      <button type="button" className="add-service-btn" onClick={onAddService}>
-        + Добавить услугу
-      </button>
-
-      {/* Навигация */}
-      <div className="buttons-group">
-        <button onClick={onBack} disabled={submitting}>
-          Назад
-        </button>
-        <button onClick={onSubmit} disabled={submitting}>
-          {submitting ? "Отправка…" : "Подтвердить"}
-        </button>
-      </div>
-    </div>
-  );
-}
-
-// Главный компонент регистрации
-export default function Register() {
-  const navigate = useNavigate(); // Добавляем хук для навигации
-  const location = useLocation(); // Добавляем хук для получения URL параметров
+  // Состояния для Step 1
   const [step, setStep] = useState(1);
-  const [telegramReadOnly, setTelegramReadOnly] = useState(false);
-  const [firstNameReadOnly, setFirstNameReadOnly] = useState(false);
-  const [lastNameReadOnly, setLastNameReadOnly] = useState(false);
-  const [telegramId, setTelegramId] = useState(null);
+  const [firstName, setFirstName] = useState(searchParams.get('first_name') || '');
+  const [lastName, setLastName] = useState(searchParams.get('last_name') || '');
+  const [telegramHandle, setTelegramHandle] = useState(searchParams.get('telegram_username') || '');
+  const [phoneNumber, setPhoneNumber] = useState('');
+  const [password, setPassword] = useState('');
+  const [confirmPassword, setConfirmPassword] = useState('');
   
-  // Получаем параметры из URL
-  const getUrlParams = () => {
-    const searchParams = new URLSearchParams(location.search);
-    return {
-      telegram_id: searchParams.get('telegram_id'),
-      telegram_username: searchParams.get('telegram_username'),
-      first_name: searchParams.get('first_name'),
-      last_name: searchParams.get('last_name')
-    };
-  };
-  
-  // Извлекаем параметры из URL при загрузке компонента
-  const urlParams = getUrlParams();
-
-  // Извлекаем telegram_id сразу при инициализации, чтобы гарантировать его наличие
-  const initialTelegramId = urlParams.telegram_id !== "null" && urlParams.telegram_id ? urlParams.telegram_id : null;
-  
-  const [formData, setFormData] = useState({
-    firstName: urlParams.first_name !== "null" ? urlParams.first_name || "" : "",
-    lastName: urlParams.last_name !== "null" ? urlParams.last_name || "" : "",
-    telegramHandle: urlParams.telegram_username !== "null" ? urlParams.telegram_username || "" : "",
-    phoneNumber: "",
-    password: "",
-    confirmPassword: "",
-    serviceCategory: "",
-    companyId: 0,
-    address: "",
-    isAddressLocked: false,
-    photoBase64: "",
-    photoPreview: "",
-    telegram_id: initialTelegramId, // Добавляем telegram_id прямо в formData
-  });
-  const [services, setServices] = useState([{ serviceName: "", duration: 30 }]);
+  // Состояния для Step 2
+  const [serviceCategories, setServiceCategories] = useState([]);
   const [companies, setCompanies] = useState([]);
   const [filteredCompanies, setFilteredCompanies] = useState([]);
-  const [serviceAreas, setServiceAreas] = useState([]);
-  const [loadingCompanies, setLoadingCompanies] = useState(false);
-  const [loadingServiceAreas, setLoadingServiceAreas] = useState(false);
-  const [submitting, setSubmitting] = useState(false);
-  const [error, setError] = useState(null);
-  const [registrationSuccess, setRegistrationSuccess] = useState(false);
-  const [masterId, setMasterId] = useState(null); // Добавляем состояние для хранения ID мастера
+  const [serviceCategory, setServiceCategory] = useState('');
+  const [companyId, setCompanyId] = useState('');
+  const [address, setAddress] = useState('');
+  const [photoBase64, setPhotoBase64] = useState('');
+  const [services, setServices] = useState([{ serviceName: '', duration: 30 }]);
+  const [noCompany, setNoCompany] = useState(false);
+  
+  // Состояния ошибок
+  const [errors, setErrors] = useState({
+    firstName: '',
+    lastName: '',
+    telegramHandle: '',
+    phoneNumber: '',
+    password: '',
+    confirmPassword: '',
+    serviceCategory: '',
+    companyId: '',
+    services: [''],
+    general: ''
+  });
 
-  // Проверяем наличие параметров в URL и устанавливаем readOnly
-  useEffect(() => {
-    if (urlParams.telegram_username && urlParams.telegram_username !== "null") {
-      setTelegramReadOnly(true);
-      const telegram_id = urlParams.telegram_id !== "null" ? urlParams.telegram_id : null;
-      setTelegramId(telegram_id);
-      // Добавляем telegram_id в formData
-      setFormData(prevData => ({
-        ...prevData,
-        telegram_id: telegram_id
-      }));
-    }
-    if (urlParams.first_name && urlParams.first_name !== "null") {
-      setFirstNameReadOnly(true);
-    }
-    
-    if (urlParams.last_name && urlParams.last_name !== "null") {
-      setLastNameReadOnly(true);
-    }
-    
-    // Всегда устанавливаем telegram_id из URL параметров, если он доступен
-    if (urlParams.telegram_id && urlParams.telegram_id !== "null") {
-      setTelegramId(urlParams.telegram_id);
-    }
-  }, [urlParams.telegram_username, urlParams.telegram_id, urlParams.first_name, urlParams.last_name]);
+  // Состояния валидации полей
+  const [validFields, setValidFields] = useState({
+    firstName: false,
+    lastName: false,
+    telegramHandle: false,
+    phoneNumber: false,
+    password: false,
+    confirmPassword: false,
+    serviceCategory: false,
+    companyId: false,
+    services: [false]
+  });
 
+  // Refs для полей ввода
+  const fileInputRef = useRef(null);
+
+  // Состояния для отслеживания, было ли поле в фокусе
+  const [touchedFields, setTouchedFields] = useState({
+    firstName: false,
+    lastName: false,
+    telegramHandle: false,
+    phoneNumber: false,
+    password: false,
+    confirmPassword: false,
+    serviceCategory: false,
+    companyId: false,
+    services: [false]
+  });
+
+  // Проверяем наличие telegram_id в URL
+  const hasTelegramData = searchParams.get('telegram_id') !== null;
+
+  // Эффект для загрузки категорий услуг
   useEffect(() => {
+    const fetchServiceCategories = async () => {
+      try {
+        const response = await fetch('https://api.kuchizu.online/service-areas/');
+        if (!response.ok) throw new Error('Failed to fetch service categories');
+        const data = await response.json();
+        setServiceCategories(data);
+      } catch (error) {
+        setErrors(prev => ({ ...prev, general: 'Failed to load service categories' }));
+      }
+    };
+
+    const fetchCompanies = async () => {
+      try {
+        const response = await fetch('https://api.kuchizu.online/companies');
+        if (!response.ok) throw new Error('Failed to fetch companies');
+        const data = await response.json();
+        setCompanies(data);
+      } catch (error) {
+        setErrors(prev => ({ ...prev, general: 'Failed to load companies' }));
+      }
+    };
+
+    fetchServiceCategories();
     fetchCompanies();
-    fetchServiceAreas();
   }, []);
 
-  async function fetchCompanies() {
-    setLoadingCompanies(true);
-    try {
-      const res = await fetch(`${API_BASE}/companies`, {
-        headers: { accept: "application/json" },
-      });
-      if (!res.ok) throw new Error(res.statusText);
-      const data = await res.json();
-      setCompanies(data);
-      setFilteredCompanies(data);
-    } catch (err) {
-      console.error("Ошибка загрузки компаний:", err);
-      setError("Не удалось загрузить компании");
-    } finally {
-      setLoadingCompanies(false);
-    }
-  }
-
-  async function fetchServiceAreas() {
-    setLoadingServiceAreas(true);
-    try {
-      const res = await fetch(`${API_BASE}/service-areas/`, {
-        headers: { accept: "application/json" },
-      });
-      if (!res.ok) throw new Error(res.statusText);
-      setServiceAreas(await res.json());
-    } catch (err) {
-      console.error("Ошибка загрузки сфер услуг:", err);
-      setError("Не удалось загрузить сферы услуг");
-    } finally {
-      setLoadingServiceAreas(false);
-    }
-  }
-
-  const handleChange = (e) => {
-    const { name, value } = e.target;
-    
-    // Предотвращаем изменения полей, если они в режиме только для чтения
-    if (name === "serviceCategory") {
-      setFormData((fd) => ({ ...fd, serviceCategory: value }));
-      const filtered = companies.filter((c) => c.service_area_id === value);
+  // Эффект для фильтрации компаний при изменении категории услуг
+  useEffect(() => {
+    if (serviceCategory) {
+      const filtered = companies.filter(company => company.service_area_id === serviceCategory);
       setFilteredCompanies(filtered);
-      if (!filtered.some((c) => c.id === formData.companyId)) {
-        setFormData((fd) => ({
-          ...fd,
-          companyId: 0,
-          address: "",
-          isAddressLocked: false,
-        }));
+    } else {
+      setFilteredCompanies([]);
+    }
+  }, [serviceCategory, companies]);
+
+  // Эффект для установки адреса при выборе компании
+  useEffect(() => {
+    if (companyId) {
+      const selectedCompany = companies.find(company => company.id === companyId);
+      if (selectedCompany) {
+        setAddress(selectedCompany.address);
+        setNoCompany(false);
       }
+    } else if (noCompany) {
+      // Если выбрано "Нет компании", оставляем редактируемое поле адреса
+      setAddress('');
+    } else {
+      setAddress('');
+    }
+  }, [companyId, companies, noCompany]);
+
+  // Проверка валидности полей Step 1
+  useEffect(() => {
+    const isStep1Valid = 
+      validFields.firstName && 
+      validFields.lastName && 
+      validFields.telegramHandle && 
+      validFields.phoneNumber && 
+      validFields.password && 
+      validFields.confirmPassword;
+    
+    if (isStep1Valid) {
+      document.getElementById('nextBtn')?.removeAttribute('disabled');
+    } else {
+      document.getElementById('nextBtn')?.setAttribute('disabled', 'true');
+    }
+  }, [validFields]);
+
+  // Инициализация начальных значений валидности полей
+  useEffect(() => {
+    // Проверяем начальные значения полей, полученные из URL
+    if (firstName) {
+      const { isValid } = validateField('firstName', firstName);
+      setValidFields(prev => ({ ...prev, firstName: isValid }));
+    }
+    
+    if (lastName) {
+      const { isValid } = validateField('lastName', lastName);
+      setValidFields(prev => ({ ...prev, lastName: isValid }));
+    }
+    
+    if (telegramHandle) {
+      const { isValid } = validateField('telegramHandle', telegramHandle);
+      setValidFields(prev => ({ ...prev, telegramHandle: isValid }));
+    }
+  }, []);
+
+  // Валидация полей
+  const validateField = (field, value) => {
+    let errorMessage = '';
+    let isValid = false;
+
+    switch (field) {
+      case 'firstName':
+        isValid = value.length >= 2 && value.length <= 50;
+        errorMessage = isValid ? '' : 'Имя должно содержать от 2 до 50 символов';
+        break;
+      case 'lastName':
+        isValid = value.length >= 2 && value.length <= 50;
+        errorMessage = isValid ? '' : 'Фамилия должна содержать от 2 до 50 символов';
+        break;
+      case 'telegramHandle':
+        // Если поле пустое, считаем его валидным
+        if (!value) {
+          isValid = true;
+          errorMessage = '';
+        } else {
+          const telegramRegex = /^[A-Za-z0-9_]{5,32}$/;
+          isValid = telegramRegex.test(value);
+          errorMessage = isValid ? '' : 'Неверный формат имени пользователя Telegram (5-32 символа, буквы, цифры, подчеркивания)';
+        }
+        break;
+      case 'phoneNumber':
+        const phoneRegex = /^\d{9}$/;
+        isValid = phoneRegex.test(value);
+        errorMessage = isValid ? '' : 'Номер телефона должен содержать 9 цифр';
+        break;
+      case 'password':
+        isValid = value.length >= 6;
+        errorMessage = isValid ? '' : 'Пароль должен содержать минимум 6 символов';
+        break;
+      case 'confirmPassword':
+        isValid = value === password;
+        errorMessage = isValid ? '' : 'Пароли не совпадают';
+        break;
+      case 'serviceCategory':
+        isValid = !!value;
+        errorMessage = isValid ? '' : 'Выберите категорию услуг';
+        break;
+      case 'companyId':
+        // Компания не обязательна для выбора
+        isValid = true;
+        errorMessage = '';
+        break;
+      case 'serviceName':
+        isValid = value.length > 0;
+        errorMessage = isValid ? '' : 'Введите название услуги';
+        break;
+      case 'duration':
+        isValid = parseInt(value) >= 1;
+        errorMessage = isValid ? '' : 'Длительность должна быть не менее 1 минуты';
+        break;
+      default:
+        return { isValid: true, errorMessage: '' };
+    }
+
+    return { isValid, errorMessage };
+  };
+
+  // Обработчики изменения полей Step 1
+  const handleFirstNameChange = (e) => {
+    const value = e.target.value;
+    setFirstName(value);
+    const { isValid, errorMessage } = validateField('firstName', value);
+    setErrors(prev => ({ ...prev, firstName: errorMessage }));
+    setValidFields(prev => ({ ...prev, firstName: isValid }));
+  };
+
+  const handleFieldBlur = (field, value) => {
+    setTouchedFields(prev => ({ ...prev, [field]: true }));
+    const { isValid, errorMessage } = validateField(field, value);
+    setErrors(prev => ({ ...prev, [field]: errorMessage }));
+    setValidFields(prev => ({ ...prev, [field]: isValid }));
+  };
+
+  const handleLastNameChange = (e) => {
+    const value = e.target.value;
+    setLastName(value);
+    const { isValid, errorMessage } = validateField('lastName', value);
+    setErrors(prev => ({ ...prev, lastName: errorMessage }));
+    setValidFields(prev => ({ ...prev, lastName: isValid }));
+  };
+
+  const handleTelegramHandleChange = (e) => {
+    const value = e.target.value.replace(/^@/, ''); // Удаляем @ в начале, если пользователь его ввел
+    setTelegramHandle(value);
+    const { isValid, errorMessage } = validateField('telegramHandle', value);
+    setErrors(prev => ({ ...prev, telegramHandle: errorMessage }));
+    setValidFields(prev => ({ ...prev, telegramHandle: isValid }));
+  };
+
+  const handlePhoneNumberChange = (e) => {
+    const value = e.target.value.replace(/\D/g, '');
+    if (value.length <= 9) {
+      setPhoneNumber(value);
+      const { isValid, errorMessage } = validateField('phoneNumber', value);
+      setErrors(prev => ({ ...prev, phoneNumber: errorMessage }));
+      setValidFields(prev => ({ ...prev, phoneNumber: isValid }));
+    }
+  };
+
+  const handlePasswordChange = (e) => {
+    const value = e.target.value;
+    setPassword(value);
+    const { isValid, errorMessage } = validateField('password', value);
+    setErrors(prev => ({ ...prev, password: errorMessage }));
+    setValidFields(prev => ({ ...prev, password: isValid }));
+    
+    // Также проверяем, совпадает ли confirmPassword с новым значением password
+    if (confirmPassword) {
+      const confirmValidation = validateField('confirmPassword', confirmPassword);
+      setErrors(prev => ({ ...prev, confirmPassword: confirmValidation.errorMessage }));
+      setValidFields(prev => ({ ...prev, confirmPassword: confirmValidation.isValid }));
+    }
+  };
+
+  const handleConfirmPasswordChange = (e) => {
+    const value = e.target.value;
+    setConfirmPassword(value);
+    const { isValid, errorMessage } = validateField('confirmPassword', value);
+    setErrors(prev => ({ ...prev, confirmPassword: errorMessage }));
+    setValidFields(prev => ({ ...prev, confirmPassword: isValid }));
+  };
+
+  // Обработчики изменения полей Step 2
+  const handleServiceCategoryChange = (e) => {
+    const value = e.target.value;
+    setServiceCategory(value);
+    setCompanyId('');
+    setAddress('');
+    const { isValid, errorMessage } = validateField('serviceCategory', value);
+    setErrors(prev => ({ ...prev, serviceCategory: errorMessage }));
+    setValidFields(prev => ({ ...prev, serviceCategory: isValid }));
+  };
+
+  const handleCompanyIdChange = (e) => {
+    const value = e.target.value;
+    
+    if (value === 'no-company') {
+      setCompanyId('');
+      setNoCompany(true);
+    } else {
+      setCompanyId(value);
+      setNoCompany(false);
+    }
+    
+    const { isValid, errorMessage } = validateField('companyId', value);
+    setErrors(prev => ({ ...prev, companyId: errorMessage }));
+    setValidFields(prev => ({ ...prev, companyId: isValid }));
+  };
+
+  const handleAddressChange = (e) => {
+    const value = e.target.value;
+    setAddress(value);
+  };
+
+  const handlePhotoUpload = (e) => {
+    const file = e.target.files[0];
+    if (file) {
+      const reader = new FileReader();
+      reader.onloadend = () => {
+        setPhotoBase64(reader.result);
+      };
+      reader.readAsDataURL(file);
+    }
+  };
+
+  const triggerPhotoUpload = () => {
+    fileInputRef.current.click();
+  };
+
+  const handleServiceNameChange = (index, value) => {
+    const newServices = [...services];
+    newServices[index].serviceName = value;
+    setServices(newServices);
+
+    const { isValid, errorMessage } = validateField('serviceName', value);
+    const newErrors = [...errors.services];
+    newErrors[index] = errorMessage;
+    setErrors(prev => ({ ...prev, services: newErrors }));
+
+    const newValidFields = [...validFields.services];
+    newValidFields[index] = isValid;
+    setValidFields(prev => ({ ...prev, services: newValidFields }));
+  };
+
+  const handleServiceDurationChange = (index, value) => {
+    const newServices = [...services];
+    newServices[index].duration = value === '' ? '' : parseInt(value) || 0;
+    setServices(newServices);
+
+    const { isValid, errorMessage } = validateField('duration', value);
+    const newErrors = [...errors.services];
+    newErrors[index] = errorMessage;
+    setErrors(prev => ({ ...prev, services: newErrors }));
+
+    const newValidFields = [...validFields.services];
+    newValidFields[index] = isValid;
+    setValidFields(prev => ({ ...prev, services: newValidFields }));
+  };
+
+  // Обработчик потери фокуса для полей услуг
+  const handleServiceFieldBlur = (field, index, value) => {
+    const newTouchedServices = [...touchedFields.services];
+    newTouchedServices[index] = true;
+    setTouchedFields(prev => ({ ...prev, services: newTouchedServices }));
+    
+    const { isValid, errorMessage } = validateField(field, value);
+    const newErrors = [...errors.services];
+    newErrors[index] = errorMessage;
+    setErrors(prev => ({ ...prev, services: newErrors }));
+
+    const newValidFields = [...validFields.services];
+    newValidFields[index] = isValid;
+    setValidFields(prev => ({ ...prev, services: newValidFields }));
+  };
+
+  const addService = () => {
+    setServices([...services, { serviceName: '', duration: 30 }]);
+    setErrors(prev => ({ ...prev, services: [...prev.services, ''] }));
+    setValidFields(prev => ({ ...prev, services: [...prev.services, false] }));
+    setTouchedFields(prev => ({ ...prev, services: [...prev.services, false] }));
+  };
+
+  const removeService = (index) => {
+    if (services.length > 1) {
+      const newServices = services.filter((_, i) => i !== index);
+      setServices(newServices);
+
+      const newErrors = errors.services.filter((_, i) => i !== index);
+      setErrors(prev => ({ ...prev, services: newErrors }));
+
+      const newValidFields = validFields.services.filter((_, i) => i !== index);
+      setValidFields(prev => ({ ...prev, services: newValidFields }));
+      
+      const newTouchedServices = touchedFields.services.filter((_, i) => i !== index);
+      setTouchedFields(prev => ({ ...prev, services: newTouchedServices }));
+    }
+  };
+
+  // Навигация между шагами
+  const goToNextStep = () => {
+    if (isStep1Valid()) {
+      setStep(2);
+    }
+  };
+
+  const goToPreviousStep = () => {
+    setStep(1);
+  };
+
+  // Проверка возможности продолжения (для Step 2)
+  const canContinue = () => {
+    const isServiceCategoryValid = !!serviceCategory;
+    // Убираем проверку companyId, т.к. она необязательна
+    const areServicesValid = services.every(service => 
+      service.serviceName.length > 0 && service.duration >= 1
+    );
+
+    return isServiceCategoryValid && areServicesValid;
+  };
+
+  // Проверка валидности полей Step 1
+  const isStep1Valid = () => {
+    return (
+      validFields.firstName && 
+      validFields.lastName && 
+      // Telegram handle теперь необязательное поле, поэтому проверяем или на валидность, или на пустоту
+      validFields.telegramHandle && 
+      validFields.phoneNumber && 
+      validFields.password && 
+      validFields.confirmPassword
+    );
+  };
+
+  // Отправка формы
+  const handleSubmit = async (e) => {
+    e.preventDefault();
+    
+    if (!canContinue()) {
+      setErrors(prev => ({ ...prev, general: 'Пожалуйста, заполните все обязательные поля' }));
       return;
     }
-    setFormData((fd) => ({ ...fd, [name]: value }));
-  };
 
-  const handleCompanyChange = (e) => {
-    const id = e.target.value;
-    const sel = companies.find((c) => c.id === id) || null;
-    setFormData((fd) => ({
-      ...fd,
-      companyId: id,
-      address: sel ? sel.address : "",
-      isAddressLocked: !!sel,
-    }));
-  };
-
-  const handlePhotoChange = (e) => {
-    const file = e.target.files[0];
-    if (!file) return;
-    const rdr = new FileReader();
-    rdr.onload = () => {
-      const b64 = rdr.result.split(",")[1];
-      setFormData((fd) => ({
-        ...fd,
-        photoBase64: b64,
-        photoPreview: URL.createObjectURL(file),
-      }));
+    const payload = {
+      first_name: firstName,
+      last_name: lastName,
+      // Если telegramHandle пустой, отправляем null
+      telegram_username: telegramHandle ? '@' + telegramHandle : null,
+      phone_number: '+992' + phoneNumber,
+      password: password,
+      service_category: serviceCategory,
+      // Если companyId не выбран, отправляем null
+      company_id: companyId || null,
+      address: address || null,
+      photo_base64: photoBase64,
+      services: services.map(service => ({
+        service_name: service.serviceName,
+        duration: service.duration
+      }))
     };
-    rdr.readAsDataURL(file);
-  };
 
-  const handleServiceChange = (index, field, value) => {
-    setServices((svcs) => {
-      const copy = [...svcs];
-      copy[index] = { ...copy[index], [field]: value };
-      return copy;
-    });
-  };
-  const addService = () =>
-    setServices((svcs) => [...svcs, { serviceName: "", duration: 30 }]);
-  const removeService = (idx) =>
-    setServices((svcs) => svcs.filter((_, i) => i !== idx));
-
-  const handleSubmit = async () => {
-    setSubmitting(true);
-    setError(null);
     try {
-      const payload = {
-        first_name: formData.firstName,
-        last_name: formData.lastName,
-        telegram_username: "@" + formData.telegramHandle,
-        phone_number: "+992" + formData.phoneNumber,
-        password: formData.password,
-        service_category: formData.serviceCategory,
-        company_id: formData.companyId,
-        address: formData.address,
-        photo_base64: formData.photoBase64,
-        services: services.map((s) => ({
-          service_name: s.serviceName,
-          duration: s.duration,
-        })),
-      };
-      
-      // Всегда добавляем telegram_id из formData, если он есть
-      if (formData.telegram_id) {
-        payload.telegram_id = formData.telegram_id;
-      }
-      
-      const res = await fetch(`${API_BASE}/masters/`, {
-        method: "POST",
+      const response = await fetch('https://api.kuchizu.online/masters/', {
+        method: 'POST',
         headers: {
-          "Content-Type": "application/json",
-          accept: "application/json",
+          'Content-Type': 'application/json'
         },
-        body: JSON.stringify(payload),
+        body: JSON.stringify(payload)
       });
-      if (!res.ok) {
-        const err = await res.json();
-        throw new Error(err.detail || "Ошибка регистрации");
+
+      if (!response.ok) {
+        const errorData = await response.json();
+        throw new Error(errorData.message || 'Ошибка при регистрации');
       }
-      
-      // Получаем ответ от сервера с ID мастера
-      const data = await res.json();
-      setMasterId(data.id);
-      setRegistrationSuccess(true);
-      
-      // Редирект на страницу мастера через 1.5 секунды
-      setTimeout(() => {
-        navigate(`/master/${data.id}`);
-      }, 1500);
-    } catch (err) {
-      console.error("Ошибка при регистрации:", err);
-      setError(err.message);
-    } finally {
-      setSubmitting(false);
+
+      const data = await response.json();
+      navigate(`/master/${data.id}`);
+    } catch (error) {
+      setErrors(prev => ({ ...prev, general: error.message || 'Произошла ошибка при регистрации' }));
     }
   };
 
-  if (registrationSuccess) {
-    return (
-      <div className="form-container success-container">
-        <h2>Регистрация успешно завершена!</h2>
-        <p>Перенаправление на страницу мастера...</p>
-        {masterId && (
-          <button 
-            className="submit-button" 
-            onClick={() => navigate(`/master/${masterId}`)}
-          >
-            Перейти в профиль
-          </button>
-        )}
-      </div>
-    );
-  }
+  // Функция для удаления загруженной фотографии
+  const handleRemovePhoto = () => {
+    setPhotoBase64('');
+  };
 
   return (
-    <div className="master-registration">
-      <div className="form-wrapper">
-        <div className="progress-container">
-          <div className={`progress-step ${step >= 1 ? "active" : ""}`}>1</div>
-          <div className="progress-line" />
-          <div className={`progress-step ${step >= 2 ? "active" : ""}`}>2</div>
-        </div>
-        {step === 1 ? (
-          <Step1
-            data={formData}
-            onChange={handleChange}
-            onNext={() => setStep(2)}
-            telegramReadOnly={telegramReadOnly}
-            firstNameReadOnly={firstNameReadOnly}
-            lastNameReadOnly={lastNameReadOnly}
-          />
-        ) : (
-          <Step2
-            data={formData}
-            serviceAreas={serviceAreas}
-            filteredCompanies={filteredCompanies}
-            loadingCompanies={loadingCompanies}
-            loadingServiceAreas={loadingServiceAreas}
-            services={services}
-            onChange={handleChange}
-            onCompanyChange={handleCompanyChange}
-            onPhotoChange={handlePhotoChange}
-            onServiceChange={handleServiceChange}
-            onAddService={addService}
-            onRemoveService={removeService}
-            onBack={() => setStep(1)}
-            onSubmit={handleSubmit}
-            submitting={submitting}
-            error={error}
-          />
+    <div className="register-container">
+      <div className="register-card">
+        <h2>Регистрация мастера</h2>
+        
+        {errors.general && <div className="error-message general-error">{errors.general}</div>}
+        
+        {step === 1 && (
+          <form className="register-form step1">
+            <h3>Шаг 1: Личная информация</h3>
+            
+            <div className="form-group">
+              <label htmlFor="firstName">Имя</label>
+              <input 
+                type="text" 
+                id="firstName" 
+                value={firstName} 
+                onChange={handleFirstNameChange}
+                onBlur={() => handleFieldBlur('firstName', firstName)}
+                // Убираем readOnly, даже если есть данные из Telegram
+                className={touchedFields.firstName && errors.firstName ? 'error' : validFields.firstName ? 'valid' : ''}
+              />
+              {touchedFields.firstName && errors.firstName && (
+                <div className="error-message">
+                  <FaExclamationCircle /> {errors.firstName}
+                </div>
+              )}
+            </div>
+            
+            <div className="form-group">
+              <label htmlFor="lastName">Фамилия</label>
+              <input 
+                type="text" 
+                id="lastName" 
+                value={lastName} 
+                onChange={handleLastNameChange}
+                onBlur={() => handleFieldBlur('lastName', lastName)}
+                // Убираем readOnly, даже если есть данные из Telegram
+                className={touchedFields.lastName && errors.lastName ? 'error' : validFields.lastName ? 'valid' : ''}
+              />
+              {touchedFields.lastName && errors.lastName && (
+                <div className="error-message">
+                  <FaExclamationCircle /> {errors.lastName}
+                </div>
+              )}
+            </div>
+            
+            <div className="form-group">
+              <label htmlFor="telegramHandle">Имя пользователя Telegram (необязательно)</label>
+              <div className="phone-input-container">
+                <span className="phone-prefix">@</span>
+                <input 
+                  type="text" 
+                  id="telegramHandle" 
+                  value={telegramHandle} 
+                  onChange={handleTelegramHandleChange}
+                  onBlur={() => handleFieldBlur('telegramHandle', telegramHandle)}
+                  readOnly={hasTelegramData && telegramHandle}
+                  className={touchedFields.telegramHandle && errors.telegramHandle ? 'error' : validFields.telegramHandle ? 'valid' : ''}
+                />
+              </div>
+              {touchedFields.telegramHandle && errors.telegramHandle && (
+                <div className="error-message">
+                  <FaExclamationCircle /> {errors.telegramHandle}
+                </div>
+              )}
+            </div>
+            
+            <div className="form-group">
+              <label htmlFor="phoneNumber">Номер телефона (+992)</label>
+              <div className="phone-input-container">
+                <span className="phone-prefix">+992</span>
+                <input 
+                  type="text" 
+                  id="phoneNumber" 
+                  value={phoneNumber} 
+                  onChange={handlePhoneNumberChange}
+                  onBlur={() => handleFieldBlur('phoneNumber', phoneNumber)}
+                  className={touchedFields.phoneNumber && errors.phoneNumber ? 'error' : validFields.phoneNumber ? 'valid' : ''}
+                />
+              </div>
+              {touchedFields.phoneNumber && errors.phoneNumber && (
+                <div className="error-message">
+                  <FaExclamationCircle /> {errors.phoneNumber}
+                </div>
+              )}
+            </div>
+            
+            <div className="form-group">
+              <label htmlFor="password">Пароль</label>
+              <input 
+                type="password" 
+                id="password" 
+                value={password} 
+                onChange={handlePasswordChange}
+                onBlur={() => handleFieldBlur('password', password)}
+                className={touchedFields.password && errors.password ? 'error' : validFields.password ? 'valid' : ''}
+              />
+              {touchedFields.password && errors.password && (
+                <div className="error-message">
+                  <FaExclamationCircle /> {errors.password}
+                </div>
+              )}
+            </div>
+            
+            <div className="form-group">
+              <label htmlFor="confirmPassword">Подтверждение пароля</label>
+              <input 
+                type="password" 
+                id="confirmPassword" 
+                value={confirmPassword} 
+                onChange={handleConfirmPasswordChange}
+                onBlur={() => handleFieldBlur('confirmPassword', confirmPassword)}
+                className={touchedFields.confirmPassword && errors.confirmPassword ? 'error' : validFields.confirmPassword ? 'valid' : ''}
+              />
+              {touchedFields.confirmPassword && errors.confirmPassword && (
+                <div className="error-message">
+                  <FaExclamationCircle /> {errors.confirmPassword}
+                </div>
+              )}
+            </div>
+            
+            <div className="form-buttons">
+              <button 
+                type="button" 
+                id="nextBtn" 
+                onClick={goToNextStep} 
+                disabled={!isStep1Valid()}
+              >
+                Далее
+              </button>
+            </div>
+          </form>
+        )}
+        
+        {step === 2 && (
+          <form className="register-form step2" onSubmit={handleSubmit}>
+            <h3>Шаг 2: Профессиональная информация</h3>
+            
+            <div className="form-group">
+              <label htmlFor="serviceCategory">Категория услуг</label>
+              <select 
+                id="serviceCategory" 
+                value={serviceCategory} 
+                onChange={handleServiceCategoryChange}
+                onBlur={() => handleFieldBlur('serviceCategory', serviceCategory)}
+                className={touchedFields.serviceCategory && errors.serviceCategory ? 'error' : ''}
+              >
+                <option value="">Выберите категорию</option>
+                {serviceCategories.map(category => (
+                  <option key={category.id} value={category.id}>{category.name}</option>
+                ))}
+              </select>
+              {touchedFields.serviceCategory && errors.serviceCategory && (
+                <div className="error-message">
+                  <FaExclamationCircle /> {errors.serviceCategory}
+                </div>
+              )}
+            </div>
+            
+            <div className="form-group">
+              <label htmlFor="companyId">Компания (необязательно)</label>
+              <select 
+                id="companyId" 
+                value={noCompany ? 'no-company' : companyId} 
+                onChange={handleCompanyIdChange}
+                onBlur={() => handleFieldBlur('companyId', companyId)}
+                disabled={!serviceCategory}
+                className={touchedFields.companyId && errors.companyId ? 'error' : ''}
+              >
+                <option value="">Выберите компанию</option>
+                <option value="no-company">Нет компании</option>
+                {filteredCompanies.map(company => (
+                  <option key={company.id} value={company.id}>{company.name}</option>
+                ))}
+              </select>
+              {touchedFields.companyId && errors.companyId && (
+                <div className="error-message">
+                  <FaExclamationCircle /> {errors.companyId}
+                </div>
+              )}
+            </div>
+            
+            <div className="form-group">
+              <label htmlFor="address">Адрес</label>
+              <input 
+                type="text" 
+                id="address" 
+                value={address} 
+                onChange={handleAddressChange}
+                readOnly={!noCompany && companyId} 
+                className={(noCompany || !companyId) ? '' : companyId ? 'valid' : ''}
+              />
+            </div>
+            
+            <div className="form-group photo-upload">
+              <label>Фотография</label>
+              <div className="photo-upload-container">
+                <input 
+                  type="file" 
+                  ref={fileInputRef} 
+                  onChange={handlePhotoUpload} 
+                  accept="image/*" 
+                  style={{ display: 'none' }} 
+                />
+                <div className="photo-preview" onClick={triggerPhotoUpload}>
+                  {photoBase64 ? (
+                    <img src={photoBase64} alt="Preview" />
+                  ) : (
+                    <div className="photo-placeholder">
+                      <FaUserCircle />
+                      <div>Нажмите для загрузки фото</div>
+                    </div>
+                  )}
+                </div>
+                <div className="photo-actions">
+                  <button type="button" className="upload-btn" onClick={triggerPhotoUpload}>
+                    <FaCamera /> Загрузить фото
+                  </button>
+                  {photoBase64 && (
+                    <button type="button" className="remove-photo-btn" onClick={handleRemovePhoto}>
+                      <FaTrash /> Удалить фото
+                    </button>
+                  )}
+                </div>
+              </div>
+            </div>
+            
+            <div className="form-group services-section">
+              <label>Услуги</label>
+              {services.map((service, index) => (
+                <div key={index} className="service-item">
+                  <div className="service-inputs">
+                    <div className="service-name-input">
+                      <input 
+                        type="text" 
+                        placeholder="Название услуги" 
+                        value={service.serviceName} 
+                        onChange={(e) => handleServiceNameChange(index, e.target.value)}
+                        onBlur={() => handleServiceFieldBlur('serviceName', index, service.serviceName)}
+                        className={touchedFields.services[index] && errors.services[index] ? 'error' : ''}
+                      />
+                    </div>
+                    <div className="service-duration-input">
+                      <input 
+                        type="number" 
+                        placeholder="Длительность (мин)" 
+                        value={service.duration} 
+                        onChange={(e) => handleServiceDurationChange(index, e.target.value)}
+                        onBlur={() => handleServiceFieldBlur('duration', index, service.duration)}
+                        min="1"
+                        className={touchedFields.services[index] && errors.services[index] ? 'error' : ''}
+                      />
+                    </div>
+                    <button 
+                      type="button" 
+                      className="remove-service-btn" 
+                      onClick={() => removeService(index)}
+                      disabled={services.length === 1}
+                    >
+                      Удалить
+                    </button>
+                  </div>
+                  {touchedFields.services[index] && errors.services[index] && (
+                    <div className="error-message">
+                      <FaExclamationCircle /> {errors.services[index]}
+                    </div>
+                  )}
+                </div>
+              ))}
+              <button type="button" className="add-service-btn" onClick={addService}>
+                Добавить услугу
+              </button>
+            </div>
+            
+            <div className="form-buttons">
+              <button type="button" onClick={goToPreviousStep}>Назад</button>
+              <button type="submit" disabled={!canContinue()}>Зарегистрироваться</button>
+            </div>
+          </form>
         )}
       </div>
     </div>
   );
-}
+};
+
+export default Register;

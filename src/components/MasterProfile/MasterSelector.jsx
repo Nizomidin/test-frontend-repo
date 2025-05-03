@@ -4,13 +4,6 @@ import "./MasterSelector.css";
 function MasterSelector({ masters, selectedMasterId, onMasterSelect }) {
   const [searchTerm, setSearchTerm] = useState("");
   
-  // Фильтрация мастеров по поисковому запросу с проверкой на undefined
-  const filteredMasters = masters.filter(master => {
-    // Создаем отображаемое имя мастера, используя доступные поля
-    const masterName = master.name || `${master.first_name || ''} ${master.last_name || ''}`.trim() || 'Мастер без имени';
-    
-    return searchTerm === '' || masterName.toLowerCase().includes(searchTerm.toLowerCase());
-  });
   
   return (
     <div className="master-selector">

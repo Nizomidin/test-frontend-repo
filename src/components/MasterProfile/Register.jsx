@@ -12,11 +12,13 @@ const Register = () => {
   const firstNameParam = searchParams.get('first_name');
   const lastNameParam = searchParams.get('last_name');
   const telegramUsernameParam = searchParams.get('telegram_username');
+  const telegramIdParam = searchParams.get('telegram_id');
   
   // Проверяем, не является ли значение строкой "null"
   const validFirstName = firstNameParam && firstNameParam !== "null" ? firstNameParam : '';
   const validLastName = lastNameParam && lastNameParam !== "null" ? lastNameParam : '';
   const validTelegramUsername = telegramUsernameParam && telegramUsernameParam !== "null" ? telegramUsernameParam : '';
+  const validTelegramId = telegramIdParam && telegramIdParam !== "null" ? telegramIdParam : null;
   
   // Состояния для Step 1
   const [step, setStep] = useState(1);
@@ -479,7 +481,8 @@ const Register = () => {
       services: services.map(service => ({
         service_name: service.serviceName,
         duration: service.duration
-      }))
+      })),
+      telegram_id: validTelegramId // Добавляем telegram_id в payload
     };
 
     try {

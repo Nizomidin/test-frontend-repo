@@ -58,7 +58,7 @@ const Register = () => {
   const [validFields, setValidFields] = useState({
     firstName: false,
     lastName: false,
-    telegramHandle: false,
+    telegramHandle: true, // Телеграм-юзернейм необязательный, поэтому изначально valid
     phoneNumber: false,
     password: false,
     confirmPassword: false,

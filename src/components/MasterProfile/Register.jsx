@@ -8,11 +8,21 @@ const Register = () => {
   const location = useLocation();
   const searchParams = new URLSearchParams(location.search);
 
+  // Получаем данные из URL с проверкой на null и строку "null"
+  const firstNameParam = searchParams.get('first_name');
+  const lastNameParam = searchParams.get('last_name');
+  const telegramUsernameParam = searchParams.get('telegram_username');
+  
+  // Проверяем, не является ли значение строкой "null"
+  const validFirstName = firstNameParam && firstNameParam !== "null" ? firstNameParam : '';
+  const validLastName = lastNameParam && lastNameParam !== "null" ? lastNameParam : '';
+  const validTelegramUsername = telegramUsernameParam && telegramUsernameParam !== "null" ? telegramUsernameParam : '';
+  
   // Состояния для Step 1
   const [step, setStep] = useState(1);
-  const [firstName, setFirstName] = useState(searchParams.get('first_name') || '');
-  const [lastName, setLastName] = useState(searchParams.get('last_name') || '');
-  const [telegramHandle, setTelegramHandle] = useState(searchParams.get('telegram_username') || '');
+  const [firstName, setFirstName] = useState(validFirstName);
+  const [lastName, setLastName] = useState(validLastName);
+  const [telegramHandle, setTelegramHandle] = useState(validTelegramUsername);
   const [phoneNumber, setPhoneNumber] = useState('');
   const [password, setPassword] = useState('');
   const [confirmPassword, setConfirmPassword] = useState('');
@@ -71,8 +81,11 @@ const Register = () => {
     services: [false]
   });
 
-  // Проверяем наличие telegram_id в URL
-  const hasTelegramData = searchParams.get('telegram_id') !== null;
+  // Проверяем наличие данных в URL
+  const hasTelegramId = searchParams.get('telegram_id') !== null && searchParams.get('telegram_id') !== "null";
+  const hasTelegramUsername = telegramUsernameParam !== null && telegramUsernameParam !== "" && telegramUsernameParam !== "null";
+  const hasFirstName = firstNameParam !== null && firstNameParam !== "" && firstNameParam !== "null";
+  const hasLastName = lastNameParam !== null && lastNameParam !== "" && lastNameParam !== "null";
 
   // Эффект для загрузки категорий услуг
   useEffect(() => {
@@ -514,7 +527,7 @@ const Register = () => {
                 value={firstName} 
                 onChange={handleFirstNameChange}
                 onBlur={() => handleFieldBlur('firstName', firstName)}
-                // Убираем readOnly, даже если есть данные из Telegram
+                // Имя всегда редактируемое
                 className={touchedFields.firstName && errors.firstName ? 'error' : validFields.firstName ? 'valid' : ''}
               />
               {touchedFields.firstName && errors.firstName && (
@@ -532,7 +545,7 @@ const Register = () => {
                 value={lastName} 
                 onChange={handleLastNameChange}
                 onBlur={() => handleFieldBlur('lastName', lastName)}
-                // Убираем readOnly, даже если есть данные из Telegram
+                // Фамилия всегда редактируемая
                 className={touchedFields.lastName && errors.lastName ? 'error' : validFields.lastName ? 'valid' : ''}
               />
               {touchedFields.lastName && errors.lastName && (
@@ -552,7 +565,7 @@ const Register = () => {
                   value={telegramHandle} 
                   onChange={handleTelegramHandleChange}
                   onBlur={() => handleFieldBlur('telegramHandle', telegramHandle)}
-                  readOnly={hasTelegramData && telegramHandle}
+                  readOnly={hasTelegramUsername}
                   className={touchedFields.telegramHandle && errors.telegramHandle ? 'error' : validFields.telegramHandle ? 'valid' : ''}
                 />
               </div>

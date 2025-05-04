@@ -135,6 +135,31 @@
   background-color: #4cae4c;
 }
 
+/* Стили для кнопки управления услугами */
+.master-actions .services-btn {
+  background-color: #ff9800;
+  color: white;
+  border: none;
+  padding: 10px 15px;
+  border-radius: 5px;
+  cursor: pointer;
+  font-size: 0.9rem;
+  transition: background-color 0.3s;
+  white-space: nowrap; /* Предотвращает перенос текста на новую строку */
+}
+
+.master-actions .services-btn:hover {
+  background-color: #e68900;
+}
+
+.master-actions .services-btn.active {
+  background-color: #e67700;
+}
+
+.services-container {
+  width: 100%;
+}
+
 .block-time-btn,
 .work-schedule-btn,
 .book-master-btn {

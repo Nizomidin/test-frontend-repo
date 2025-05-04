@@ -6,6 +6,7 @@ import BookingDetails from "./BookingDetails";
 import BlockTimeForm from "./BlockTimeForm";
 import WorkScheduleForm from "./WorkScheduleForm";
 import MasterBookingManager from "./MasterBookingManager";
+import ServiceManager from "./ServiceManager";
 import { useToast } from "../Toast/ToastContext";
 
 const API_BASE = "https://api.kuchizu.online";
@@ -47,7 +48,7 @@ function MasterProfile() {
   const [showBlockTimeForm, setShowBlockTimeForm] = useState(false);
   const [showWorkScheduleForm, setShowWorkScheduleForm] = useState(false);
   const [showBookingManager, setShowBookingManager] = useState(false);
-  const [view, setView] = useState("calendar"); // 'calendar', 'details' или 'booking-manager'
+  const [view, setView] = useState("calendar"); // 'calendar', 'details', 'booking-manager' или 'services'
   const [isCompanyAdmin, setIsCompanyAdmin] = useState(false); // Состояние для проверки, является ли пользователь администратором компании
   const { showSuccess, showError } = useToast(); // Получаем функции для показа тостов
 
@@ -365,6 +366,12 @@ function MasterProfile() {
           >
             Редактировать график работы
           </button>
+          <button
+            className={`services-btn ${view === "services" ? "active" : ""}`}
+            onClick={() => setView(view === "services" ? "calendar" : "services")}
+          >
+            {view === "services" ? "Вернуться к календарю" : "Управление услугами"}
+          </button>
           {isCompanyAdmin && (
             <button
               className={`book-master-btn ${view === "booking-manager" ? "active" : ""}`}
@@ -396,6 +403,10 @@ function MasterProfile() {
             onUpdate={handleUpdateBooking}
             masterId={masterId}
           />
+        </div>
+      ) : view === "services" ? (
+        <div className="services-container">
+          <ServiceManager masterId={masterId} />
         </div>
       ) : (
         <div className="booking-manager-container">

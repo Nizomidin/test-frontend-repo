@@ -1,5 +1,53 @@
-/* Основной контейнер */
-.service-manager {
+/* =========================================
+   ServiceManager.css — с префиксом sm-
+   ========================================= */
+
+/* -----------------------------------------
+   1. Override для классов, которые могут 
+      перебиваться глобальными reset-ами или 
+      библиотеками
+   ----------------------------------------- */
+.sm-service-manager .sm-add-service-btn {
+  background-color: #4a90e2 !important;
+  color: #fff !important;
+  border: none !important;
+  border-radius: 6px !important;
+  padding: 12px 18px !important;
+  font-size: 1.05rem !important;
+  font-weight: 500 !important;
+  letter-spacing: 0.3px !important;
+  cursor: pointer !important;
+  transition: all 0.3s ease !important;
+  box-shadow: 0 4px 6px rgba(74, 144, 226, 0.25) !important;
+  display: flex !important;
+  align-items: center !important;
+  justify-content: center !important;
+  position: relative !important;
+  overflow: hidden !important;
+}
+
+.sm-service-manager .sm-add-service-btn:before {
+  content: "+" !important;
+  margin-right: 8px !important;
+  font-size: 1.2rem !important;
+  font-weight: 400 !important;
+}
+
+.sm-service-manager .sm-add-service-btn:hover {
+  background-color: #3a7bc8 !important;
+  transform: translateY(-2px) !important;
+  box-shadow: 0 6px 12px rgba(74, 144, 226, 0.35) !important;
+}
+
+.sm-service-manager .sm-add-service-btn:active {
+  transform: translateY(1px) !important;
+  box-shadow: 0 2px 4px rgba(74, 144, 226, 0.2) !important;
+}
+
+/* -----------------------------------------
+     2. Основной контейнер
+     ----------------------------------------- */
+.sm-service-manager {
   background-color: white;
   border-radius: 8px;
   box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
@@ -8,8 +56,10 @@
   width: 100%;
 }
 
-/* Заголовок с кнопкой добавления */
-.service-manager-header {
+/* -----------------------------------------
+     3. Заголовок с кнопкой добавления
+     ----------------------------------------- */
+.sm-service-manager-header {
   display: flex;
   justify-content: space-between;
   align-items: center;
@@ -18,30 +68,17 @@
   border-bottom: 1px solid #eee;
 }
 
-.service-manager-header h2 {
+.sm-service-manager-header h2 {
   margin: 0;
   font-size: 1.5rem;
   color: #333;
   font-weight: 500;
 }
 
-.add-service-btn {
-  background-color: #4a90e2;
-  color: white;
-  border: none;
-  padding: 8px 16px;
-  border-radius: 5px;
-  cursor: pointer;
-  font-size: 0.9rem;
-  transition: background-color 0.3s;
-}
-
-.add-service-btn:hover {
-  background-color: #3a7bc8;
-}
-
-/* Сообщение об отсутствии услуг */
-.no-services-message {
+/* -----------------------------------------
+     4. Сообщение об отсутствии услуг
+     ----------------------------------------- */
+.sm-no-services-message {
   padding: 30px 0;
   text-align: center;
   color: #777;
@@ -51,15 +88,21 @@
   margin: 20px 0;
 }
 
-/* Список услуг */
-.services-list {
+/* -----------------------------------------
+     5. Список услуг
+     ----------------------------------------- */
+.sm-services-list {
   display: grid;
   grid-template-columns: repeat(auto-fill, minmax(320px, 1fr));
   gap: 15px;
+  width: 100%;
 }
 
-/* Карточка услуги */
-.service-card {
+/* -----------------------------------------
+     6. Карточка услуги (базовый стиль)
+        — без жёстких ограничений по высоте
+     ----------------------------------------- */
+.sm-service-card {
   background-color: #f9fafb;
   border: 1px solid #e2e8f0;
   border-radius: 6px;
@@ -68,31 +111,48 @@
   transition: all 0.2s ease;
   display: flex;
   flex-direction: column;
+  justify-content: space-between;
   gap: 12px;
-  min-height: 150px; /* Устанавливаем минимальную высоту для карточки */
-  position: relative; /* Добавляем для правильного позиционирования элементов */
+  width: 100%;
+  box-sizing: border-box;
 }
-
-.service-card:hover {
+.sm-service-card:hover {
   transform: translateY(-2px);
   box-shadow: 0 4px 12px rgba(0, 0, 0, 0.08);
 }
 
-/* Информация об услуге */
-.service-info {
+/* -----------------------------------------
+     7. На средних и больших: единая высота
+        и обрезка лишнего
+     ----------------------------------------- */
+@media (min-width: 577px) {
+  .sm-service-manager .sm-services-list .sm-service-card {
+    min-height: 150px !important;
+    overflow: hidden !important;
+  }
+}
+
+/* -----------------------------------------
+     8. Информация об услуге
+     ----------------------------------------- */
+.sm-service-info {
   display: flex;
   flex-direction: column;
   gap: 8px;
+  margin-bottom: 10px;
+  width: 100%;
 }
 
-.service-name {
+.sm-service-name {
   margin: 0;
   font-size: 1.2rem;
   font-weight: 500;
   color: #2d3748;
+  line-height: 1.4;
+  word-wrap: break-word;
 }
 
-.service-duration {
+.sm-service-duration {
   font-size: 0.9rem;
   color: #718096;
   display: flex;
@@ -100,19 +160,23 @@
   gap: 5px;
 }
 
-.duration-label {
+.sm-duration-label {
   font-weight: 500;
 }
 
-/* Кнопки действий для услуги */
-.service-actions {
+/* -----------------------------------------
+     9. Кнопки действий услуги
+     ----------------------------------------- */
+.sm-service-actions {
   display: flex;
   justify-content: space-between;
   gap: 10px;
   margin-top: auto;
+  width: 100%;
 }
 
-.edit-btn, .delete-btn {
+.sm-edit-btn,
+.sm-delete-btn {
   padding: 8px 12px;
   border-radius: 4px;
   font-size: 0.9rem;
@@ -123,28 +187,28 @@
   text-align: center;
 }
 
-.edit-btn {
+.sm-edit-btn {
   background-color: #ebf8ff;
   color: #3182ce;
   border: 1px solid #bee3f8;
 }
-
-.edit-btn:hover {
+.sm-edit-btn:hover {
   background-color: #bee3f8;
 }
 
-.delete-btn {
+.sm-delete-btn {
   background-color: #fff5f5;
   color: #e53e3e;
   border: 1px solid #fed7d7;
 }
-
-.delete-btn:hover {
+.sm-delete-btn:hover {
   background-color: #fed7d7;
 }
 
-/* Форма добавления/редактирования услуги */
-.service-form-container {
+/* -----------------------------------------
+     10. Форма добавления/редактирования
+     ----------------------------------------- */
+.sm-service-form-container {
   background-color: #f9fafb;
   border: 1px solid #e2e8f0;
   border-radius: 6px;
@@ -152,54 +216,58 @@
   margin-bottom: 20px;
 }
 
-.service-form-container h3 {
+.sm-service-form-container h3 {
   margin-top: 0;
   margin-bottom: 15px;
   font-size: 1.2rem;
   color: #2d3748;
 }
 
-.service-form, .edit-form {
+.sm-service-form,
+.sm-edit-form {
   display: flex;
   flex-direction: column;
   gap: 15px;
 }
 
-.form-group {
+.sm-form-group {
   display: flex;
   flex-direction: column;
   gap: 5px;
 }
 
-.form-group label {
+.sm-form-group label {
   font-size: 0.9rem;
   font-weight: 500;
   color: #4a5568;
 }
 
-.form-group input {
+.sm-form-group input {
   padding: 10px;
   border: 1px solid #e2e8f0;
   border-radius: 4px;
   font-size: 0.95rem;
   transition: border-color 0.2s;
 }
-
-.form-group input:focus {
+.sm-form-group input:focus {
   border-color: #4a90e2;
   outline: none;
   box-shadow: 0 0 0 2px rgba(74, 144, 226, 0.1);
 }
 
-/* Кнопки действий формы */
-.form-actions, .edit-actions {
+/* -----------------------------------------
+     11. Кнопки действий формы
+     ----------------------------------------- */
+.sm-form-actions,
+.sm-edit-actions {
   display: flex;
   gap: 10px;
   justify-content: flex-end;
   margin-top: 10px;
 }
 
-.save-btn, .cancel-btn {
+.sm-save-btn,
+.sm-cancel-btn {
   padding: 10px 16px;
   border-radius: 4px;
   font-weight: 500;
@@ -208,111 +276,103 @@
   border: none;
 }
 
-.save-btn {
+.sm-save-btn {
   background-color: #4caf50;
   color: white;
 }
-
-.save-btn:hover {
+.sm-save-btn:hover {
   background-color: #45a049;
 }
 
-.cancel-btn {
+.sm-cancel-btn {
   background-color: #f1f1f1;
   color: #333;
 }
-
-.cancel-btn:hover {
+.sm-cancel-btn:hover {
   background-color: #e1e1e1;
 }
 
-/* Состояния загрузки и ошибки */
-.service-manager.loading,
-.service-manager.error {
+/* -----------------------------------------
+     12. Загрузка / Ошибка
+     ----------------------------------------- */
+.sm-service-manager.sm-loading,
+.sm-service-manager.sm-error {
   text-align: center;
   padding: 30px;
   font-size: 1.1rem;
 }
 
-.service-manager.loading {
+.sm-service-manager.sm-loading {
   color: #777;
 }
 
-.service-manager.error {
+.sm-service-manager.sm-error {
   color: #e74c3c;
 }
 
-/* Адаптивность для маленьких экранов */
+/* -----------------------------------------
+     13. Адаптивность для маленьких экранов
+        — снимаем любые ограничения высоты и
+        обрезки у карточек
+     ----------------------------------------- */
 @media (max-width: 576px) {
-  .service-manager-header {
+  .sm-service-manager-header {
     flex-direction: column;
     align-items: flex-start;
     gap: 15px;
   }
-  
-  .add-service-btn {
+
+  .sm-add-service-btn {
     width: 100%;
   }
-  
-  .services-list {
+
+  .sm-services-list {
     grid-template-columns: 1fr;
   }
-  
-  .service-card {
-    padding: 12px;
-    min-height: auto; /* Убираем фиксированную высоту */
-    display: grid;
-    grid-template-columns: 1fr;
-    grid-template-areas:
-      "name"
-      "duration"
-      "actions";
-    gap: 10px;
+
+  .sm-service-manager .sm-services-list .sm-service-card {
+    padding: 15px;
+    gap: 8px;
+    min-height: auto !important;
+    overflow: visible !important;
   }
-  
-  .service-info {
-    margin-bottom: 0;
-    display: flex;
-    flex-direction: column;
-    gap: 5px;
+
+  .sm-service-name {
+    font-size: 1.1rem;
   }
-  
-  .service-name {
-    grid-area: name;
+
+  .sm-service-duration {
+    margin-bottom: 8px;
   }
-  
-  .service-duration {
-    grid-area: duration;
-    margin-bottom: 10px;
-  }
-  
-  .service-actions {
-    grid-area: actions;
-    width: 100%;
-    margin-top: 5px;
+
+  .sm-service-actions {
     display: grid;
     grid-template-columns: 1fr 1fr;
     gap: 8px;
   }
-  
-  .edit-btn, .delete-btn {
+
+  .sm-edit-btn,
+  .sm-delete-btn {
     padding: 8px;
     font-size: 0.85rem;
-    width: 100%;
   }
-  
-  .form-actions, .edit-actions {
+
+  .sm-form-actions,
+  .sm-edit-actions {
     flex-direction: column;
   }
-  
-  .save-btn, .cancel-btn {
+
+  .sm-save-btn,
+  .sm-cancel-btn {
     width: 100%;
   }
 }
 
-/* Адаптивность для средних экранов */
+/* -----------------------------------------
+     14. Адаптивность для средних экранов
+     ----------------------------------------- */
 @media (min-width: 577px) and (max-width: 768px) {
-  .services-list {
+  .sm-services-list {
     grid-template-columns: repeat(auto-fill, minmax(250px, 1fr));
   }
 }

@@ -190,6 +190,11 @@ export default function WorkScheduleForm({ masterId, onSubmit, onCancel }) {
       if (onSubmit) {
         onSubmit(scheduleData);
       }
+      
+      // Закрываем модальное окно после успешного сохранения
+      if (onCancel) {
+        onCancel();
+      }
     } catch (err) {
       setGlobalError("Ошибка при сохранении графика: " + err.message);
       showError("Не удалось сохранить график работы");

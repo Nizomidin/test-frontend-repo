@@ -137,7 +137,7 @@
 
 /* Стили для кнопки управления услугами */
 .master-actions .services-btn {
-  background-color: #ff9800;
+  background-color: rgba(84, 107, 172, 0.8);
   color: white;
   border: none;
   padding: 10px 15px;
@@ -149,11 +149,11 @@
 }
 
 .master-actions .services-btn:hover {
-  background-color: #e68900;
+  background-color: rgba(84, 107, 172, 0.8);
 }
 
 .master-actions .services-btn.active {
-  background-color: #e67700;
+  background-color: rgba(84, 107, 172, 0.8);
 }
 
 .services-container {

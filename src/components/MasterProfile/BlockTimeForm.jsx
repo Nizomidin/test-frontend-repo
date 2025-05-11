@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from "react";
 import "./BlockTimeForm.css";
 
-function BlockTimeForm({ onSubmit, onCancel, selectedDate, masterId }) {
+function BlockTimeForm({ onSubmit, onCancel, selectedDate, masterId, embedded = false }) {
   const [formData, setFormData] = useState({
     clientName: "",
     service: "", // будет хранить id выбранной услуги
@@ -172,20 +172,26 @@ function BlockTimeForm({ onSubmit, onCancel, selectedDate, masterId }) {
     onSubmit(blockData);
   };
 
+  // Основной контейнер с учетом встроенного режима  
+  const formContainerClass = `block-time-form-container ${embedded ? 'embedded' : ''}`;
+  const formClass = `block-time-form ${embedded ? 'embedded' : ''}`;
+
   return (
-    <div className="block-time-form-container">
-      <div className="block-time-form">
-        <div className="form-header">
-          <h2>Запись клиента</h2>
-          <button
-            type="button"
-            className="close-button"
-            onClick={onCancel}
-            aria-label="Закрыть"
-          >
-            &times;
-          </button>
-        </div>
+    <div className={formContainerClass}>
+      <div className={formClass}>
+        {!embedded && (
+          <div className="form-header">
+            <h2>Стандартная запись</h2>
+            <button
+              type="button"
+              className="close-button"
+              onClick={onCancel}
+              aria-label="Закрыть"
+            >
+              &times;
+            </button>
+          </div>
+        )}
 
         <form onSubmit={handleSubmit}>
           {/* Имя клиента */}
@@ -300,11 +306,13 @@ function BlockTimeForm({ onSubmit, onCancel, selectedDate, masterId }) {
 
           {/* Кнопки */}
           <div className="form-actions">
-            <button type="button" className="cancel-btn" onClick={onCancel}>
-              Отмена
-            </button>
+            {!embedded && (
+              <button type="button" className="cancel-btn" onClick={onCancel}>
+                Отмена
+              </button>
+            )}
             <button type="submit" className="submit-btn">
-              Сохранить
+              {embedded ? "Забронировать" : "Сохранить"}
             </button>
           </div>
         </form>

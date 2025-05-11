@@ -1,3 +1,23 @@
+/* Импортируем глобальные переменные из MasterProfile.css */
+:root {
+  --primary-color: #4a90e2;
+  --primary-hover: #3a7bc8;
+  --secondary-color: #f7fafc;
+  --accent-color: #6c5ce7;
+  --success-color: #2ecc71;
+  --warning-color: #f39c12;
+  --danger-color: #e74c3c;
+  --text-color: #2d3748;
+  --text-light: #718096;
+  --border-color: #e2e8f0;
+  --shadow-sm: 0 2px 4px rgba(0, 0, 0, 0.05);
+  --shadow-md: 0 4px 6px rgba(0, 0, 0, 0.1);
+  --shadow-lg: 0 10px 15px rgba(0, 0, 0, 0.1);
+  --transition-speed: 0.3s;
+  --border-radius: 8px;
+  --grad-blue: linear-gradient(135deg, #4a90e2 0%, #5e72e4 100%);
+}
+
 .calendar-container {
   display: flex;
   flex-direction: column;
@@ -5,6 +25,16 @@
   width: 100%;
   max-width: 1000px;
   margin: 0 auto; /* Центрирование по горизонтали */
+  background-color: #fff;
+  border-radius: 12px;
+  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.05);
+  padding: 20px;
+  margin: 20px 0;
+  transition: box-shadow var(--transition-speed);
+}
+
+.calendar-container:hover {
+  box-shadow: var(--shadow-md);
 }
 
 .master-calendar {
@@ -18,12 +48,50 @@
   display: flex;
   justify-content: space-between;
   align-items: center;
-  margin-bottom: 15px;
+  margin-bottom: 20px;
+}
+
+.calendar-title {
+  font-size: 1.4rem;
+  font-weight: 600;
+  color: #2c3e50;
+  margin: 0;
+}
+
+.calendar-nav {
+  display: flex;
+  gap: 12px;
+}
+
+.calendar-nav button {
+  background-color: #f5f7fa;
+  border: none;
+  border-radius: 8px;
+  color: #4a90e2;
+  cursor: pointer;
+  font-size: 0.9rem;
+  padding: 10px 15px;
+  transition: all 0.2s ease;
+  display: flex;
+  align-items: center;
+  gap: 5px;
+}
+
+.calendar-nav button:hover {
+  background-color: #e6f0fd;
+  color: #3a7bc8;
+}
+
+.calendar-nav-today {
+  font-weight: 500;
 }
 
 .calendar-navigation {
   display: flex;
   align-items: center;
+  background-color: var(--secondary-color);
+  border-radius: var(--border-radius);
+  padding: 5px;
 }
 
 .calendar-navigation button {
@@ -31,98 +99,157 @@
   border: none;
   font-size: 1.2rem;
   cursor: pointer;
-  padding: 5px 10px;
-  color: #4a90e2;
+  padding: 8px 12px;
+  color: var(--primary-color);
+  transition: all var(--transition-speed);
+  border-radius: 4px;
+}
+
+.calendar-navigation button:hover {
+  background-color: rgba(74, 144, 226, 0.1);
+  color: var(--primary-hover);
 }
 
 .calendar-navigation h3 {
   margin: 0 15px;
   font-size: 1.2rem;
-  font-weight: 500;
-  color: #333;
+  font-weight: 600;
+  color: var(--text-color);
 }
 
 .today-button {
-  background-color: #f0f0f0;
-  border: 1px solid #ddd;
-  padding: 5px 12px;
-  border-radius: 4px;
+  background-color: var(--secondary-color);
+  border: 1px solid var(--border-color);
+  padding: 8px 16px;
+  border-radius: var(--border-radius);
   cursor: pointer;
   font-size: 0.9rem;
-  transition: background-color 0.2s;
+  font-weight: 500;
+  transition: all var(--transition-speed);
+  color: var(--text-color);
 }
 
 .today-button:hover {
-  background-color: #e0e0e0;
+  background-color: var(--primary-color);
+  color: white;
+  border-color: var(--primary-color);
 }
 
-/* Стили для сетки календаря */
+/* Улучшенные стили для сетки календаря */
 .calendar-grid {
   display: grid;
   grid-template-columns: repeat(7, 1fr);
-  gap: 5px;
+  gap: 10px;
   width: 100%;
-  margin-bottom: 20px;
+  margin-bottom: 25px;
+}
+
+.calendar-day-header {
+  text-align: center;
+  font-weight: 500;
+  color: #666;
+  padding: 10px 0;
+  font-size: 0.9rem;
 }
 
 .calendar-weekday {
   text-align: center;
-  padding: 10px;
-  font-weight: 500;
-  font-size: 0.9rem;
-  background-color: #f9f9f9;
-  color: #666;
+  padding: 12px 5px;
+  font-weight: 600;
+  font-size: 0.85rem;
+  text-transform: uppercase;
+  background-color: var(--secondary-color);
+  color: var(--text-light);
+  border-radius: var(--border-radius) var(--border-radius) 0 0;
+  letter-spacing: 0.5px;
 }
 
 .calendar-day {
   position: relative;
-  min-height: 90px;
-  border: 1px solid #eee;
-  border-radius: 4px;
-  padding: 8px;
+  min-height: 120px;
+  border: 1px solid var(--border-color);
+  border-radius: 8px;
+  padding: 10px;
   text-align: center; /* Изменено с right на center */
   cursor: pointer;
-  transition: background-color 0.2s;
+  transition: transform 0.2s ease, box-shadow 0.2s ease;
   display: flex; /* Добавлено для лучшего центрирования */
   flex-direction: column; /* Вертикальное расположение элементов */
   align-items: center; /* Горизонтальное центрирование содержимого */
+  background-color: #f9fafc;
 }
 
 .calendar-day:hover {
-  background-color: #f5f5f5;
+  background-color: #f5f8ff;
+  transform: translateY(-2px);
+  box-shadow: 0 5px 15px rgba(0, 0, 0, 0.07);
 }
 
 .calendar-day.empty {
   background-color: #f9f9f9;
   cursor: default;
+  border: 1px dashed #eee;
+}
+
+.calendar-day.empty:hover {
+  transform: none;
+  box-shadow: none;
 }
 
 .calendar-day.today {
-  background-color: #e6f2ff;
+  background-color: #e6f0fd;
+  border: 2px solid #4a90e2;
 }
 
 .calendar-day.selected {
-  border: 2px solid #4a90e2;
+  border: 2px solid var(--primary-color);
+  box-shadow: 0 0 0 2px rgba(74, 144, 226, 0.3);
+  transform: scale(1.02);
+}
+
+.calendar-day.outside-month {
+  background-color: #f0f0f0;
+  opacity: 0.6;
 }
 
 .day-number {
   position: relative;
-  width: 100%;
-  font-size: 0.9rem;
-  color: #333;
-  text-align: center; /* Центрирование текста */
+  width: 30px;
+  height: 30px;
   display: flex;
-  justify-content: center; /* Центрирование по горизонтали */
-  align-items: center; /* Центрирование по вертикали */
-  margin-bottom: 5px; /* Отступ снизу для разделения от другого содержимого */
+  justify-content: center;
+  align-items: center;
+  font-size: 0.95rem;
+  font-weight: 500;
+  color: var(--text-color);
+  border-radius: 50%;
+  margin-bottom: 8px;
+  transition: all var(--transition-speed);
+}
+
+.calendar-day-number {
+  font-size: 1.1rem;
+  font-weight: 500;
+  margin-bottom: 8px;
+  color: #2c3e50;
+}
+
+.today .day-number {
+  background-color: var(--primary-color);
+  color: white;
+}
+
+.today .calendar-day-number {
+  color: #4a90e2;
+  font-weight: 600;
 }
 
 /* Индикаторы записей в календаре */
 .booking-indicators {
   display: flex;
   flex-wrap: wrap;
-  gap: 3px;
-  margin-top: 5px;
+  gap: 4px;
+  margin-top: 8px;
   justify-content: center;
   align-items: center;
 }
@@ -131,109 +258,350 @@
   width: 8px;
   height: 8px;
   border-radius: 50%;
-  background-color: #4a90e2; /* цвет для обычной записи */
+  background-color: var(--primary-color); /* цвет для обычной записи */
+  transition: transform var(--transition-speed);
+}
+
+.booking-dot:hover {
+  transform: scale(1.3);
 }
 
 .booking-dot.blocked {
-  background-color: #e74c3c; /* цвет для заблокированного времени */
+  background-color: var(--danger-color); /* цвет для заблокированного времени */
 }
 
 .booking-dot.personal {
-  background-color: #2ecc71; /* цвет для личной записи */
+  background-color: var(--success-color); /* цвет для личной записи */
+}
+
+.calendar-day-appointments {
+  display: flex;
+  flex-direction: column;
+  gap: 5px;
+  flex-grow: 1;
+  overflow-y: auto;
+  max-height: 80px;
+}
+
+.calendar-appointment {
+  background-color: rgba(74, 144, 226, 0.1);
+  border-left: 3px solid #4a90e2;
+  padding: 5px 8px;
+  border-radius: 4px;
+  font-size: 0.8rem;
+  color: #333;
+  transition: background-color 0.2s ease;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.calendar-appointment:hover {
+  background-color: rgba(74, 144, 226, 0.2);
+}
+
+.calendar-appointment.canceled {
+  background-color: rgba(231, 76, 60, 0.1);
+  border-left-color: #e74c3c;
+  text-decoration: line-through;
+  color: #7f8c8d;
+}
+
+.calendar-appointment.completed {
+  background-color: rgba(46, 204, 113, 0.1);
+  border-left-color: #2ecc71;
 }
 
 .more-bookings {
   font-size: 0.7rem;
-  color: #666;
+  color: var(--text-light);
+  margin-top: 5px;
+  background-color: var(--secondary-color);
+  padding: 3px 6px;
+  border-radius: 10px;
+}
+
+.calendar-day-more {
+  font-size: 0.8rem;
+  color: #4a90e2;
+  text-align: center;
+  margin-top: 5px;
+  font-weight: 500;
 }
 
 /* Стили для расписания на выбранный день */
 .calendar-schedule {
-  padding: 15px;
-  background-color: #f9f9f9;
-  border-radius: 5px;
+  padding: 20px;
+  background-color: var(--secondary-color);
+  border-radius: var(--border-radius);
+  box-shadow: var(--shadow-sm);
+  margin-top: 10px;
+  transition: all var(--transition-speed);
+}
+
+.calendar-schedule:hover {
+  box-shadow: var(--shadow-md);
 }
 
 .no-bookings {
   text-align: center;
-  padding: 20px;
-  color: #777;
+  padding: 30px;
+  color: var(--text-light);
+  font-style: italic;
+  background-color: white;
+  border-radius: var(--border-radius);
 }
 
 .day-schedule h3 {
   margin-top: 0;
-  margin-bottom: 15px;
-  font-size: 1.1rem;
-  color: #333;
+  margin-bottom: 20px;
+  font-size: 1.2rem;
+  color: var(--text-color);
+  padding-bottom: 10px;
+  border-bottom: 1px solid var(--border-color);
+  position: relative;
+}
+
+.day-schedule h3:after {
+  content: '';
+  position: absolute;
+  width: 40px;
+  height: 3px;
+  background: var(--grad-blue);
+  bottom: -1px;
+  left: 0;
+  border-radius: 3px;
 }
 
 .bookings-list {
   display: flex;
-  gap: 10px;
+  flex-wrap: wrap;
+  gap: 15px;
 }
 
 .booking-item {
   display: flex;
-  padding: 12px;
-  background-color: #fff;
-  border: 1px solid #e0e0e0;
-  border-radius: 5px;
+  padding: 15px;
+  background-color: white;
+  border: 1px solid var(--border-color);
+  border-radius: var(--border-radius);
   cursor: pointer;
-  transition: transform 0.2s, box-shadow 0.2s;
+  transition: all var(--transition-speed);
+  box-shadow: var(--shadow-sm);
+  width: calc(50% - 8px);
+  position: relative;
+  overflow: hidden;
 }
 
 .booking-item:hover {
-  transform: translateY(-2px);
-  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+  transform: translateY(-4px);
+  box-shadow: var(--shadow-md);
 }
 
 .booking-item.blocked {
-  border-left: 4px solid #e74c3c; /* красная полоса для заблокированного времени */
+  border-left: 4px solid var(--danger-color); /* красная полоса для заблокированного времени */
+}
+
+.booking-item.blocked:before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 4px;
+  height: 100%;
+  background-color: var(--danger-color);
 }
 
 .booking-item.personal {
-  border-left: 4px солид #2ecc71; /* зеленая полоса для личной записи */
+  border-left: 4px solid var(--success-color); /* зеленая полоса для личной записи */
+}
+
+.booking-item.personal:before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 4px;
+  height: 100%;
+  background-color: var(--success-color);
 }
 
 .booking-time {
   min-width: 90px;
-  font-weight: 500;
-  color: #333;
+  font-weight: 600;
+  color: var(--text-color);
+  background-color: var(--secondary-color);
+  padding: 6px 10px;
+  border-radius: var(--border-radius);
+  display: flex;
+  align-items: center;
+  justify-content: center;
 }
 
 .booking-info {
   flex-grow: 1;
-  margin-left: 10px;
+  margin-left: 15px;
 }
 
 .booking-title {
-  font-weight: 500;
-  color: #333;
-  margin-bottom: 3px;
+  font-weight: 600;
+  color: var(--text-color);
+  margin-bottom: 5px;
+  font-size: 1.05rem;
 }
 
 .booking-client {
   font-size: 0.9rem;
+  color: var(--text-light);
+  display: flex;
+  align-items: center;
+  gap: 5px;
+}
+
+.booking-client:before {
+  content: '👤';
+  font-size: 0.8rem;
+}
+
+/* Стили для легенды */
+.calendar-legend {
+  display: flex;
+  gap: 15px;
+  margin-top: 15px;
+  flex-wrap: wrap;
+  padding: 10px;
+  background-color: #f9fafc;
+  border-radius: 8px;
+}
+
+.legend-item {
+  display: flex;
+  align-items: center;
+  gap: 5px;
+  font-size: 0.85rem;
   color: #666;
 }
 
+.legend-color {
+  width: 12px;
+  height: 12px;
+  border-radius: 3px;
+}
+
+.legend-color.scheduled {
+  background-color: #4a90e2;
+}
+
+.legend-color.completed {
+  background-color: #2ecc71;
+}
+
+.legend-color.canceled {
+  background-color: #e74c3c;
+}
+
+.legend-color.blocked {
+  background-color: #95a5a6;
+}
+
 /* Адаптивная верстка */
-@media (max-width: 768px) {
+@media (max-width: 992px) {
   .calendar-grid {
-    gap: 1px;
+    gap: 5px;
+  }
+  
+  .calendar-day {
+    min-height: 100px;
+    padding: 8px;
+  }
+}
+
+@media (max-width: 768px) {
+  .calendar-header {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 10px;
+  }
+  
+  .calendar-nav {
+    width: 100%;
+    justify-content: space-between;
+  }
+  
+  .calendar-day-header {
+    font-size: 0.8rem;
+  }
+  
+  .calendar-day {
+    min-height: 80px;
+    padding: 5px;
+  }
+  
+  .calendar-day-number {
+    font-size: 0.9rem;
+  }
+  
+  .calendar-appointment {
+    font-size: 0.7rem;
+    padding: 3px 5px;
+  }
+
+  .calendar-grid {
+    gap: 3px;
   }
 
   .calendar-day {
-    height: 60px;
-    padding: 2px;
+    height: 70px;
+    padding: 5px;
+    min-height: 70px;
     display: flex; /* Сохраняем flex даже в мобильной версии */
     flex-direction: column;
     align-items: center;
   }
 
   .day-number {
+    width: 25px;
+    height: 25px;
     font-size: 0.85rem;
+    margin-bottom: 5px;
     text-align: center; /* Убедимся, что текст центрирован */
+  }
+  
+  .booking-indicators {
+    gap: 3px;
+  }
+  
+  .booking-item {
+    width: 100%;
+  }
+}
+
+@media (max-width: 576px) {
+  .calendar-grid {
+    grid-template-columns: repeat(1, 1fr);
+  }
+  
+  .calendar-day {
+    display: flex;
+    flex-direction: row;
+    min-height: 60px;
+    align-items: center;
+  }
+  
+  .calendar-day-number {
+    width: 36px;
+    text-align: center;
+    margin-bottom: 0;
+    margin-right: 10px;
+  }
+  
+  .calendar-day-appointments {
+    flex-grow: 1;
+    max-height: none;
+  }
+  
+  .calendar-day-header {
+    display: none;
   }
 }
 
@@ -244,23 +612,37 @@
   }
 
   .today-button {
-    margin-top: 10px;
+    margin-top: 15px;
+    align-self: stretch;
+    text-align: center;
   }
 
   .calendar-weekday {
-    font-size: 0.8rem;
-    padding: 5px;
+    font-size: 0.7rem;
+    padding: 8px 2px;
   }
 
   .calendar-day {
-    height: 50px;
+    height: 60px;
+    min-height: 60px;
+    padding: 3px;
     display: flex; /* Сохраняем flex */
     flex-direction: column;
     align-items: center;
   }
+  
+  .day-number {
+    width: 20px;
+    height: 20px;
+    font-size: 0.8rem;
+  }
 
   .booking-time {
     min-width: 70px;
-    font-size: 0.9rem;
+    font-size: 0.85rem;
+  }
+  
+  .booking-item {
+    padding: 10px;
   }
 }

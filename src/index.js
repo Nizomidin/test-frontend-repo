@@ -3,6 +3,9 @@ import ReactDOM from 'react-dom/client';
 import './index.css';
 import App from './App';
 import reportWebVitals from './reportWebVitals';
+// Импортируем скрипт для тестирования кастомных бронирований
+// Раскомментируйте строку ниже для включения тестирования
+// import './test_custom_bookings.js';
 
 const root = ReactDOM.createRoot(document.getElementById('root'));
 root.render(

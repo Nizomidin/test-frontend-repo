@@ -1018,3 +1018,562 @@
     font-size: 0.8rem;
   }
 }
+
+.booking-item,
+.appointment-item {
+  display: flex;
+  flex-direction: column;
+  padding: 15px;
+  margin-bottom: 12px;
+  border-radius: var(--border-radius-md);
+  box-shadow: var(--shadow-card);
+  background-color: white;
+  transition: var(--transition);
+  position: relative;
+  overflow: hidden;
+  border-left: 4px solid var(--status-booked);
+}
+
+[data-theme='dark'] .booking-item,
+[data-theme='dark'] .appointment-item {
+  background-color: var(--light-gray);
+}
+
+.booking-item:hover,
+.appointment-item:hover {
+  box-shadow: var(--shadow-card-hover);
+  transform: translateY(-2px);
+}
+
+/* Улучшенное цветовое кодирование для статусов */
+.booking-item.status-booked,
+.appointment-item.status-booked {
+  border-left: 4px solid var(--status-booked);
+  background-color: rgba(72, 149, 239, 0.05);
+}
+
+.booking-item.status-completed,
+.appointment-item.status-completed {
+  border-left: 4px solid var(--status-completed);
+  background-color: rgba(46, 196, 182, 0.05);
+}
+
+.booking-item.status-cancelled,
+.appointment-item.status-cancelled {
+  border-left: 4px solid var(--status-cancelled);
+  background-color: rgba(230, 57, 70, 0.05);
+}
+
+.booking-item.status-waiting,
+.appointment-item.status-waiting {
+  border-left: 4px solid var(--status-waiting);
+  background-color: rgba(255, 159, 28, 0.05);
+}
+
+/* Бейджи для статусов */
+.status-badge {
+  position: absolute;
+  top: 10px;
+  right: 10px;
+  font-size: 0.7rem;
+  padding: 3px 8px;
+  border-radius: 12px;
+  font-weight: 500;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+}
+
+.status-badge.status-booked {
+  background-color: var(--status-booked);
+  color: white;
+}
+
+.status-badge.status-completed {
+  background-color: var(--status-completed);
+  color: white;
+}
+
+.status-badge.status-cancelled {
+  background-color: var(--status-cancelled);
+  color: white;
+}
+
+.status-badge.status-waiting {
+  background-color: var(--status-waiting);
+  color: white;
+}
+
+/* Улучшения для мобильной версии */
+@media (max-width: 768px) {
+  .booking-item, 
+  .appointment-item {
+    padding: 12px;
+    margin-bottom: 10px;
+  }
+  
+  .status-badge {
+    top: 8px;
+    right: 8px;
+    font-size: 0.65rem;
+    padding: 2px 6px;
+  }
+  
+  .appointment-content,
+  .booking-content {
+    font-size: 0.9rem;
+  }
+}
+
+@media (max-width: 576px) {
+  .booking-item,
+  .appointment-item {
+    padding: 10px;
+    margin-bottom: 8px;
+  }
+  
+  .status-badge {
+    position: static;
+    display: inline-block;
+    margin-top: 5px;
+  }
+  
+  .appointment-content,
+  .booking-content {
+    font-size: 0.85rem;
+  }
+}
+
+/* Адаптивный дизайн для календаря */
+@media (max-width: 768px) {
+  .calendar-container {
+    padding: 10px;
+  }
+  
+  .calendar-day {
+    min-width: 40px;
+    font-size: 0.85rem;
+  }
+  
+  .calendar-day-header {
+    font-size: 0.7rem;
+  }
+  
+  .day-bookings-preview {
+    max-height: 30px;
+    overflow: hidden;
+  }
+  
+  .booking-count-badge {
+    font-size: 0.7rem;
+    padding: 1px 5px;
+  }
+}
+
+/* Иконки для бронирований */
+.booking-icon {
+  font-size: 1.2rem;
+  margin-right: 8px;
+  color: var(--primary-color);
+}
+
+/* Анимации для карточек бронирования */
+@keyframes pulseHighlight {
+  0% { box-shadow: 0 0 0 0 rgba(72, 149, 239, 0.4); }
+  70% { box-shadow: 0 0 0 10px rgba(72, 149, 239, 0); }
+  100% { box-shadow: 0 0 0 0 rgba(72, 149, 239, 0); }
+}
+
+.booking-item.highlight,
+.appointment-item.highlight {
+  animation: pulseHighlight 2s infinite;
+}
+
+/* Дополнительные стили для отображения загруженности дня */
+.day-load-indicator {
+  display: flex;
+  height: 3px;
+  margin-top: 2px;
+  background-color: var(--light-gray);
+  border-radius: 2px;
+  overflow: hidden;
+}
+
+.day-load-bar {
+  height: 100%;
+  background-color: var(--status-booked);
+  transition: width 0.3s ease;
+}
+
+.day-load-high .day-load-bar {
+  background-color: var(--status-waiting);
+}
+
+.day-load-full .day-load-bar {
+  background-color: var(--status-cancelled);
+}
+
+/* Исправление для элементов, которые не видны в темной теме */
+[data-theme='dark'] .master-booking-manager {
+  background-color: var(--light-gray);
+  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.2);
+}
+
+[data-theme='dark'] .manager-title {
+  color: #f7fafc;
+}
+
+[data-theme='dark'] .manager-title:after {
+  background: linear-gradient(90deg, var(--primary-color), #63b3ed);
+}
+
+[data-theme='dark'] .date-selector {
+  background-color: var(--medium-gray);
+  border: 1px solid var(--border-color);
+}
+
+[data-theme='dark'] .date-input {
+  background-color: #3a4859;
+  color: #f7fafc;
+  border-color: var(--border-color);
+}
+
+[data-theme='dark'] .selected-date {
+  color: #f7fafc;
+}
+
+[data-theme='dark'] .today-button {
+  background-color: transparent;
+  border: 1px solid var(--primary-color);
+  color: var(--primary-color);
+}
+
+[data-theme='dark'] .today-button:hover {
+  background-color: var(--primary-color);
+  color: #f7fafc;
+}
+
+[data-theme='dark'] .nav-button {
+  background-color: #3a4859;
+  color: #f7fafc;
+  border-color: var(--border-color);
+}
+
+[data-theme='dark'] .nav-button:hover {
+  background-color: var(--primary-color);
+  color: #f7fafc;
+}
+
+[data-theme='dark'] .section-header h3 {
+  color: #f7fafc;
+}
+
+[data-theme='dark'] .booking-item {
+  background-color: var(--medium-gray);
+  border-left: 4px solid var(--status-booked);
+}
+
+[data-theme='dark'] .booking-item:hover {
+  background-color: #3a4859;
+}
+
+[data-theme='dark'] .booking-time {
+  color: #f7fafc;
+}
+
+[data-theme='dark'] .booking-title {
+  color: #f7fafc;
+}
+
+[data-theme='dark'] .booking-client,
+[data-theme='dark'] .booking-comment {
+  color: #cbd5e0;
+}
+
+[data-theme='dark'] .no-bookings {
+  color: #cbd5e0;
+}
+
+[data-theme='dark'] .booking-form-container {
+  background-color: var(--medium-gray);
+  border-color: var(--border-color);
+}
+
+[data-theme='dark'] .form-header {
+  border-color: var(--border-color);
+}
+
+[data-theme='dark'] .form-header h3 {
+  color: #f7fafc;
+}
+
+[data-theme='dark'] .close-button {
+  color: #cbd5e0;
+}
+
+[data-theme='dark'] .close-button:hover {
+  background-color: #4a5568;
+  color: #f7fafc;
+}
+
+[data-theme='dark'] .form-group label {
+  color: #f7fafc;
+}
+
+[data-theme='dark'] .form-group input,
+[data-theme='dark'] .form-group select,
+[data-theme='dark'] .form-group textarea {
+  background-color: #3a4859;
+  color: #f7fafc;
+  border-color: var(--border-color);
+}
+
+[data-theme='dark'] .time-slot {
+  background-color: var(--medium-gray);
+  border-color: var(--border-color);
+  color: #f7fafc;
+}
+
+[data-theme='dark'] .time-slot:hover {
+  background-color: #4a5568;
+  border-color: var(--primary-color);
+}
+
+[data-theme='dark'] .time-slot.selected {
+  background-color: var(--primary-color);
+  color: #f7fafc;
+}
+
+[data-theme='dark'] .cancel-button {
+  background-color: transparent;
+  border-color: var(--border-color);
+  color: #f7fafc;
+}
+
+[data-theme='dark'] .cancel-button:hover {
+  background-color: #4a5568;
+}
+
+[data-theme='dark'] .view-mode-btn {
+  background-color: #3a4859;
+  color: #f7fafc;
+  border-color: var(--border-color);
+}
+
+[data-theme='dark'] .master-status-card {
+  background-color: var(--medium-gray);
+  border-color: var(--border-color);
+}
+
+[data-theme='dark'] .master-card-header {
+  background-color: var(--light-gray);
+  border-color: var(--border-color);
+}
+
+[data-theme='dark'] .master-card-header h4 {
+  color: #f7fafc;
+}
+
+[data-theme='dark'] .master-card-header .specialization {
+  color: #cbd5e0;
+}
+
+/* Настройки статусов в темной теме */
+[data-theme='dark'] .status.free {
+  background-color: rgba(46, 204, 113, 0.2);
+  color: #7cffbd;
+}
+
+[data-theme='dark'] .status.has-free-time {
+  background-color: rgba(52, 152, 219, 0.2);
+  color: #7cc2ff;
+}
+
+[data-theme='dark'] .status.busy {
+  background-color: rgba(231, 76, 60, 0.2);
+  color: #ff9e9e;
+}
+
+[data-theme='dark'] .status.day-off {
+  background-color: rgba(149, 165, 166, 0.2);
+  color: #cbd5e0;
+}
+
+[data-theme='dark'] .day-off-message {
+  color: #cbd5e0;
+  font-style: italic;
+}
+
+[data-theme='dark'] .appointments-preview p {
+  color: #f7fafc;
+}
+
+[data-theme='dark'] .next-appointment {
+  color: #f7fafc;
+}
+
+[data-theme='dark'] .no-appointments {
+  color: #cbd5e0;
+}
+
+[data-theme='dark'] .appointment-time {
+  color: #f7fafc;
+}
+
+[data-theme='dark'] .appointment-client {
+  color: #cbd5e0 !important;
+}
+
+[data-theme='dark'] .master-appointments-list::-webkit-scrollbar-track {
+  background: #2d3748;
+}
+
+[data-theme='dark'] .master-appointments-list::-webkit-scrollbar-thumb {
+  background: #4a5568;
+}
+
+/* Улучшения для планировщика в темной теме */
+[data-theme='dark'] .scheduler-container {
+  background-color: var(--light-gray);
+  border: 1px solid var(--border-color);
+}
+
+[data-theme='dark'] .scheduler-header {
+  background-color: #2d3748;
+  border-color: var(--border-color);
+}
+
+[data-theme='dark'] .time-column-header,
+[data-theme='dark'] .master-column-header {
+  background-color: #2d3748;
+  color: #f7fafc;
+  border-color: var(--border-color);
+}
+
+[data-theme='dark'] .time-cell {
+  background-color: #2d3748;
+  color: #f7fafc;
+  border-color: var(--border-color);
+}
+
+[data-theme='dark'] .master-time-cell {
+  border-color: var(--border-color);
+}
+
+[data-theme='dark'] .master-time-cell.available {
+  background-color: rgba(72, 187, 120, 0.1);
+}
+
+[data-theme='dark'] .master-time-cell.available:hover {
+  background-color: rgba(72, 187, 120, 0.2);
+}
+
+[data-theme='dark'] .master-time-cell.unavailable {
+  background-color: #2d3748;
+}
+
+[data-theme='dark'] .master-time-cell.booked {
+  background-color: rgba(49, 130, 206, 0.15);
+}
+
+[data-theme='dark'] .appointment-info {
+  color: #90cdf4;
+}
+
+/* Стили для модального окна редактирования в темной теме */
+[data-theme='dark'] .edit-form-container {
+  background-color: var(--light-gray);
+}
+
+[data-theme='dark'] .delete-button {
+  background-color: rgba(229, 62, 62, 0.1);
+  color: #fc8181;
+}
+
+[data-theme='dark'] .delete-button:hover {
+  background-color: rgba(229, 62, 62, 0.2);
+  color: #fff5f5;
+}
+
+/* Улучшения для карточки бронирования в темной теме */
+[data-theme='dark'] .booking-item.status-booked,
+[data-theme='dark'] .appointment-item.status-booked {
+  background-color: #2d4a70 !important; /* Насыщенный синий фон */
+  border-left: 4px solid var(--status-booked);
+}
+
+[data-theme='dark'] .booking-item.status-completed,
+[data-theme='dark'] .appointment-item.status-completed {
+  background-color: #2a5048 !important; /* Насыщенный зеленый фон */
+  border-left: 4px solid var(--status-completed);
+}
+
+[data-theme='dark'] .booking-item.status-waiting,
+[data-theme='dark'] .appointment-item.status-waiting {
+  background-color: #614a30 !important; /* Насыщенный оранжевый фон */
+  border-left: 4px solid var(--status-waiting);
+}
+
+[data-theme='dark'] .booking-item.status-cancelled,
+[data-theme='dark'] .appointment-item.status-cancelled {
+  background-color: #5f3339 !important; /* Насыщенный красный фон */
+  border-left: 4px solid var(--status-cancelled);
+}
+
+/* Улучшение контраста текста в карточках */
+[data-theme='dark'] .booking-title,
+[data-theme='dark'] .appointment-content .booking-title {
+  color: white !important;
+  font-weight: 600;
+}
+
+[data-theme='dark'] .booking-client,
+[data-theme='dark'] .appointment-content .booking-client {
+  color: #e2e8f0 !important;
+}
+
+/* Стили для видимости текстовых полей в детальной карточке консультации */
+[data-theme='dark'] .detail-card {
+  background-color: #2d3748 !important;
+  color: white !important;
+}
+
+/* Стили для модального окна в темной теме */
+[data-theme='dark'] .modal-content {
+  background-color: #2d3748;
+  border-color: #4a5568;
+}
+
+[data-theme='dark'] .modal-header {
+  border-color: #4a5568;
+}
+
+[data-theme='dark'] .modal-title {
+  color: white;
+}
+
+/* Исправления для карточки консультации, видимой на скриншоте */
+[data-theme='dark'] .event-card {
+  background-color: #3a4859 !important;
+  color: white !important;
+}
+
+[data-theme='dark'] .consultation-title,
+[data-theme='dark'] .consultation-text {
+  color: white !important;
+}
+
+/* Улучшаем отображение в календаре */
+[data-theme='dark'] .calendar-day .event, 
+[data-theme='dark'] .calendar-day-view .event {
+  background-color: #3a4859 !important;
+  color: white !important;
+}
+
+/* Исправления для телефонного поля на скриншоте */
+[data-theme='dark'] input[type="tel"],
+[data-theme='dark'] input[type="text"],
+[data-theme='dark'] input[type="number"] {
+  background-color: #2d3748 !important;
+  color: white !important;
+  border-color: #4a5568 !important;
+}

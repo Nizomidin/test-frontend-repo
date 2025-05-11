@@ -359,12 +359,13 @@
 }
 
 .master-calendar {
+  display: flex;
+  flex-direction: column;
+  gap: 20px;
   background-color: white;
-  border-radius: 8px;
-  box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+  border-radius: var(--border-radius-lg);
+  box-shadow: var(--shadow-card);
   padding: 20px;
-  width: 100%;
-  margin-bottom: 20px;
 }
 
 .calendar-header {
@@ -467,6 +468,27 @@
 
 .calendar-day.selected {
   background-color: #e1effe;
+  border: 2px solid var(--primary-color);
+  position: relative;
+  z-index: 2;
+  box-shadow: 0 0 10px rgba(67, 97, 238, 0.15);
+}
+
+.calendar-day.selected::after {
+  content: "";
+  position: absolute;
+  width: 100%;
+  height: 100%;
+  top: 0;
+  left: 0;
+  background-color: rgba(94, 158, 255, 0.1);
+  z-index: -1;
+  pointer-events: none;
+}
+
+.calendar-day.selected .day-number {
+  color: var(--primary-color);
+  font-weight: 700;
 }
 
 .day-number {
@@ -553,6 +575,10 @@
 
 .booking-item.personal {
   border-left: 4px solid #f39c12;
+}
+
+.booking-item.custom {
+  border-left: 4px solid #2ecc71; /* Зеленый цвет для кастомных бронирований */
 }
 
 .booking-time {
@@ -750,6 +776,11 @@
 
 .booking-preview.blocked {
   background-color: rgba(220, 53, 69, 0.1);
+}
+
+.booking-preview.custom {
+  background-color: rgba(46, 204, 113, 0.2);
+  border-left: 3px solid #2ecc71;
 }
 
 .booking-time {
@@ -979,4 +1010,475 @@
   color: #aaa;
   text-align: center;
   padding: 10px 0;
+}
+
+.calendar-nav {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 15px;
+}
+
+.calendar-title {
+  font-size: 1.4rem;
+  font-weight: 600;
+  color: var(--dark-gray);
+  text-align: center;
+  flex: 1;
+}
+
+.nav-button {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 36px;
+  height: 36px;
+  background-color: transparent;
+  border: 1px solid var(--border-color);
+  border-radius: 50%;
+  cursor: pointer;
+  color: var(--dark-gray);
+  font-size: 1.2rem;
+  transition: var(--transition);
+}
+
+.nav-button:hover {
+  background-color: var(--primary-color);
+  color: white;
+  border-color: var(--primary-color);
+  transform: translateY(-2px);
+}
+
+.calendar-days {
+  display: flex;
+  flex-wrap: nowrap;
+  gap: 10px;
+  overflow-x: auto;
+  padding-bottom: 10px;
+  scrollbar-width: thin;
+  scrollbar-color: var(--medium-gray) transparent;
+}
+
+.calendar-days::-webkit-scrollbar {
+  height: 6px;
+}
+
+.calendar-days::-webkit-scrollbar-track {
+  background: transparent;
+}
+
+.calendar-days::-webkit-scrollbar-thumb {
+  background-color: var(--medium-gray);
+  border-radius: 3px;
+}
+
+.calendar-day {
+  display: flex;
+  flex-direction: column;
+  min-width: 90px;
+  padding: 10px;
+  border-radius: var(--border-radius-md);
+  border: 1px solid var(--border-color);
+  background-color: white;
+  cursor: pointer;
+  transition: var(--transition);
+  position: relative;
+  overflow: hidden;
+}
+
+.calendar-day:hover {
+  transform: translateY(-3px);
+  box-shadow: var(--shadow-card-hover);
+  border-color: var(--primary-color);
+}
+
+.calendar-day.day-off {
+  background-color: #feebc8;
+  border-color: #f6ad55;
+}
+
+.calendar-day.selected {
+  border-color: var(--primary-color);
+  background-color: rgba(67, 97, 238, 0.1);
+  box-shadow: var(--shadow-card);
+}
+
+.calendar-day.today {
+  border-color: var(--primary-color);
+  border-width: 2px;
+}
+
+.calendar-day.has-appointments::after {
+  content: "";
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 5px;
+  background-color: var(--status-booked);
+}
+
+.calendar-day.has-appointments.high-load::after {
+  background-color: var(--status-waiting);
+}
+
+.calendar-day.has-appointments.full-load::after {
+  background-color: var(--status-cancelled);
+}
+
+.calendar-day-header {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  margin-bottom: 10px;
+  position: relative;
+}
+
+.day-name {
+  font-weight: 500;
+  font-size: 0.85rem;
+  color: var(--secondary-color);
+  margin-bottom: 2px;
+}
+
+.day-number {
+  font-weight: 600;
+  font-size: 1.4rem;
+  color: var(--dark-gray);
+}
+
+.calendar-day.weekend .day-name,
+.calendar-day.weekend .day-number {
+  color: var(--status-cancelled);
+}
+
+.day-bookings-preview {
+  display: flex;
+  flex-direction: column;
+  gap: 5px;
+  font-size: 0.85rem;
+}
+
+.booking-preview {
+  padding: 5px;
+  border-radius: var(--border-radius-sm);
+  background-color: #e6f7ff;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  position: relative;
+  border-left: 3px solid var(--status-booked);
+}
+
+.booking-preview.personal {
+  background-color: #fff0f6;
+  border-left-color: #f687b3;
+}
+
+.booking-preview.blocked {
+  background-color: #fffaf0;
+  border-left-color: #ed8936;
+}
+
+.booking-preview.custom {
+  background-color: rgba(46, 204, 113, 0.2);
+  border-left: 3px solid #2ecc71;
+}
+
+.more-bookings {
+  font-size: 0.75rem;
+  text-align: center;
+  color: var(--primary-color);
+  font-weight: 500;
+  padding: 2px 0;
+}
+
+.bookings-list {
+  margin-top: 20px;
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+
+.booking-item {
+  position: relative;
+  display: flex;
+  padding: 15px;
+  border-radius: var(--border-radius-md);
+  border-left: 4px solid var(--status-booked);
+  background-color: white;
+  box-shadow: var(--shadow-card);
+  transition: var(--transition);
+  cursor: pointer;
+}
+
+.booking-item:hover {
+  transform: translateY(-2px);
+  box-shadow: var(--shadow-card-hover);
+}
+
+.booking-item.personal {
+  border-left-color: #f687b3;
+}
+
+.booking-item.blocked {
+  border-left-color: #ed8936;
+}
+
+.booking-item.custom {
+  border-left: 4px solid #2ecc71; /* Зеленый цвет для кастомных бронирований */
+}
+
+.booking-time {
+  display: flex;
+  flex-direction: column;
+  min-width: 80px;
+  font-weight: 600;
+}
+
+.booking-time-start {
+  color: var(--dark-gray);
+}
+
+.booking-time-end {
+  font-size: 0.85rem;
+  color: var(--secondary-color);
+  margin-top: 4px;
+}
+
+.booking-info {
+  flex: 1;
+  margin-left: 15px;
+}
+
+.booking-title {
+  font-weight: 600;
+  color: var(--dark-gray);
+  margin-bottom: 5px;
+  font-size: 1rem;
+}
+
+.booking-client {
+  font-size: 0.9rem;
+  color: var(--secondary-color);
+}
+
+.booking-comment {
+  margin-top: 8px;
+  font-size: 0.85rem;
+  color: var(--secondary-color);
+  padding-left: 8px;
+  border-left: 2px solid var(--border-color);
+  font-style: italic;
+}
+
+.booking-status {
+  position: absolute;
+  top: 10px;
+  right: 10px;
+  font-size: 0.75rem;
+  padding: 3px 8px;
+  border-radius: 12px;
+  background-color: var(--status-booked);
+  color: white;
+}
+
+.booking-count-badge {
+  position: absolute;
+  top: -5px;
+  right: -5px;
+  background-color: var(--status-booked);
+  color: white;
+  font-size: 0.75rem;
+  font-weight: 600;
+  padding: 2px 6px;
+  border-radius: 10px;
+  box-shadow: 0 2px 5px rgba(0, 0, 0, 0.2);
+}
+
+.no-bookings {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  padding: 40px 20px;
+  text-align: center;
+  color: var(--secondary-color);
+  background-color: #f9fafb;
+  border-radius: var(--border-radius-md);
+  border: 1px dashed var(--border-color);
+}
+
+.no-bookings p {
+  margin-bottom: 10px;
+  font-size: 1.1rem;
+}
+
+.no-bookings-icon {
+  font-size: 3rem;
+  margin-bottom: 15px;
+  color: var(--border-color);
+}
+
+.day-off-message {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  padding: 40px 20px;
+  text-align: center;
+  color: #d69e2e;
+  background-color: #fffaf0;
+  border-radius: var(--border-radius-md);
+  border: 1px dashed #f6ad55;
+}
+
+.day-off-message p {
+  margin-bottom: 10px;
+  font-size: 1.1rem;
+  font-weight: 500;
+}
+
+.day-off-icon {
+  font-size: 3rem;
+  margin-bottom: 15px;
+  color: #f6ad55;
+}
+
+/* Адаптивные стили для мобильных устройств */
+@media (max-width: 992px) {
+  .master-calendar {
+    padding: 15px;
+  }
+  
+  .calendar-day {
+    min-width: 80px;
+  }
+}
+
+@media (max-width: 768px) {
+  .master-calendar {
+    padding: 12px;
+  }
+  
+  .calendar-nav {
+    gap: 10px;
+  }
+  
+  .calendar-title {
+    font-size: 1.2rem;
+  }
+  
+  .nav-button {
+    width: 32px;
+    height: 32px;
+    font-size: 1rem;
+  }
+  
+  .calendar-days {
+    gap: 8px;
+  }
+  
+  .calendar-day {
+    min-width: 70px;
+    padding: 8px;
+  }
+  
+  .day-number {
+    font-size: 1.1rem;
+  }
+  
+  .booking-item {
+    padding: 12px;
+  }
+  
+  .booking-time {
+    min-width: 70px;
+  }
+  
+  .booking-info {
+    margin-left: 10px;
+  }
+  
+  .booking-title {
+    font-size: 0.95rem;
+  }
+}
+
+@media (max-width: 576px) {
+  .master-calendar {
+    padding: 10px;
+  }
+  
+  .calendar-title {
+    font-size: 1.1rem;
+  }
+  
+  .nav-button {
+    width: 30px;
+    height: 30px;
+  }
+  
+  .calendar-days {
+    gap: 6px;
+  }
+  
+  .calendar-day {
+    min-width: 60px;
+    padding: 6px;
+  }
+  
+  .day-name {
+    font-size: 0.7rem;
+  }
+  
+  .day-number {
+    font-size: 1rem;
+  }
+  
+  .booking-preview {
+    padding: 3px;
+    font-size: 0.75rem;
+  }
+  
+  .more-bookings {
+    font-size: 0.7rem;
+  }
+  
+  .booking-item {
+    flex-direction: column;
+    padding: 10px;
+  }
+  
+  .booking-time {
+    margin-bottom: 8px;
+  }
+  
+  .booking-info {
+    margin-left: 0;
+  }
+  
+  .booking-client {
+    font-size: 0.8rem;
+  }
+  
+  .booking-comment {
+    font-size: 0.75rem;
+    margin-top: 5px;
+  }
+  
+  .no-bookings,
+  .day-off-message {
+    padding: 30px 15px;
+  }
+  
+  .no-bookings p,
+  .day-off-message p {
+    font-size: 0.95rem;
+  }
+  
+  .no-bookings-icon,
+  .day-off-icon {
+    font-size: 2.5rem;
+  }
 }

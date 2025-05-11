@@ -1,57 +1,89 @@
 .booking-form-container {
   background-color: white;
-  border-radius: 12px;
-  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.08);
-  padding: 30px;
-  max-width: 800px;
+  border-radius: var(--border-radius-lg);
+  box-shadow: var(--shadow);
+  padding: var(--spacing-lg);
+  width: 100%;
+  max-width: 700px;
   margin: 0 auto;
+  transition: var(--transition);
+}
+
+[data-theme='dark'] .booking-form-container {
+  background-color: #2d3748;
+  color: #f7fafc;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.25);
+}
+
+.booking-form-container h2 {
+  color: var(--primary-color);
+  margin-bottom: var(--spacing-md);
+  text-align: center;
+  font-weight: 600;
+}
+
+[data-theme='dark'] .booking-form-container h2 {
+  color: var(--primary-color);
 }
 
 .booking-form {
   display: flex;
   flex-direction: column;
-  gap: 24px;
+  gap: var(--spacing-lg);
 }
 
 .selected-service-summary {
-  background-color: #f7f9fc;
-  border-radius: 8px;
-  padding: 16px;
-  margin-bottom: 20px;
-  border-left: 4px solid #4a90e2;
+  background-color: var(--medium-gray);
+  border-radius: var(--border-radius-md);
+  padding: var(--spacing-md);
+  margin-bottom: var(--spacing-lg);
+  border-left: 4px solid var(--primary-color);
+}
+
+[data-theme='dark'] .selected-service-summary {
+  background-color: #3a4859;
+  border-left: 4px solid var(--primary-color);
 }
 
 .selected-service-summary h3 {
-  margin-top: 0;
-  margin-bottom: 8px;
-  color: #333;
-  font-size: 18px;
+  margin-bottom: var(--spacing-sm);
+  color: var(--primary-color);
+}
+
+[data-theme='dark'] .selected-service-summary h3 {
+  color: var(--primary-color);
 }
 
 .selected-service-summary p {
-  margin: 5px 0;
-  color: #555;
-  font-size: 14px;
+  margin: var(--spacing-xs) 0;
+  font-size: 0.95rem;
+}
+
+[data-theme='dark'] .selected-service-summary p {
+  color: #e2e8f0;
 }
 
 .form-section {
-  background-color: #fafafa;
-  border-radius: 8px;
-  padding: 20px;
-  margin-bottom: 10px;
+  background-color: var(--light-gray);
+  border-radius: var(--border-radius-md);
+  padding: var(--spacing-md);
+  transition: var(--transition);
+}
+
+[data-theme='dark'] .form-section {
+  background-color: #3a4859;
+  border-color: #4a5568;
 }
 
 .form-section h3 {
-  margin-top: 0;
-  margin-bottom: 15px;
-  font-size: 16px;
-  color: #333;
-  border-bottom: 1px solid #eee;
-  padding-bottom: 8px;
+  margin-bottom: var(--spacing-md);
+  font-size: 1.2rem;
+  color: var(--primary-color);
+  font-weight: 500;
 }
 
 .form-group {
-  margin-bottom: 16px;
+  margin-bottom: var(--spacing-md);
 }
 
 .form-group:last-child {
@@ -60,10 +92,13 @@
 
 .form-group label {
   display: block;
-  margin-bottom: 6px;
+  margin-bottom: var(--spacing-xs);
   font-weight: 500;
-  color: #444;
-  font-size: 14px;
+  font-size: 0.9rem;
+}
+
+[data-theme='dark'] .form-group label {
+  color: #e2e8f0;
 }
 
 .form-group input,
@@ -71,17 +106,26 @@
 .form-group textarea {
   width: 100%;
   padding: 10px 12px;
-  border: 1px solid #ddd;
-  border-radius: 6px;
-  font-size: 15px;
-  transition: border-color 0.2s;
+  border: 1px solid var(--border-color);
+  border-radius: var(--border-radius-sm);
+  font-size: 1rem;
+  transition: var(--transition);
+}
+
+[data-theme='dark'] .form-group input,
+[data-theme='dark'] .form-group select,
+[data-theme='dark'] .form-group textarea {
+  background-color: #2d3748;
+  color: #f7fafc;
+  border-color: #4a5568;
 }
 
 .form-group input:focus,
 .form-group select:focus,
 .form-group textarea:focus {
-  border-color: #4a90e2;
+  border-color: var(--primary-color);
   outline: none;
+  box-shadow: 0 0 0 2px rgba(67, 97, 238, 0.2);
 }
 
 .form-group textarea {
@@ -94,12 +138,16 @@
   display: flex;
   flex-wrap: wrap;
   gap: 8px;
-  margin-top: 10px;
+  margin-top: var(--spacing-xs);
   max-height: 200px; /* Устанавливаем максимальную высоту для блока */
   overflow-y: auto; /* Включаем вертикальный скролл */
   padding-right: 5px; /* Дополнительный отступ справа для скролла */
   scrollbar-width: thin; /* Для Firefox - тонкий скроллбар */
   scrollbar-color: #b0b0b0 #f0f0f0; /* Для Firefox - цвет скроллбара */
+}
+
+[data-theme='dark'] .time-slots {
+  scrollbar-color: #4a5568 #2d3748;
 }
 
 /* Стилизация скроллбара для WebKit (Chrome, Safari) */
@@ -112,9 +160,17 @@
   border-radius: 3px;
 }
 
+[data-theme='dark'] .time-slots::-webkit-scrollbar-track {
+  background: #2d3748;
+}
+
 .time-slots::-webkit-scrollbar-thumb {
   background-color: #b0b0b0;
   border-radius: 3px;
+}
+
+[data-theme='dark'] .time-slots::-webkit-scrollbar-thumb {
+  background-color: #4a5568;
 }
 
 .time-slots::-webkit-scrollbar-thumb:hover {
@@ -123,65 +179,107 @@
 
 .time-slot {
   background-color: white;
-  border: 1px solid #ddd;
-  border-radius: 6px;
+  border: 1px solid var(--border-color);
+  border-radius: var(--border-radius-sm);
   padding: 8px 12px;
   cursor: pointer;
-  font-size: 14px;
-  transition: all 0.2s;
+  font-size: 0.9rem;
+  transition: var(--transition);
+}
+
+[data-theme='dark'] .time-slot {
+  background-color: #3a4859;
+  border-color: #4a5568;
+  color: #f7fafc;
 }
 
 .time-slot:hover {
-  background-color: #f0f8ff;
-  border-color: #4a90e2;
+  background-color: rgba(67, 97, 238, 0.1);
+  border-color: var(--primary-color);
+}
+
+[data-theme='dark'] .time-slot:hover {
+  background-color: rgba(94, 158, 255, 0.2);
+  border-color: var(--primary-color);
 }
 
 .time-slot.selected {
-  background-color: #4a90e2;
-  border-color: #4a90e2;
+  background-color: var(--primary-color);
+  border-color: var(--primary-color);
   color: white;
   font-weight: 500;
+}
+
+[data-theme='dark'] .time-slot.selected {
+  background-color: var(--primary-color);
+  color: #f7fafc;
 }
 
 /* Кнопки действий */
 .form-actions {
   display: flex;
   justify-content: space-between;
-  margin-top: 10px;
+  gap: var(--spacing-md);
+  margin-top: var(--spacing-md);
 }
 
 .btn {
-  padding: 12px 20px;
-  border-radius: 6px;
-  font-size: 15px;
+  padding: 10px 16px;
+  border-radius: var(--border-radius-sm);
+  font-size: 1rem;
   font-weight: 500;
   cursor: pointer;
-  transition: background-color 0.2s;
+  transition: var(--transition);
   border: none;
+  min-width: 120px;
 }
 
 .cancel-btn {
-  background-color: #f5f5f5;
-  color: #555;
+  background-color: var(--medium-gray);
+  color: #333;
+}
+
+[data-theme='dark'] .cancel-btn {
+  background-color: #4a5568;
+  color: #f7fafc;
 }
 
 .cancel-btn:hover {
-  background-color: #e8e8e8;
+  background-color: #d1d5db;
+}
+
+[data-theme='dark'] .cancel-btn:hover {
+  background-color: #2d3748;
+  color: #f7fafc;
 }
 
 .submit-btn {
-  background-color: #4a90e2;
+  background-color: var(--primary-color);
   color: white;
 }
 
+[data-theme='dark'] .submit-btn {
+  background-color: var(--primary-color);
+}
+
 .submit-btn:hover {
-  background-color: #3a7bc8;
+  background-color: var(--primary-hover);
+}
+
+[data-theme='dark'] .submit-btn:hover {
+  background-color: var(--primary-hover);
 }
 
 /* Стили для автоматически заполненных полей */
 .field-autofilled {
-  background-color: #f7f9fc;
-  border-left: 3px solid #4a90e2;
+  background-color: #f0f7ff !important;
+  border-left: 3px solid var(--primary-color) !important;
+}
+
+[data-theme='dark'] .field-autofilled {
+  background-color: #2d3748 !important;
+  border-left: 3px solid var(--primary-color) !important;
+  color: #f7fafc !important;
 }
 
 /* Стили для полей только для чтения */
@@ -194,6 +292,14 @@ select[readonly] {
   border-color: #ddd;
   box-shadow: none;
   opacity: 0.9;
+}
+
+[data-theme='dark'] input[readonly],
+[data-theme='dark'] textarea[readonly],
+[data-theme='dark'] select[readonly] {
+  background-color: #1a202c;
+  color: #a0aec0;
+  border-color: #4a5568;
 }
 
 input[readonly]:focus,
@@ -211,11 +317,17 @@ select[readonly]:focus {
   color: #4d6a88;
 }
 
+[data-theme='dark'] .field-autofilled[readonly] {
+  background-color: #2a365c !important;
+  border-left: 3px solid #4a90e2;
+  color: #a0aec0;
+}
+
 /* Стили для сообщения о загрузке */
 .loading-message {
-  color: #4a90e2;
+  color: var(--info-color);
   text-align: center;
-  padding: 15px;
+  padding: var(--spacing-sm);
   font-style: italic;
   background-color: #f7fbff;
   border-radius: 6px;
@@ -223,11 +335,22 @@ select[readonly]:focus {
   border: 1px solid #e0eeff;
 }
 
+[data-theme='dark'] .loading-message {
+  color: var(--info-color);
+  background-color: #2a3749;
+  border: 1px solid #3182ce;
+}
+
 /* Стили для отключенной кнопки */
 .btn:disabled {
-  background-color: #cccccc;
-  color: #666666;
+  background-color: var(--secondary-color);
   cursor: not-allowed;
+  opacity: 0.7;
+}
+
+[data-theme='dark'] .btn:disabled {
+  background-color: #4a5568;
+  color: #a0aec0;
   opacity: 0.7;
 }
 
@@ -241,8 +364,8 @@ select[readonly]:focus {
 
 @media (max-width: 768px) {
   .booking-form-container {
-    padding: 20px;
-    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.06);
+    padding: var(--spacing-md);
+    border-radius: var(--border-radius-md);
   }
 
   .form-section {
@@ -250,12 +373,21 @@ select[readonly]:focus {
   }
 
   .time-slots {
-    gap: 6px;
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
   }
 
   .time-slot {
-    padding: 6px 10px;
-    font-size: 13px;
+    font-size: 0.85rem;
+    padding: 8px;
+  }
+
+  .form-actions {
+    flex-direction: column;
+  }
+
+  .btn {
+    width: 100%;
   }
 }
 
@@ -316,4 +448,14 @@ select[readonly]:focus {
   .submit-btn {
     order: 1;
   }
+}
+
+/* Анимация при появлении формы */
+@keyframes fadeIn {
+  from { opacity: 0; transform: translateY(10px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+
+.booking-form-container {
+  animation: fadeIn 0.3s ease-out;
 }

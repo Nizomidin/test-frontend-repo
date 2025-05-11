@@ -7,6 +7,8 @@ import BlockTimeForm from "./BlockTimeForm";
 import WorkScheduleForm from "./WorkScheduleForm";
 import MasterBookingManager from "./MasterBookingManager";
 import ServiceManager from "./ServiceManager";
+import CustomBookingForm from "./CustomBookingForm";
+import BookingOptionsForm from "./BookingOptionsForm";
 import { useToast } from "../Toast/ToastContext";
 
 const API_BASE = "https://api.kuchizu.online";
@@ -43,10 +45,105 @@ function MasterProfile() {
   const [bookings, setBookings] = useState([]);
   const [selectedDate, setSelectedDate] = useState(new Date());
   const [selectedBooking, setSelectedBooking] = useState(null);
-  const [error, setError] = useState(null);
-  const [isDayOff, setIsDayOff] = useState(false); // Новое состояние для отслеживания выходного дня
+  const [error, setError] = useState(null);  const [isDayOff, setIsDayOff] = useState(false); // Новое состояние для отслеживания выходного дня
   const [showBlockTimeForm, setShowBlockTimeForm] = useState(false);
+  const [showCustomBookingForm, setShowCustomBookingForm] = useState(false);  const [showBookingOptionsForm, setShowBookingOptionsForm] = useState(false);
   const [showWorkScheduleForm, setShowWorkScheduleForm] = useState(false);
+    // Функция для управления открытием/закрытием модальных окон
+  const toggleModal = (setState, value) => {
+    // Обновляем состояние модального окна
+    setState(value);
+    
+    if (value) {
+      // Блокируем скролл страницы при открытии модального окна
+      document.body.classList.add('modal-open');
+      
+      // Сохраняем текущую позицию скролла
+      const scrollPosition = window.pageYOffset || document.documentElement.scrollTop;
+      document.body.setAttribute('data-scroll-position', scrollPosition);
+      
+      // Блокируем скролл страницы
+      document.body.style.overflow = 'hidden';
+      document.body.style.position = 'fixed';
+      document.body.style.width = '100%';
+      document.body.style.top = `-${scrollPosition}px`;
+    } else {
+      // Проверяем, открыты ли другие модальные окна
+      const hasOpenModals = 
+        showBlockTimeForm || 
+        showCustomBookingForm || 
+        showBookingOptionsForm || 
+        showWorkScheduleForm || 
+        (view === "details" && value !== setView);
+      
+      // Восстанавливаем скролл только если нет других открытых окон
+      if (!hasOpenModals) {
+        // Получаем сохраненную позицию скролла
+        const scrollPosition = parseInt(document.body.getAttribute('data-scroll-position') || '0', 10);
+        
+        // Восстанавливаем стили
+        document.body.style.overflow = '';
+        document.body.style.position = '';
+        document.body.style.width = '';
+        document.body.style.top = '';
+        document.body.classList.remove('modal-open');
+        
+        // Восстанавливаем позицию скролла
+        window.scrollTo(0, scrollPosition);
+        
+        // Удаляем временные атрибуты
+        document.body.removeAttribute('data-scroll-position');
+      }
+    }
+  };
+  
+  // Функция для закрытия всех модальных окон и восстановления скролла
+  const closeAllModals = () => {
+    // Проверяем, было ли открыто какое-либо модальное окно
+    const wasAnyModalOpen = 
+      showBlockTimeForm || 
+      showCustomBookingForm || 
+      showBookingOptionsForm || 
+      showWorkScheduleForm || 
+      view === "details";
+    
+    // Закрываем все модальные окна
+    setShowBlockTimeForm(false);
+    setShowCustomBookingForm(false);
+    setShowBookingOptionsForm(false);
+    setShowWorkScheduleForm(false);
+    
+    // Если детали записи были открыты, возвращаемся к календарю
+    if (view === "details") {
+      setView("calendar");
+      setSelectedBooking(null);
+    }
+    
+    // Разблокируем скролл страницы
+    if (wasAnyModalOpen) {
+      // Получаем сохраненную позицию скролла
+      const scrollPosition = parseInt(document.body.getAttribute('data-scroll-position') || '0', 10);
+      
+      // Восстанавливаем стили
+      document.body.style.overflow = '';
+      document.body.style.position = '';
+      document.body.style.width = '';
+      document.body.style.height = '';
+      document.body.style.top = '';
+      document.body.style.left = '';
+      document.body.classList.remove('modal-open');
+      
+      // Восстанавливаем позицию скролла
+      setTimeout(() => {
+        window.scrollTo(0, scrollPosition);
+        
+        // Удаляем временные атрибуты
+        document.body.removeAttribute('data-scroll-position');
+        document.body.removeAttribute('data-previous-overflow');
+        document.body.removeAttribute('data-previous-position');
+      }, 10);
+    }
+  };
   const [showBookingManager, setShowBookingManager] = useState(false);
   const [view, setView] = useState("calendar"); // 'calendar', 'details', 'booking-manager' или 'services'
   const [isCompanyAdmin, setIsCompanyAdmin] = useState(false); // Состояние для проверки, является ли пользователь администратором компании
@@ -88,6 +185,20 @@ function MasterProfile() {
 
     fetchMasterData();
   }, [masterId]);
+  // Обработчик клавиши Escape для закрытия модальных окон
+  useEffect(() => {
+    const handleEscape = (event) => {
+      if (event.key === 'Escape') {
+        // Закрываем все модальные окна и восстанавливаем скролл
+        closeAllModals();
+      }
+    };
+    
+    document.addEventListener('keydown', handleEscape);
+    return () => {
+      document.removeEventListener('keydown', handleEscape);
+    };
+  }, [showBookingOptionsForm, showBlockTimeForm, showCustomBookingForm, showWorkScheduleForm, view]);
 
   // Функция для проверки, является ли текущий пользователь админом компании
   const checkIsCompanyAdmin = async (companyId) => {
@@ -186,22 +297,27 @@ function MasterProfile() {
     // Загружаем актуальные данные
     fetchAvailableTimes(masterId, formattedDate);
   };
-
   // Обработчик удаления записи
   const handleDeleteBooking = async (bookingId) => {
     if (!window.confirm("Вы уверены, что хотите удалить эту запись?")) {
       return;
     }
+    
+    // Проверяем, является ли запись кастомной
+    const isCustomBooking = selectedBooking && selectedBooking.is_custom;
+    const endpoint = isCustomBooking 
+        ? `${API_BASE}/custom_appointments/${bookingId}`
+        : `${API_BASE}/appointments/${bookingId}`;
 
     try {
-        const res = await fetch(`${API_BASE}/appointments/${bookingId}`, {
+        const res = await fetch(endpoint, {
         method: "DELETE",
         headers: {
           accept: "application/json"
         },
       });
 
-      if (!res.ok) throw new Error("Не удалось удалить запись");
+      if (!res.ok) throw new Error(`Не удалось удалить ${isCustomBooking ? 'кастомную ' : ''}запись`);
 
       // Если это была выбранная запись, сбрасываем выбор
       if (selectedBooking && selectedBooking.id === bookingId) {
@@ -209,18 +325,59 @@ function MasterProfile() {
         setView("calendar");
       }
       
-      showSuccess("Запись успешно удалена");
+      showSuccess(`${isCustomBooking ? 'Кастомная запись' : 'Запись'} успешно удалена`);
       
       // Автоматическое обновление страницы
       window.location.reload();
     } catch (err) {
-      console.error("Ошибка при удалении записи:", err);
-      showError(`Ошибка при удалении записи: ${err.message}`);
+      console.error(`Ошибка при удалении ${isCustomBooking ? 'кастомной ' : ''}записи:`, err);
+      showError(`Ошибка при удалении ${isCustomBooking ? 'кастомной ' : ''}записи: ${err.message}`);
     }
   };
 
+  // Обработчик удаления кастомной записи
+  const handleDeleteCustomBooking = async (bookingId) => {
+    if (!window.confirm("Вы уверены, что хотите удалить эту запись?")) {
+      return;
+    }
+
+    try {
+      const res = await fetch(`${API_BASE}/custom_appointments/${bookingId}`, {
+        method: "DELETE",
+        headers: {
+          accept: "application/json"
+        },
+      });
+
+      if (!res.ok) throw new Error("Не удалось удалить кастомную запись");
+
+      // Если это была выбранная запись, сбрасываем выбор
+      if (selectedBooking && selectedBooking.id === bookingId) {
+        setSelectedBooking(null);
+        setView("calendar");
+      }
+      
+      showSuccess("Кастомная запись успешно удалена");
+      
+      // Автоматическое обновление страницы
+      window.location.reload();
+    } catch (err) {
+      console.error("Ошибка при удалении кастомной записи:", err);
+      showError(`Ошибка при удалении кастомной записи: ${err.message}`);
+    }
+  };
   // Обработчик изменения времени записи
   const handleUpdateBooking = async (bookingId, updatedData) => {
+    // Проверяем, является ли запись кастомной
+    const isCustomBooking = selectedBooking && selectedBooking.is_custom;
+    
+    if (isCustomBooking) {
+      // Вызываем функцию обновления кастомной записи
+      await handleUpdateCustomBooking(bookingId, updatedData);
+      return;
+    }
+    
+    // Логика для обновления стандартной записи
     try {
       const res = await fetch(`${API_BASE}/appointments/${bookingId}`, {
         method: "PATCH",
@@ -249,6 +406,42 @@ function MasterProfile() {
     }
   };
 
+  // Обработчик изменения кастомной записи
+  const handleUpdateCustomBooking = async (bookingId, updatedData) => {
+    try {
+      // Проверяем структуру данных, которую ожидает API
+      const formattedData = {
+        ...updatedData,
+        master_id: masterId
+      };
+
+      const res = await fetch(`${API_BASE}/custom_appointments/${bookingId}`, {
+        method: "PATCH",
+        headers: {
+          "Content-Type": "application/json",
+          accept: "application/json"
+        },
+        body: JSON.stringify(formattedData),
+      });
+
+      if (!res.ok) throw new Error("Не удалось обновить кастомную запись");
+
+      const updatedBooking = await res.json();
+      // Обновляем выбранную запись, если она была изменена
+      if (selectedBooking && selectedBooking.id === bookingId) {
+        setSelectedBooking(updatedBooking);
+      }
+
+      showSuccess("Кастомная запись успешно обновлена");
+      
+      // Автоматическое обновление страницы
+      window.location.reload();
+    } catch (err) {
+      console.error("Ошибка при обновлении кастомной записи:", err);
+      showError(`Ошибка при обновлении кастомной записи: ${err.message}`);
+    }
+  };
+
   // Обработчик блокировки времени (личная запись мастера)
   const handleBlockTime = async (blockData) => {
     try {
@@ -262,11 +455,10 @@ function MasterProfile() {
           ...blockData,
           master_id: masterId,
         }),
-      });
+      });      if (!res.ok) throw new Error("Не удалось забронировать время");
 
-      if (!res.ok) throw new Error("Не удалось забронировать время");
-
-      setShowBlockTimeForm(false);
+      toggleModal(setShowBlockTimeForm, false);
+      toggleModal(setShowBookingOptionsForm, false);
       showSuccess("Время успешно забронировано");
       
       // Автоматически обновляем страницу для отображения актуальных данных
@@ -274,6 +466,36 @@ function MasterProfile() {
     } catch (err) {
       console.error("Ошибка при брони времени:", err);
       showError(`Ошибка при брони времени: ${err.message}`);
+    }
+  };
+  // Обработчик создания кастомной брони
+  const handleCustomBooking = async (bookingData) => {
+    try {
+      console.log("Отправляемые данные:", bookingData);
+      
+      const res = await fetch(`${API_BASE}/custom_appointments`, {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+          accept: "application/json"
+        },
+        body: JSON.stringify(bookingData),
+      });
+
+      if (!res.ok) {
+        const errorData = await res.json();        throw new Error(errorData.detail || "Не удалось создать кастомную запись");
+      }
+
+      toggleModal(setShowCustomBookingForm, false);
+      toggleModal(setShowBookingOptionsForm, false);
+      showSuccess("Кастомная запись успешно создана");
+      
+      // Обновляем данные после создания кастомной записи
+      const formattedDate = selectedDate.toISOString().split('T')[0];
+      fetchAvailableTimes(masterId, formattedDate);
+    } catch (err) {
+      console.error("Ошибка при создании кастомной записи:", err);
+      showError(`Ошибка: ${err.message}`);
     }
   };
 
@@ -352,17 +574,16 @@ function MasterProfile() {
               )}
             </div>
           </div>
-        </div>
-        <div className="master-actions">
+        </div>        <div className="master-actions">
           <button
             className="block-time-btn"
-            onClick={() => setShowBlockTimeForm(true)}
+            onClick={() => toggleModal(setShowBookingOptionsForm, true)}
           >
             Забронировать время
           </button>
           <button
             className="work-schedule-btn"
-            onClick={() => setShowWorkScheduleForm(true)}
+            onClick={() => toggleModal(setShowWorkScheduleForm, true)}
           >
             Редактировать график работы
           </button>
@@ -414,25 +635,50 @@ function MasterProfile() {
             currentMasterId={masterId} 
           />
         </div>
-      )}
-
-      {showBlockTimeForm && (
-        <div className="overlay">
-          <BlockTimeForm
-            onSubmit={handleBlockTime}
-            onCancel={() => setShowBlockTimeForm(false)}
-            selectedDate={selectedDate}
-            masterId={masterId}
-          />
+      )}      {showBlockTimeForm && (
+        <div className="overlay" onClick={() => toggleModal(setShowBlockTimeForm, false)}>
+          <div onClick={(e) => e.stopPropagation()}>
+            <BlockTimeForm
+              onSubmit={handleBlockTime}
+              onCancel={() => toggleModal(setShowBlockTimeForm, false)}
+              selectedDate={selectedDate}
+              masterId={masterId}
+            />
+          </div>
         </div>
       )}
 
-      {showWorkScheduleForm && (
-        <div className="overlay">
-          <WorkScheduleForm
-            masterId={masterId}
-            onCancel={() => setShowWorkScheduleForm(false)}
-          />
+      {showCustomBookingForm && (
+        <div className="overlay" onClick={() => toggleModal(setShowCustomBookingForm, false)}>
+          <div onClick={(e) => e.stopPropagation()}>
+            <CustomBookingForm
+              onSubmit={handleCustomBooking}
+              onCancel={() => toggleModal(setShowCustomBookingForm, false)}
+              selectedDate={selectedDate}
+              masterId={masterId}
+            />
+          </div>
+        </div>
+      )}{showBookingOptionsForm && (
+        <div className="overlay" onClick={() => toggleModal(setShowBookingOptionsForm, false)}>
+          <div onClick={(e) => e.stopPropagation()}>
+            <BookingOptionsForm
+              onSubmitStandard={handleBlockTime}
+              onSubmitCustom={handleCustomBooking}
+              onCancel={() => toggleModal(setShowBookingOptionsForm, false)}
+              selectedDate={selectedDate}
+              masterId={masterId}
+            />
+          </div>
+        </div>
+      )}      {showWorkScheduleForm && (
+        <div className="overlay" onClick={() => toggleModal(setShowWorkScheduleForm, false)}>
+          <div onClick={(e) => e.stopPropagation()}>
+            <WorkScheduleForm
+              masterId={masterId}
+              onCancel={() => toggleModal(setShowWorkScheduleForm, false)}
+            />
+          </div>
         </div>
       )}
     </div>

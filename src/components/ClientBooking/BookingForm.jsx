@@ -261,7 +261,7 @@ const BookingForm = ({ selectedService, onCancel, onSubmit, masterId }) => {
                   value={contactInfo.phone}
                   onChange={handleInputChange}
                   required
-                  placeholder="+7 (___) ___-__-__"
+                  placeholder="+992 (___) ___-__-__"
                   className={clientId ? "field-autofilled" : ""}
                   readOnly={!!clientId}
                 />

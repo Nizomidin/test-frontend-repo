@@ -186,12 +186,12 @@ const Register = () => {
 
     switch (field) {
       case 'firstName':
-        isValid = value.length >= 2 && value.length <= 50;
-        errorMessage = isValid ? '' : 'Имя должно содержать от 2 до 50 символов';
+        isValid = value.length >= 5 && value.length <= 50;
+        errorMessage = isValid ? '' : 'ФИО должно содержать от 5 до 50 символов';
         break;
       case 'lastName':
         isValid = value.length >= 2 && value.length <= 50;
-        errorMessage = isValid ? '' : 'Фамилия должна содержать от 2 до 50 символов';
+        errorMessage = isValid ? '' : 'Профессия должна содержать от 2 до 50 символов';
         break;
       case 'telegramHandle':
         // Если поле пустое, считаем его валидным
@@ -527,7 +527,7 @@ const Register = () => {
             <h3>Шаг 1: Личная информация</h3>
             
             <div className="form-group">
-              <label htmlFor="firstName">Имя</label>
+              <label htmlFor="firstName">ФИО</label>
               <input 
                 type="text" 
                 id="firstName" 
@@ -545,7 +545,7 @@ const Register = () => {
             </div>
             
             <div className="form-group">
-              <label htmlFor="lastName">Фамилия</label>
+              <label htmlFor="lastName">Профессия</label>
               <input 
                 type="text" 
                 id="lastName" 

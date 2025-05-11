@@ -32,24 +32,34 @@ function MasterCalendar({
       return null;
     }
   }
-
   // Получение записей с API
   useEffect(() => {
     const fetchBookings = async () => {
       setIsLoading(true);
       setError(null);
       try {
-        const response = await fetch("https://api.kuchizu.online/appointments");
-        if (!response.ok) {
+        // Получаем стандартные записи
+        const responseAppointments = await fetch("https://api.kuchizu.online/appointments");
+        if (!responseAppointments.ok) {
           throw new Error("Не удалось загрузить данные о бронированиях");
         }
-        const data = await response.json();
-        const filteredData = data.filter(
+        const appointmentsData = await responseAppointments.json();
+        const filteredAppointments = appointmentsData.filter(
+          (item) => item.master_id === master_id && item.status === 'booked'
+        );
+
+        // Получаем кастомные записи
+        const responseCustom = await fetch("https://api.kuchizu.online/custom_appointments");
+        if (!responseCustom.ok) {
+          throw new Error("Не удалось загрузить данные о кастомных бронированиях");
+        }
+        const customData = await responseCustom.json();
+        const filteredCustom = customData.filter(
           (item) => item.master_id === master_id && item.status === 'booked'
         );
         
         // Получаем уникальные service_id из всех бронирований
-        const uniqueServiceIds = [...new Set(filteredData.map(booking => booking.service_id))];
+        const uniqueServiceIds = [...new Set(filteredAppointments.map(booking => booking.service_id))];
         
         // Получаем названия услуг для всех уникальных service_id
         const serviceNamesMap = {};
@@ -60,7 +70,9 @@ function MasterCalendar({
           }
         }
         setServiceNames(serviceNamesMap);
-        setApiBookings(filteredData);
+        
+        // Объединяем стандартные и кастомные записи
+        setApiBookings([...filteredAppointments, ...filteredCustom]);
       } catch (err) {
         console.error("Ошибка при загрузке бронирований:", err);
         setError(err.message);
@@ -71,23 +83,44 @@ function MasterCalendar({
 
     fetchBookings();
   }, [master_id]);
-
   // Комбинируем бронирования из пропсов и API
   const allBookings = [
     ...(propBookings || []),
-    ...apiBookings.map((booking) => ({
-      id: booking.id,
-      client_name: booking.client_name,
-      service_id: booking.service_id,
-      service_name: serviceNames[booking.service_id] || "Услуга",
-      appointment_datetime: booking.appointment_datetime,
-      start_time: booking.appointment_datetime, // Для обратной совместимости
-      is_blocked: booking.status === "blocked",
-      is_personal: booking.status === "personal",
-      comment: booking.comment,
-      // Добавляем оригинальные данные для возможного использования
-      original_data: booking,
-    })),
+    ...apiBookings.map((booking) => {
+      // Проверяем, является ли бронирование кастомным (по наличию полей start_time и end_time в формате YYYY-MM-DD HH:MM)
+      const isCustom = booking.start_time && booking.start_time.includes(' ');
+      
+      if (isCustom) {
+        // Обработка кастомного бронирования
+        return {
+          id: booking.id,
+          client_name: booking.client_name,
+          service_name: booking.service_name, // У кастомных есть сразу service_name
+          start_time: booking.start_time,
+          end_time: booking.end_time,
+          is_blocked: booking.status === "blocked",
+          is_personal: booking.status === "personal",
+          comment: booking.comment,
+          is_custom: true,
+          original_data: booking,
+        };
+      } else {
+        // Обработка стандартного бронирования
+        return {
+          id: booking.id,
+          client_name: booking.client_name,
+          service_id: booking.service_id,
+          service_name: serviceNames[booking.service_id] || "Услуга",
+          appointment_datetime: booking.appointment_datetime,
+          start_time: booking.appointment_datetime, // Для обратной совместимости
+          is_blocked: booking.status === "blocked",
+          is_personal: booking.status === "personal",
+          comment: booking.comment,
+          is_custom: false,
+          original_data: booking,
+        };
+      }
+    }),
   ];
 
   // Переход к предыдущему дню
@@ -129,17 +162,34 @@ function MasterCalendar({
       selectedDate.getFullYear() === date.getFullYear()
     );
   };
-
   // Получение записей для определенного дня
   const getDayBookings = (date) => {
     return allBookings.filter((booking) => {
-      // Проверяем наличие разных полей с датой (date, start_time, appointment_datetime)
-      const dateField = booking.date || booking.start_time || booking.appointment_datetime || 
-                       (booking.original_data && booking.original_data.appointment_datetime);
+      // Проверяем наличие разных полей с датой и выбираем подходящее
+      let dateField;
+      
+      if (booking.is_custom) {
+        // Для кастомных бронирований используем start_time
+        dateField = booking.start_time;
+      } else {
+        // Для стандартных бронирований проверяем разные поля
+        dateField = booking.date || booking.start_time || booking.appointment_datetime || 
+                   (booking.original_data && booking.original_data.appointment_datetime);
+      }
       
       if (!dateField) return false;
       
-      const bookingDate = new Date(dateField);
+      // Преобразуем строку в объект Date
+      let bookingDate = new Date(dateField);
+      
+      // Если это формат "YYYY-MM-DD HH:MM", разберем его вручную
+      if (typeof dateField === 'string' && dateField.includes(' ')) {
+        const [datePart, timePart] = dateField.split(' ');
+        const [year, month, day] = datePart.split('-').map(Number);
+        // Учитываем, что месяцы в объекте Date начинаются с 0
+        bookingDate = new Date(year, month - 1, day);
+      }
+      
       return (
         bookingDate.getDate() === date.getDate() &&
         bookingDate.getMonth() === date.getMonth() &&
@@ -176,10 +226,18 @@ function MasterCalendar({
 
     return dates;
   };
-
   // Форматирование времени
   const formatTime = (dateStr) => {
     if (!dateStr) return "—";
+    
+    // Проверяем формат строки
+    if (typeof dateStr === 'string' && dateStr.includes(' ')) {
+      // Для строк в формате "YYYY-MM-DD HH:MM" извлекаем время
+      const timePart = dateStr.split(' ')[1];
+      return timePart;
+    }
+    
+    // Для других форматов используем встроенное форматирование
     const date = new Date(dateStr);
     return date.toLocaleTimeString([], { hour: "2-digit", minute: "2-digit" });
   };
@@ -202,7 +260,6 @@ function MasterCalendar({
     "Ноября",
     "Декабря",
   ];
-
   // Отрисовка дней
   const renderDays = () => {
     return getDatesForDisplay().map((date, index) => {
@@ -235,6 +292,8 @@ function MasterCalendar({
                       ? "blocked"
                       : booking.is_personal
                       ? "personal"
+                      : booking.is_custom
+                      ? "custom"
                       : ""
                   }`}
                 >
@@ -242,7 +301,7 @@ function MasterCalendar({
                     {formatTime(booking.start_time)}
                   </span>
                   <span className="booking-title">
-                    {booking.service_name || "Личное время"}
+                    {booking.service_name || (booking.is_custom ? "Кастомная запись" : "Личное время")}
                   </span>
                 </div>
               ))}
@@ -261,13 +320,25 @@ function MasterCalendar({
       );
     });
   };
-
   // Отображение расписания на выбранный день
   const renderSelectedDaySchedule = () => {
     const dayBookings = getDayBookings(selectedDate).sort((a, b) => {
-      const timeA = a.start_time ? new Date(a.start_time).getTime() : 0;
-      const timeB = b.start_time ? new Date(b.start_time).getTime() : 0;
-      return timeA - timeB;
+      // Получаем временную метку из start_time
+      const getTimeValue = (booking) => {
+        const timeStr = booking.start_time;
+        if (typeof timeStr === 'string' && timeStr.includes(' ')) {
+          // Формат "YYYY-MM-DD HH:MM"
+          const [datePart, timePart] = timeStr.split(' ');
+          const [hours, minutes] = timePart.split(':').map(Number);
+          const [year, month, day] = datePart.split('-').map(Number);
+          // Создаем объект Date для сравнения (месяцы в Date начинаются с 0)
+          return new Date(year, month - 1, day, hours, minutes).getTime();
+        }
+        // Для стандартного формата
+        return timeStr ? new Date(timeStr).getTime() : 0;
+      };
+      
+      return getTimeValue(a) - getTimeValue(b);
     });
 
     if (dayBookings.length === 0) {
@@ -294,6 +365,8 @@ function MasterCalendar({
                     ? "blocked"
                     : booking.is_personal
                     ? "personal"
+                    : booking.is_custom
+                    ? "custom"
                     : ""
                 }`}
                 onClick={() => onSelectBooking(booking)}
@@ -304,7 +377,7 @@ function MasterCalendar({
                 </div>
                 <div className="booking-info">
                   <div className="booking-title">
-                    {booking.service_name || "Личное время"}
+                    {booking.service_name || (booking.is_custom ? "Кастомная запись" : "Личное время")}
                   </div>
                   <div className="booking-client">
                     {booking.client_name ||

@@ -12,9 +12,34 @@
   position: relative; /* Для правильного позиционирования крестика */
 }
 
-.block-time-form {
+/* Встроенный режим - без тени и отступов контейнера */
+.block-time-form-container.embedded {
+  margin: 0;
+  padding: 0;
+  box-shadow: none;
   width: 100%;
-  position: relative; /* Для правильного позиционирования внутренних элементов */
+  max-width: 100%;
+  max-height: none;
+  border-radius: 0;
+}
+
+.block-time-form {
+  background-color: white;
+  border-radius: 8px;
+  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.15);
+  width: 100%;
+  padding: 20px;
+  max-width: 600px;
+  margin: 0 auto;
+  position: relative;
+}
+
+/* Встроенный режим формы */
+.block-time-form.embedded {
+  padding: 15px;
+  box-shadow: none;
+  border-radius: 0;
+  max-width: 100%;
 }
 
 .form-header {
@@ -43,14 +68,37 @@
   cursor: pointer;
   color: #999;
   transition: color 0.2s;
-  position: absolute;
-  right: 0;
-  top: 0;
-  z-index: 10; /* Обеспечивает отображение поверх других элементов */
+  z-index: 10;
 }
 
 .close-button:hover {
   color: #333;
+}
+
+@media (max-width: 576px) {
+  .close-button {
+    font-size: 28px;
+    width: 36px;
+    height: 36px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background-color: rgba(231, 76, 60, 0.1);
+    border: 1px solid rgba(231, 76, 60, 0.3);
+    color: #e74c3c;
+    border-radius: 50%;
+    position: absolute;
+    top: 10px;
+    right: 10px;
+    z-index: 20;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+  }
+  
+  .close-button:hover,
+  .close-button:active {
+    background-color: #e74c3c;
+    color: white;
+  }
 }
 
 .form-group {
@@ -162,66 +210,56 @@
     max-width: 100%;
   }
 }
-/* Контейнер доступных слотов: сетка с гибкой шириной */
+/* Улучшение стилей для временных слотов */
 .available-time-slots {
   display: grid;
-  /* меньше минимум — больше карточек в ряд */
-  grid-template-columns: repeat(auto-fill, minmax(100px, 1fr));
-  gap: 6px;
-  max-height: 200px; /* Уменьшили максимальную высоту */
-  overflow-y: auto;
-  padding-right: 4px;
+  grid-template-columns: repeat(auto-fill, minmax(140px, 1fr));
+  gap: 12px;
+  margin-top: 10px;
 }
 
-/* Одиночный слот */
 .time-slot {
-  border: 1px solid #ddd;
-  border-radius: 4px;
+  background-color: #f5f7fa;
+  border: 1px solid #e1e4e8;
+  border-radius: 6px;
+  padding: 10px;
   cursor: pointer;
+  transition: all 0.2s ease;
   display: flex;
   flex-direction: column;
-  align-items: center;
-  background-color: #fafafa;
-  transition: background-color 0.2s, border-color 0.2s;
-  min-height: 70px; 
-  justify-content: center;
-  text-align: center; 
-  padding: 6px 8px; 
-  min-height: 60px; /* было 70px */
-  font-size: 0.85rem; /* уменьшили общий размер шрифта */
-  justify-content: center;
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.05);
 }
 
-/* Hover-эффект для слота */
 .time-slot:hover {
-  background-color: #f0f8ff;
-  border-color: #b3d4fc;
+  border-color: #c0c7d1;
+  background-color: #f8f9fb;
+  transform: translateY(-2px);
 }
 
-/* Выбранный слот */
 .time-slot.selected {
-  background-color: #4a90e2;
+  background-color: #e6f3ff;
   border-color: #4a90e2;
-  color: #fff;
+  box-shadow: 0 0 0 1px #4a90e2;
 }
 
-/* Время в слоте (первый ряд) */
 .slot-time {
-  font-weight: 600;
+  font-weight: 500;
+  color: #2c3e50;
   margin-bottom: 4px;
 }
 
-/* Название услуги в слоте (второй ряд) */
 .slot-service {
-  font-size: 0.875rem;
-  color: inherit; /* унаследует цвет при selected */
-  text-align: center;
+  font-size: 0.8rem;
+  color: #7f8c8d;
 }
 
-/* Если нужно добавить небольшой отступ между селектом и слотами */
-.form-group + .available-time-slots {
-  margin-top: 5px;
+@media (max-width: 480px) {
+  .available-time-slots {
+    grid-template-columns: repeat(auto-fill, minmax(120px, 1fr));
+    gap: 8px;
+  }
 }
+
 @media (max-width: 992px) {
   /* чуть уже форма на планшетах */
   .block-time-form-container {

@@ -1,0 +1,571 @@
+/**
+ * Стили для страницы клиентского бронирования
+ */
+
+.client-booking-page {
+  width: 100%;
+  max-width: 1200px;
+  margin: 0 auto;
+  padding: 20px;
+  font-family: 'Roboto', sans-serif;
+}
+
+/* Стили для шапки с информацией о клиенте */
+.client-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
+  margin-bottom: 30px;
+  padding-bottom: 20px;
+  border-bottom: 1px solid #e0e0e0;
+}
+
+.client-info {
+  display: flex;
+  align-items: center;
+}
+
+.client-photo-container {
+  width: 100px;
+  height: 100px;
+  border-radius: 50%;
+  overflow: hidden;
+  margin-right: 20px;
+  background-color: #f0f0f0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.client-photo {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+
+.client-photo-placeholder {
+  width: 100%;
+  height: 100%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background-color: #e0e0e0;
+  font-size: 40px;
+  font-weight: bold;
+  color: #666;
+}
+
+.client-details {
+  display: flex;
+  flex-direction: column;
+}
+
+.client-name {
+  margin: 0 0 10px 0;
+  font-size: 24px;
+  font-weight: 500;
+}
+
+.photo-upload {
+  margin-top: 10px;
+}
+
+.upload-photo-button {
+  background-color: #f0f0f0;
+  border: 1px solid #ccc;
+  border-radius: 4px;
+  padding: 8px 15px;
+  cursor: pointer;
+  font-size: 14px;
+  transition: background-color 0.3s;
+}
+
+.upload-photo-button:hover {
+  background-color: #e0e0e0;
+}
+
+.upload-photo-button:disabled {
+  background-color: #f0f0f0;
+  cursor: not-allowed;
+  opacity: 0.6;
+}
+
+/* Стили для информации о мастере */
+.master-info {
+  text-align: right;
+  padding: 10px;
+  border-radius: 8px;
+  background-color: #f9f9f9;
+}
+
+.master-info h2 {
+  margin: 0 0 10px 0;
+  font-size: 20px;
+  font-weight: 500;
+  color: #333;
+}
+
+.master-name {
+  font-size: 18px;
+  font-weight: bold;
+  margin-bottom: 5px;
+}
+
+.master-category {
+  font-size: 16px;
+  margin-bottom: 5px;
+  color: #666;
+}
+
+.master-address {
+  font-size: 14px;
+  color: #666;
+}
+
+/* Главный контент страницы */
+.client-booking-content {
+  display: grid;
+  grid-template-columns: 1fr 1fr 1fr;
+  gap: 20px;
+}
+
+@media (max-width: 992px) {
+  .client-booking-content {
+    grid-template-columns: 1fr 1fr;
+  }
+  
+  .history-section {
+    grid-column: span 2;
+  }
+}
+
+@media (max-width: 768px) {
+  .client-booking-content {
+    grid-template-columns: 1fr;
+  }
+  
+  .history-section {
+    grid-column: span 1;
+  }
+  
+  .client-header {
+    flex-direction: column;
+  }
+  
+  .master-info {
+    text-align: left;
+    margin-top: 20px;
+    width: 100%;
+  }
+}
+
+/* Стили для списка услуг */
+.services-section {
+  background-color: #fff;
+  border-radius: 8px;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+  overflow: hidden;
+  height: 100%;
+}
+
+.service-list-container {
+  display: flex;
+  flex-direction: column;
+  height: 100%;
+}
+
+.service-filter {
+  padding: 15px;
+  border-bottom: 1px solid #e0e0e0;
+}
+
+.service-filter-input {
+  width: 100%;
+  padding: 10px;
+  border: 1px solid #ccc;
+  border-radius: 4px;
+  font-size: 14px;
+}
+
+.services-list {
+  flex: 1;
+  overflow-y: auto;
+  max-height: 500px;
+}
+
+.service-item {
+  padding: 15px;
+  border-bottom: 1px solid #e0e0e0;
+  cursor: pointer;
+  transition: background-color 0.3s;
+}
+
+.service-item:hover {
+  background-color: #f5f5f5;
+}
+
+.service-item.selected {
+  background-color: #e3f2fd;
+  border-left: 4px solid #1976d2;
+}
+
+.service-item-name {
+  font-weight: 500;
+  margin-bottom: 5px;
+}
+
+.service-item-details {
+  display: flex;
+  justify-content: space-between;
+  color: #666;
+  font-size: 14px;
+}
+
+.no-services {
+  padding: 20px;
+  text-align: center;
+  color: #666;
+}
+
+/* Стили для формы бронирования */
+.booking-section {
+  background-color: #fff;
+  border-radius: 8px;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+  padding: 20px;
+}
+
+.booking-form-container h3 {
+  margin-top: 0;
+  margin-bottom: 20px;
+  color: #333;
+}
+
+.no-service-selected {
+  text-align: center;
+  padding: 30px 0;
+  color: #666;
+  font-style: italic;
+}
+
+.selected-service-info {
+  margin-bottom: 20px;
+  padding: 15px;
+  background-color: #f9f9f9;
+  border-radius: 6px;
+}
+
+.selected-service-info h4 {
+  margin-top: 0;
+  margin-bottom: 10px;
+  color: #333;
+}
+
+.service-name {
+  font-weight: 500;
+  font-size: 16px;
+  margin-bottom: 5px;
+}
+
+.service-details {
+  display: flex;
+  justify-content: space-between;
+  color: #666;
+}
+
+.date-selector {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: 20px;
+}
+
+.date-nav-button {
+  width: 40px;
+  height: 40px;
+  border: 1px solid #ccc;
+  background-color: #f0f0f0;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  font-size: 18px;
+  font-weight: bold;
+  transition: background-color 0.3s;
+}
+
+.date-nav-button:hover {
+  background-color: #e0e0e0;
+}
+
+.date-nav-button:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+}
+
+.selected-date {
+  font-size: 16px;
+  font-weight: 500;
+}
+
+.time-slots-container {
+  margin-bottom: 20px;
+}
+
+.time-slots-container h4 {
+  margin-top: 0;
+  margin-bottom: 10px;
+  color: #333;
+}
+
+.time-slots {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 10px;
+}
+
+.time-slot-button {
+  padding: 10px;
+  border: 1px solid #ccc;
+  border-radius: 4px;
+  background-color: #fff;
+  cursor: pointer;
+  transition: all 0.3s;
+  font-size: 14px;
+}
+
+.time-slot-button:hover {
+  background-color: #f0f0f0;
+}
+
+.time-slot-button.selected {
+  background-color: #1976d2;
+  color: #fff;
+  border-color: #1976d2;
+}
+
+.loading-slots, .no-slots {
+  text-align: center;
+  padding: 15px;
+  color: #666;
+}
+
+.booking-comments {
+  margin-bottom: 20px;
+}
+
+.booking-comments label {
+  display: block;
+  margin-bottom: 5px;
+  font-size: 14px;
+  color: #333;
+}
+
+.booking-comments textarea {
+  width: 100%;
+  border: 1px solid #ccc;
+  border-radius: 4px;
+  padding: 10px;
+  font-size: 14px;
+  resize: vertical;
+}
+
+.create-booking-button {
+  width: 100%;
+  padding: 12px;
+  background-color: #1976d2;
+  color: #fff;
+  border: none;
+  border-radius: 4px;
+  font-size: 16px;
+  cursor: pointer;
+  transition: background-color 0.3s;
+}
+
+.create-booking-button:hover {
+  background-color: #1565c0;
+}
+
+.create-booking-button:disabled {
+  background-color: #b0bec5;
+  cursor: not-allowed;
+}
+
+/* Стили для истории бронирований */
+.history-section {
+  background-color: #fff;
+  border-radius: 8px;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+  padding: 20px;
+}
+
+.booking-history-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 15px;
+}
+
+.booking-history-header h3 {
+  margin: 0;
+  color: #333;
+}
+
+.booking-filter-tabs {
+  display: flex;
+}
+
+.filter-tab {
+  padding: 8px 12px;
+  border: none;
+  background-color: transparent;
+  cursor: pointer;
+  border-bottom: 2px solid transparent;
+  color: #666;
+  font-size: 14px;
+  transition: all 0.3s;
+}
+
+.filter-tab.active {
+  border-bottom-color: #1976d2;
+  color: #1976d2;
+  font-weight: 500;
+}
+
+.booking-list {
+  max-height: 500px;
+  overflow-y: auto;
+}
+
+.booking-item {
+  padding: 15px;
+  border: 1px solid #e0e0e0;
+  border-radius: 6px;
+  margin-bottom: 10px;
+}
+
+.booking-item-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 10px;
+}
+
+.booking-service-name {
+  font-weight: 500;
+  font-size: 16px;
+}
+
+.booking-status {
+  font-size: 14px;
+  color: #1976d2;
+  background-color: #e3f2fd;
+  padding: 4px 8px;
+  border-radius: 4px;
+}
+
+.booking-details {
+  margin-bottom: 15px;
+  font-size: 14px;
+  color: #666;
+}
+
+.booking-details > div {
+  margin-bottom: 5px;
+}
+
+.booking-actions {
+  display: flex;
+  justify-content: flex-end;
+  gap: 10px;
+}
+
+.edit-booking-button,
+.cancel-booking-button {
+  padding: 8px 12px;
+  border-radius: 4px;
+  font-size: 14px;
+  cursor: pointer;
+  transition: background-color 0.3s;
+}
+
+.edit-booking-button {
+  background-color: #f0f0f0;
+  color: #333;
+  border: 1px solid #ccc;
+}
+
+.edit-booking-button:hover {
+  background-color: #e0e0e0;
+}
+
+.cancel-booking-button {
+  background-color: #ffebee;
+  color: #d32f2f;
+  border: 1px solid #ffcdd2;
+}
+
+.cancel-booking-button:hover {
+  background-color: #ffcdd2;
+}
+
+.no-bookings {
+  padding: 20px;
+  text-align: center;
+  color: #666;
+  font-style: italic;
+}
+
+/* Общие стили для индикаторов загрузки и ошибок */
+.loading-spinner {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  min-height: 200px;
+  font-size: 18px;
+  color: #666;
+}
+
+.error-container {
+  text-align: center;
+  padding: 30px;
+  max-width: 600px;
+  margin: 0 auto;
+}
+
+.error-container h2 {
+  color: #d32f2f;
+  margin-bottom: 10px;
+}
+
+.error-container button {
+  margin-top: 15px;
+  padding: 10px 15px;
+  background-color: #1976d2;
+  color: #fff;
+  border: none;
+  border-radius: 4px;
+  cursor: pointer;
+}
+
+.not-found {
+  text-align: center;
+  padding: 50px 20px;
+}
+
+.not-found h2 {
+  font-size: 24px;
+  margin-bottom: 10px;
+}
+
+.not-found button {
+  margin-top: 20px;
+  padding: 10px 20px;
+  background-color: #1976d2;
+  color: #fff;
+  border: none;
+  border-radius: 4px;
+  cursor: pointer;
+  font-size: 16px;
+}

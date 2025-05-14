@@ -1,104 +1,164 @@
-# Getting Started with Create React App
+# Booking App Frontend
 
-This project was bootstrapped with [Create React App](https://github.com/facebook/create-react-app).
+Фронтенд-приложение для онлайн-бронирования услуг мастеров. Разработано с использованием React и следуя принципам Clean Architecture.
 
-## Available Scripts
+## Структура проекта
 
-In the project directory, you can run:
+Проект организован согласно принципам Clean Architecture для обеспечения лучшей масштабируемости и поддержки кода:
 
-### `npm start`
+```
+src/
+├── api/                # API слой для коммуникации с бэкендом
+│   ├── apiConfig.js    # Базовая конфигурация API (URL, общие методы)
+│   ├── masterApi.js    # API для работы с мастерами
+│   ├── bookingApi.js   # API для работы с бронированиями
+│   ├── servicesApi.js  # API для работы с услугами
+│   └── clientApi.js    # API для работы с клиентами
+│
+├── components/         # UI компоненты приложения
+│   ├── ui/             # Переиспользуемые UI компоненты
+│   │   ├── Toast/      # Компонент уведомлений
+│   │   └── ...
+│   └── pages/          # Страницы приложения
+│       ├── MasterProfilePage.jsx
+│       ├── RegisterPage.jsx
+│       ├── ClientBookingPage.jsx
+│       └── ...
+│
+├── contexts/           # React контексты
+│   └── ToastContext.jsx  # Контекст для уведомлений
+│
+├── hooks/              # Кастомные React хуки
+│   ├── useMasterData.js # Хук для работы с данными мастера
+│   ├── useAppointments.js # Хук для работы с записями
+│   ├── useClientData.js # Хук для работы с данными клиента
+│   ├── useServices.js  # Хук для работы с услугами
+│   └── ...
+│
+├── services/           # Бизнес-логика приложения
+│   └── ...
+│
+├── utils/              # Утилиты и хелперы
+│   ├── dateUtils.js    # Утилиты для работы с датами
+│   └── ...
+│
+├── App.jsx             # Основной компонент приложения
+└── index.js            # Точка входа
+```
 
-Runs the app in the development mode.\
-Open [http://localhost:3000](http://localhost:3000) to view it in your browser.
+## Основные функциональные возможности
 
-The page will reload when you make changes.\
-You may also see any lint errors in the console.
+1. **Профиль мастера**
+   - Просмотр и редактирование информации о мастере
+   - Управление графиком работы
+   - Управление услугами
+
+2. **Бронирование клиентов**
+   - Выбор услуги из списка доступных
+   - Выбор времени для бронирования
+   - Просмотр истории бронирований
+   - Отмена или изменение бронирований
+
+3. **Регистрация**
+   - Регистрация новых мастеров
+   - Форма для заполнения основной информации
+
+## Технический стек
+
+- **React** - фреймворк для UI
+- **React Router** - маршрутизация
+- **Axios** - HTTP клиент
+- **date-fns** - работа с датами
+
+## Установка и запуск проекта
+
+1. Клонировать репозиторий
+```bash
+git clone https://github.com/your-username/booking-app-frontend.git
+cd booking-app-frontend
+```
+
+2. Установить зависимости
+```bash
+npm install
+```
+
+3. Создать файл `.env` в корневой директории проекта со следующим содержимым:
+```
+REACT_APP_API_BASE=http://localhost:3000/api
+```
+
+4. Запустить приложение в режиме разработки
+```bash
+npm start
+```
+
+5. Приложение будет доступно по адресу [http://localhost:3000](http://localhost:3000)
+
+## Разработка
+
+### Добавление новой страницы
+1. Создайте новый файл в `src/components/pages/`
+2. При необходимости создайте UI компоненты в `src/components/ui/`
+3. Создайте необходимые API методы в соответствующем API файле
+4. Создайте кастомные хуки для работы с данными
+5. Добавьте маршрут в `App.jsx`
+
+### Стиль кода
+- Используйте функциональные компоненты
+- Используйте React хуки для управления состоянием
+- Придерживайтесь принципа единой ответственности для компонентов
+- Выносите бизнес-логику в хуки и сервисы
+- Используйте контексты для глобального состояния
+
+## Тестирование
 
 ### `npm test`
 
-Launches the test runner in the interactive watch mode.\
-See the section about [running tests](https://facebook.github.io/create-react-app/docs/running-tests) for more information.
+Запускает средство запуска тестов в интерактивном режиме наблюдения.
+
+### Тестирование кастомных бронирований (устаревшее)
+
+Для тестирования удаления и редактирования кастомных бронирований можно использовать консольные вызовы API.
+
+```javascript
+// Импортируем API из нового слоя
+import bookingApi from './api/bookingApi';
+
+// Создать новое бронирование
+bookingApi.createBooking({
+  masterId: "идентификатор_мастера",
+  clientId: "идентификатор_клиента",
+  serviceId: "идентификатор_услуги",
+  startTime: "2023-11-30T15:00:00.000Z",
+  comments: "Комментарий к бронированию"
+});
+
+// Обновить бронирование
+bookingApi.updateBooking("идентификатор_бронирования", {
+  startTime: "2023-11-30T16:00:00.000Z",
+  comments: "Обновленный комментарий"
+});
+
+// Удалить бронирование
+bookingApi.deleteBooking("идентификатор_бронирования");
+```
+
+## Сборка для продакшена
 
 ### `npm run build`
 
-Builds the app for production to the `build` folder.\
-It correctly bundles React in production mode and optimizes the build for the best performance.
+Собирает приложение для производства в папку `build`.
+Он правильно связывает React в производственном режиме и оптимизирует сборку для достижения наилучшей производительности.
 
-The build is minified and the filenames include the hashes.\
-Your app is ready to be deployed!
+Сборка минимизируется, а имена файлов включают хеши.
+Ваше приложение готово к развертыванию!
 
-See the section about [deployment](https://facebook.github.io/create-react-app/docs/deployment) for more information.
+## Авторы
+- Team Name
 
-### `npm run eject`
-
-**Note: this is a one-way operation. Once you `eject`, you can't go back!**
-
-If you aren't satisfied with the build tool and configuration choices, you can `eject` at any time. This command will remove the single build dependency from your project.
-
-Instead, it will copy all the configuration files and the transitive dependencies (webpack, Babel, ESLint, etc) right into your project so you have full control over them. All of the commands except `eject` will still work, but they will point to the copied scripts so you can tweak them. At this point you're on your own.
-
-You don't have to ever use `eject`. The curated feature set is suitable for small and middle deployments, and you shouldn't feel obligated to use this feature. However we understand that this tool wouldn't be useful if you couldn't customize it when you are ready for it.
-
-## Learn More
-
-You can learn more in the [Create React App documentation](https://facebook.github.io/create-react-app/docs/getting-started).
-
-To learn React, check out the [React documentation](https://reactjs.org/).
-
-### Code Splitting
-
-This section has moved here: [https://facebook.github.io/create-react-app/docs/code-splitting](https://facebook.github.io/create-react-app/docs/code-splitting)
-
-## Тестирование кастомных бронирований
-
-Для тестирования удаления и редактирования кастомных бронирований используйте скрипт `src/test_custom_bookings.js`. Этот скрипт может быть импортирован в приложение и запущен в консоли браузера.
-
-### Использование в консоли браузера
-
-1. Откройте приложение в браузере
-2. Откройте консоль разработчика (F12 или Ctrl+Shift+I)
-3. Выполните следующие команды:
-
-```javascript
-// Создать тестовое кастомное бронирование
-window.testCustomBooking.create()
-
-// Обновить тестовое кастомное бронирование (замените ID на реальный)
-window.testCustomBooking.update(123, {
-  client_name: "Новое имя клиента",
-  service_name: "Новая услуга",
-  comment: "Новый комментарий"
-})
-
-// Удалить тестовое кастомное бронирование (замените ID на реальный)
-window.testCustomBooking.delete(123)
-
-// Запустить полный цикл тестирования 
-// (создание, обновление, удаление)
-window.testCustomBooking.runTests()
-```
-
-### Добавление скрипта в приложение
-
-Для использования тестового скрипта, добавьте следующую строку в `src/index.js`:
-
-```javascript
-import './test_custom_bookings.js'; // Импорт для тестирования кастомных бронирований
-```
-
-После этого тестовые функции будут доступны в объекте `window.testCustomBooking`.
-
-### Analyzing the Bundle Size
-
-This section has moved here: [https://facebook.github.io/create-react-app/docs/analyzing-the-bundle-size](https://facebook.github.io/create-react-app/docs/analyzing-the-bundle-size)
-
-### Making a Progressive Web App
-
-This section has moved here: [https://facebook.github.io/create-react-app/docs/making-a-progressive-web-app](https://facebook.github.io/create-react-app/docs/making-a-progressive-web-app)
-
-### Advanced Configuration
-
-This section has moved here: [https://facebook.github.io/create-react-app/docs/advanced-configuration](https://facebook.github.io/create-react-app/docs/advanced-configuration)
+## Лицензия
+MIT
 
 ### Deployment
 

@@ -1,0 +1,345 @@
+/* =========================================
+   ServiceManager.css — с префиксом sm-
+   ========================================= */
+
+/* -----------------------------------------
+   1. Override для классов, которые могут 
+      перебиваться глобальными reset-ами или 
+      библиотеками
+   ----------------------------------------- */
+.sm-service-manager .sm-add-service-btn {
+  background-color: #4a90e2 !important;
+  color: #fff !important;
+  border: none !important;
+  border-radius: 6px !important;
+  padding: 12px 18px !important;
+  font-size: 1.05rem !important;
+  font-weight: 500 !important;
+  letter-spacing: 0.3px !important;
+  cursor: pointer !important;
+  transition: all 0.3s ease !important;
+  box-shadow: 0 4px 6px rgba(74, 144, 226, 0.25) !important;
+  display: flex !important;
+  align-items: center !important;
+  justify-content: center !important;
+  position: relative !important;
+  overflow: hidden !important;
+}
+
+.sm-service-manager .sm-add-service-btn:before {
+  content: "+" !important;
+  margin-right: 8px !important;
+  font-size: 1.2rem !important;
+  font-weight: 400 !important;
+}
+
+.sm-service-manager .sm-add-service-btn:hover {
+  background-color: #3a7bc8 !important;
+  transform: translateY(-2px) !important;
+  box-shadow: 0 6px 12px rgba(74, 144, 226, 0.35) !important;
+}
+
+.sm-service-manager .sm-add-service-btn:active {
+  transform: translateY(1px) !important;
+  box-shadow: 0 2px 4px rgba(74, 144, 226, 0.2) !important;
+}
+
+/* -----------------------------------------
+     2. Основной контейнер
+     ----------------------------------------- */
+.sm-service-manager {
+  background-color: white;
+  border-radius: 8px;
+  box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+  padding: 20px;
+  margin-bottom: 20px;
+  width: 100%;
+}
+
+/* -----------------------------------------
+     3. Заголовок с кнопкой добавления
+     ----------------------------------------- */
+.sm-service-manager-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 20px;
+  padding-bottom: 15px;
+  border-bottom: 1px solid #eee;
+}
+
+.sm-service-manager-header h2 {
+  margin: 0;
+  font-size: 1.5rem;
+  color: #333;
+  font-weight: 500;
+}
+
+/* -----------------------------------------
+     4. Сообщение об отсутствии услуг
+     ----------------------------------------- */
+.sm-no-services-message {
+  padding: 30px 0;
+  text-align: center;
+  color: #777;
+  font-size: 1rem;
+  background-color: #f9f9f9;
+  border-radius: 6px;
+  margin: 20px 0;
+}
+
+/* -----------------------------------------
+     5. Список услуг
+     ----------------------------------------- */
+.sm-services-list {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(320px, 1fr));
+  gap: 15px;
+  width: 100%;
+}
+
+/* -----------------------------------------
+     6. Карточка услуги (базовый стиль)
+        — без жёстких ограничений по высоте
+     ----------------------------------------- */
+.sm-service-card {
+  background-color: #f9fafb;
+  border: 1px solid #e2e8f0;
+  border-radius: 6px;
+  padding: 16px;
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.05);
+  transition: all 0.2s ease;
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+  gap: 12px;
+  width: 100%;
+  box-sizing: border-box;
+}
+.sm-service-card:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.08);
+}
+
+/* -----------------------------------------
+     7. На средних и больших: единая высота
+        и обрезка лишнего
+     ----------------------------------------- */
+@media (min-width: 577px) {
+  .sm-service-manager .sm-services-list .sm-service-card {
+    min-height: 150px !important;
+    overflow: hidden !important;
+  }
+}
+
+/* -----------------------------------------
+     8. Информация об услуге
+     ----------------------------------------- */
+.sm-service-info {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  margin-bottom: 10px;
+  width: 100%;
+}
+
+.sm-service-name {
+  margin: 0;
+  font-size: 1.2rem;
+  font-weight: 500;
+  color: #2d3748;
+  line-height: 1.4;
+  word-wrap: break-word;
+}
+
+.sm-service-duration {
+  font-size: 0.9rem;
+  color: #718096;
+  display: flex;
+  align-items: center;
+  gap: 5px;
+}
+
+.sm-duration-label {
+  font-weight: 500;
+}
+
+/* -----------------------------------------
+     9. Кнопки действий услуги
+     ----------------------------------------- */
+.sm-service-actions {
+  display: flex;
+  justify-content: space-between;
+  gap: 10px;
+  margin-top: auto;
+  width: 100%;
+}
+
+.sm-edit-btn,
+.sm-delete-btn {
+  padding: 8px 12px;
+  border-radius: 4px;
+  font-size: 0.9rem;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  border: none;
+  flex: 1;
+  text-align: center;
+}
+
+.sm-edit-btn {
+  background-color: #ebf8ff;
+  color: #3182ce;
+  border: 1px solid #bee3f8;
+}
+.sm-edit-btn:hover {
+  background-color: #bee3f8;
+}
+
+.sm-delete-btn {
+  background-color: #fff5f5;
+  color: #e53e3e;
+  border: 1px solid #fed7d7;
+}
+.sm-delete-btn:hover {
+  background-color: #fed7d7;
+}
+
+/* -----------------------------------------
+     10. Форма добавления/редактирования
+     ----------------------------------------- */
+.sm-service-form-container {
+  background-color: #f8fafc;
+  border: 1px solid #e2e8f0;
+  border-radius: 6px;
+  padding: 20px;
+  margin-bottom: 20px;
+}
+
+.sm-service-form-container h3 {
+  margin-top: 0;
+  margin-bottom: 15px;
+  font-size: 1.2rem;
+  color: #2d3748;
+}
+
+.sm-service-form,
+.sm-edit-form {
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+  width: 100%;
+}
+
+.sm-form-group {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.sm-form-group label {
+  font-weight: 500;
+  font-size: 0.95rem;
+  color: #4a5568;
+}
+
+.sm-form-group input {
+  padding: 10px 12px;
+  border: 1px solid #cbd5e0;
+  border-radius: 4px;
+  font-size: 0.95rem;
+  transition: all 0.2s ease;
+}
+
+.sm-form-group input:focus {
+  border-color: #4a90e2;
+  box-shadow: 0 0 0 3px rgba(74, 144, 226, 0.15);
+  outline: none;
+}
+
+.sm-form-actions,
+.sm-edit-actions {
+  display: flex;
+  justify-content: flex-end;
+  gap: 12px;
+  margin-top: 8px;
+}
+
+.sm-save-btn,
+.sm-cancel-btn {
+  padding: 10px 16px;
+  border-radius: 4px;
+  font-size: 0.95rem;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  border: none;
+}
+
+.sm-save-btn {
+  background-color: #4a90e2;
+  color: white;
+}
+.sm-save-btn:hover {
+  background-color: #3a7bc8;
+}
+
+.sm-cancel-btn {
+  background-color: #edf2f7;
+  color: #4a5568;
+}
+.sm-cancel-btn:hover {
+  background-color: #e2e8f0;
+}
+
+/* -----------------------------------------
+     11. Состояния загрузки и ошибки
+     ----------------------------------------- */
+.sm-loading,
+.sm-error {
+  padding: 40px 20px;
+  text-align: center;
+  font-size: 1rem;
+}
+
+.sm-loading {
+  color: #4a5568;
+}
+
+.sm-error {
+  color: #e53e3e;
+}
+
+/* -----------------------------------------
+     12. Адаптивность
+     ----------------------------------------- */
+@media (max-width: 768px) {
+  .sm-services-list {
+    grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+  }
+  
+  .sm-service-manager-header {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 15px;
+  }
+  
+  .sm-service-manager-header .sm-add-service-btn {
+    width: 100%;
+  }
+}
+
+@media (max-width: 576px) {
+  .sm-services-list {
+    grid-template-columns: 1fr;
+  }
+  
+  .sm-form-actions,
+  .sm-edit-actions {
+    flex-direction: column;
+  }
+  
+  .sm-form-actions button,
+  .sm-edit-actions button {
+    width: 100%;
+  }
+}

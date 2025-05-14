@@ -1,0 +1,291 @@
+/* BookingDetailsModal.css */
+
+.booking-details-modal-overlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background-color: rgba(0, 0, 0, 0.5);
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  z-index: 1000;
+  padding: 20px;
+}
+
+.booking-details-modal {
+  background-color: white;
+  border-radius: 8px;
+  box-shadow: 0 2px 20px rgba(0, 0, 0, 0.15);
+  padding: 25px;
+  width: 100%;
+  max-width: 650px;
+  max-height: 90vh;
+  overflow-y: auto;
+  position: relative;
+}
+
+.booking-details-header {
+  display: flex;
+  align-items: center;
+  margin-bottom: 20px;
+  gap: 15px;
+}
+
+.back-button {
+  background: none;
+  border: none;
+  padding: 5px 10px;
+  font-size: 1rem;
+  color: #4a90e2;
+  cursor: pointer;
+  transition: color 0.2s;
+}
+
+.back-button:hover {
+  color: #3a7bc8;
+}
+
+.booking-details-header h2 {
+  margin: 0;
+  color: #333;
+  font-weight: 500;
+}
+
+.booking-info-container {
+  display: flex;
+  flex-direction: column;
+  gap: 20px;
+}
+
+.booking-info-card {
+  background-color: #f9f9f9;
+  border-radius: 8px;
+  padding: 20px;
+}
+
+.info-row {
+  display: grid;
+  grid-template-columns: 120px 1fr;
+  margin-bottom: 12px;
+  align-items: baseline;
+}
+
+.info-row.notes {
+  grid-template-columns: 120px 1fr;
+  align-items: start;
+}
+
+.info-label {
+  color: #777;
+  font-weight: 500;
+  font-size: 0.95rem;
+}
+
+.info-value {
+  color: #333;
+  font-size: 1rem;
+}
+
+.booking-actions {
+  display: flex;
+  justify-content: flex-end;
+  gap: 10px;
+}
+
+.edit-button, .delete-button {
+  padding: 8px 16px;
+  border-radius: 4px;
+  cursor: pointer;
+  font-weight: 500;
+  transition: background-color 0.2s;
+}
+
+.edit-button {
+  background-color: #fff;
+  border: 1px solid #4a90e2;
+  color: #4a90e2;
+}
+
+.edit-button:hover {
+  background-color: #f0f7ff;
+}
+
+.delete-button {
+  background-color: #fff;
+  border: 1px solid #e74c3c;
+  color: #e74c3c;
+}
+
+.delete-button:hover {
+  background-color: #fee8e7;
+}
+
+/* Стили для формы редактирования */
+.booking-edit-form {
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+}
+
+.form-group {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.form-group label {
+  font-weight: 500;
+  color: #555;
+  font-size: 0.95rem;
+}
+
+.form-group input,
+.form-group select,
+.form-group textarea {
+  padding: 10px 12px;
+  border: 1px solid #ddd;
+  border-radius: 4px;
+  font-size: 0.95rem;
+  transition: border-color 0.2s;
+}
+
+.form-group input:focus,
+.form-group select:focus,
+.form-group textarea:focus {
+  border-color: #4a90e2;
+  outline: none;
+  box-shadow: 0 0 0 3px rgba(74, 144, 226, 0.1);
+}
+
+/* Стили для выбора временного слота */
+.time-selection {
+  margin-top: 5px;
+}
+
+.time-slots-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(70px, 1fr));
+  gap: 8px;
+  margin-bottom: 15px;
+}
+
+.time-slot {
+  background-color: #f0f7ff;
+  border: 1px solid #d0e3ff;
+  border-radius: 4px;
+  padding: 8px 5px;
+  text-align: center;
+  cursor: pointer;
+  font-size: 0.9rem;
+  transition: all 0.2s;
+}
+
+.time-slot.selected {
+  background-color: #4a90e2;
+  color: white;
+  border-color: #4a90e2;
+}
+
+.time-slot:hover:not(.selected) {
+  background-color: #e0ecfd;
+  border-color: #b8d4ff;
+}
+
+.no-slots-message,
+.loading-slots {
+  padding: 12px;
+  color: #777;
+  background-color: #f9f9f9;
+  border-radius: 4px;
+  text-align: center;
+  margin-bottom: 15px;
+}
+
+.custom-time-input {
+  margin-top: 10px;
+}
+
+.time-error {
+  color: #e74c3c;
+  font-size: 0.85rem;
+  margin-top: 5px;
+}
+
+.form-actions {
+  display: flex;
+  justify-content: flex-end;
+  gap: 10px;
+  margin-top: 10px;
+}
+
+.save-button,
+.cancel-button {
+  padding: 10px 16px;
+  border-radius: 4px;
+  cursor: pointer;
+  font-weight: 500;
+  transition: all 0.2s;
+}
+
+.save-button {
+  background-color: #4a90e2;
+  color: white;
+  border: none;
+}
+
+.save-button:hover {
+  background-color: #3a7bc8;
+}
+
+.cancel-button {
+  background-color: #f5f5f5;
+  color: #555;
+  border: 1px solid #ddd;
+}
+
+.cancel-button:hover {
+  background-color: #e9e9e9;
+}
+
+/* Адаптивность */
+@media (max-width: 767px) {
+  .booking-details-modal {
+    padding: 20px 15px;
+    width: 100%;
+    max-height: 100vh;
+    border-radius: 0;
+  }
+  
+  .info-row {
+    grid-template-columns: 1fr;
+    gap: 5px;
+  }
+  
+  .info-row.notes {
+    grid-template-columns: 1fr;
+  }
+  
+  .info-label {
+    color: #888;
+    font-size: 0.85rem;
+  }
+  
+  .time-slots-grid {
+    grid-template-columns: repeat(auto-fill, minmax(65px, 1fr));
+  }
+  
+  .booking-actions,
+  .form-actions {
+    flex-direction: column;
+    width: 100%;
+  }
+  
+  .edit-button,
+  .delete-button,
+  .save-button,
+  .cancel-button {
+    width: 100%;
+  }
+}

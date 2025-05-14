@@ -1,0 +1,136 @@
+.master-header {
+  display: flex;
+  padding: 20px;
+  background-color: white;
+  border-radius: 8px;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+  margin-bottom: 20px;
+}
+
+@media (max-width: 768px) {
+  .master-header {
+    flex-direction: column;
+    align-items: center;
+    padding: 16px;
+  }
+}
+
+.master-photo-container {
+  position: relative;
+  width: 150px;
+  height: 150px;
+  border-radius: 50%;
+  overflow: hidden;
+  margin-right: 24px;
+  flex-shrink: 0;
+}
+
+@media (max-width: 768px) {
+  .master-photo-container {
+    margin-right: 0;
+    margin-bottom: 16px;
+  }
+}
+
+.master-photo {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+
+.master-photo-placeholder {
+  width: 100%;
+  height: 100%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background-color: #e2e8f0;
+  color: #4a5568;
+  font-size: 48px;
+  font-weight: bold;
+}
+
+.photo-upload-overlay {
+  position: absolute;
+  bottom: 0;
+  left: 0;
+  right: 0;
+  background-color: rgba(0, 0, 0, 0.5);
+  padding: 8px 0;
+  opacity: 0;
+  transition: opacity 0.2s;
+  display: flex;
+  justify-content: center;
+}
+
+.master-photo-container:hover .photo-upload-overlay {
+  opacity: 1;
+}
+
+.photo-upload-button {
+  color: white;
+  font-size: 14px;
+  cursor: pointer;
+}
+
+.master-info {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+}
+
+.master-name {
+  font-size: 24px;
+  font-weight: 600;
+  margin-bottom: 12px;
+  color: #2d3748;
+}
+
+.master-contacts {
+  margin-bottom: 12px;
+}
+
+.contact-item {
+  margin-bottom: 8px;
+  display: flex;
+}
+
+.contact-label {
+  font-weight: 500;
+  color: #718096;
+  width: 80px;
+  margin-right: 8px;
+}
+
+.contact-value {
+  color: #4a5568;
+  text-decoration: none;
+}
+
+.contact-value:hover {
+  text-decoration: underline;
+}
+
+.master-company {
+  margin-bottom: 8px;
+}
+
+.company-label {
+  font-weight: 500;
+  color: #718096;
+  margin-right: 8px;
+}
+
+.company-name {
+  color: #4a5568;
+}
+
+.master-category {
+  display: inline-block;
+  padding: 4px 10px;
+  background-color: #e6fffa;
+  color: #319795;
+  border-radius: 4px;
+  font-size: 14px;
+  font-weight: 500;
+}

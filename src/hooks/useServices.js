@@ -2,7 +2,7 @@
  * Кастомный хук для работы с услугами
  */
 import { useState, useEffect } from 'react';
-import servicesApi from '../api/servicesApi';
+import serviceService from '../services/serviceService';
 
 /**
  * Хук для получения и управления услугами мастера
@@ -16,11 +16,10 @@ const useServices = (masterId) => {
 
   useEffect(() => {
     if (!masterId) return;
-    
-    const fetchServices = async () => {
+      const fetchServices = async () => {
       try {
         setLoading(true);
-        const data = await servicesApi.fetchMasterServices(masterId);
+        const data = await serviceService.getMasterServices(masterId);
         setServices(data);
       } catch (err) {
         setError(err.message || 'Ошибка при загрузке услуг');
@@ -36,11 +35,10 @@ const useServices = (masterId) => {
   /**
    * Создать новую услугу
    * @param {Object} serviceData - данные услуги
-   */
-  const createService = async (serviceData) => {
+   */  const createService = async (serviceData) => {
     try {
       setLoading(true);
-      const newService = await servicesApi.createService(masterId, serviceData);
+      const newService = await serviceService.createService(masterId, serviceData);
       setServices(prev => [...prev, newService]);
       return newService;
     } catch (err) {
@@ -56,14 +54,13 @@ const useServices = (masterId) => {
    * Обновить услугу
    * @param {string|number} serviceId - ID услуги
    * @param {Object} serviceData - новые данные
-   */
-  const updateService = async (serviceId, serviceData) => {
+   */  const updateService = async (serviceId, serviceData) => {
     try {
       setLoading(true);
-      const updatedService = await servicesApi.updateService(serviceId, serviceData);
+      const updatedService = await serviceService.updateService(serviceId, serviceData);
       setServices(prev => 
         prev.map(service => 
-          service._id === serviceId ? updatedService : service
+          service.id === serviceId ? updatedService : service
         )
       );
       return updatedService;
@@ -79,12 +76,11 @@ const useServices = (masterId) => {
   /**
    * Удалить услугу
    * @param {string|number} serviceId - ID услуги
-   */
-  const deleteService = async (serviceId) => {
+   */  const deleteService = async (serviceId) => {
     try {
       setLoading(true);
-      await servicesApi.deleteService(serviceId);
-      setServices(prev => prev.filter(service => service._id !== serviceId));
+      await serviceService.deleteService(serviceId);
+      setServices(prev => prev.filter(service => service.id !== serviceId));
       return true;
     } catch (err) {
       setError(err.message || 'Ошибка при удалении услуги');
@@ -101,10 +97,9 @@ const useServices = (masterId) => {
     error,
     createService,
     updateService,
-    deleteService,
-    refresh: () => {
+    deleteService,    refresh: () => {
       setLoading(true);
-      servicesApi.fetchMasterServices(masterId)
+      serviceService.getMasterServices(masterId)
         .then(data => setServices(data))
         .catch(err => setError(err.message))
         .finally(() => setLoading(false));

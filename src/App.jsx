@@ -1,12 +1,16 @@
 import React from "react";
 import { BrowserRouter as Router, Routes, Route, Navigate } from "react-router-dom";
 import "./App.css";
-import { ToastProvider } from "./contexts/ToastContext";
+import { ToastProvider } from "./components/Toast/ToastContext";
 
-// Импортируем страницы
-import MasterProfilePage from "./components/pages/MasterProfilePage";
-import RegisterPage from "./components/pages/RegisterPage";
-import ClientBookingPage from "./components/pages/ClientBookingPage";
+// Импортируем компоненты
+import MasterProfile from "./components/MasterProfile/MasterProfile";
+import Register from "./components/MasterProfile/Register";
+import ClientBooking from "./components/ClientBooking/ClientBooking";
+import Test from "./Test";
+
+// API Base URL
+const API_BASE = "https://api.kuchizu.online";
 
 function App() {
   return (
@@ -18,16 +22,17 @@ function App() {
             <Route path="/" element={<Navigate to="/register" replace />} />
             
             {/* Маршрут для страницы регистрации */}
-            <Route path="/register" element={<RegisterPage />} />
+            <Route path="/register" element={<Register apiBase={API_BASE} />} />
             
             {/* Маршрут для профиля мастера */}
-            <Route path="/master/:masterId" element={<MasterProfilePage />} />
+            <Route path="/master/:masterId" element={<MasterProfile apiBase={API_BASE} />} />
             
             {/* Маршрут для профиля мастера без указания ID (используется ID из localStorage) */}
-            <Route path="/master" element={<MasterProfilePage />} />
+            <Route path="/master" element={<MasterProfile apiBase={API_BASE} />} />
             
             {/* Маршрут для клиентского бронирования - только через ссылку с clientId и master_id в query параметре */}
-            <Route path="/booking/client/:clientId" element={<ClientBookingPage />} />
+            <Route path="/booking/client/:clientId" element={<ClientBooking apiBase={API_BASE} />} />
+            <Route path="/test" element={<Test />} />
             
             {/* Маршрут для всех остальных адресов - 404 страница */}
             <Route path="*" element={
@@ -35,7 +40,8 @@ function App() {
                 <h1>404</h1>
                 <p>Страница не найдена</p>
                 <a href="/">Вернуться на главную</a>
-              </div>            } />
+              </div>
+            } />
           </Routes>
         </div>
       </Router>

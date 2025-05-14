@@ -6,23 +6,23 @@ import { useParams } from 'react-router-dom';
 import './MasterProfilePage.css';
 
 // Custom hooks
-import useMasterData from '../../../hooks/useMasterData';
-import useAppointments from '../../../hooks/useAppointments';
-import useServices from '../../../hooks/useServices';
+import useMasterData from '../../hooks/useMasterData';
+import useAppointments from '../../hooks/useAppointments';
+import useServices from '../../hooks/useServices';
 
 // UI Components
-import MasterHeader from '../../ui/MasterProfile/MasterHeader';
-import MasterCalendar from '../../ui/MasterProfile/MasterCalendar';
-import ServiceManager from '../../ui/MasterProfile/ServiceManager';
-import BookingDetailsModal from '../../ui/MasterProfile/BookingDetailsModal';
-import BookingOptionsModal from '../../ui/MasterProfile/BookingOptionsModal';
-import BlockTimeForm from '../../ui/MasterProfile/BlockTimeForm';
-import WorkScheduleForm from '../../ui/MasterProfile/WorkScheduleForm';
-import CustomBookingForm from '../../ui/MasterProfile/CustomBookingForm';
-import MasterBookingManager from '../../ui/MasterProfile/MasterBookingManager';
+import MasterHeader from '../ui/MasterProfile/MasterHeader';
+import MasterCalendar from '../ui/MasterProfile/MasterCalendar';
+import ServiceManager from '../ui/MasterProfile/ServiceManager';
+import BookingDetailsModal from '../ui/MasterProfile/BookingDetailsModal';
+import BookingOptionsModal from '../ui/MasterProfile/BookingOptionsModal';
+import BlockTimeForm from '../ui/MasterProfile/BlockTimeForm';
+import WorkScheduleForm from '../ui/MasterProfile/WorkScheduleForm';
+import CustomBookingForm from '../ui/MasterProfile/CustomBookingForm';
+import MasterBookingManager from '../ui/MasterProfile/MasterBookingManager';
 
 // Contexts
-import { useToast } from '../../../contexts/ToastContext';
+import { useToast } from '../../contexts/ToastContext';
 
 /**
  * Компонент страницы профиля мастера
@@ -259,7 +259,7 @@ const MasterProfilePage = () => {
       </div>
       
       {/* Модальные окна */}
-      {selectedBooking && (
+    {selectedBooking && (
         <BookingDetailsModal 
           booking={selectedBooking}
           onClose={() => setSelectedBooking(null)}

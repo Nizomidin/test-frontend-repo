@@ -2,7 +2,7 @@
  * Кастомный хук для работы с бронированиями
  */
 import { useState, useEffect } from 'react';
-import bookingApi from '../api/bookingApi';
+import bookingService from '../services/bookingService';
 
 /**
  * Хук для получения и управления бронированиями
@@ -18,12 +18,11 @@ const useAppointments = (masterId, initialFilters = {}) => {
 
   useEffect(() => {
     if (!masterId) return;
-    
-    const fetchAppointments = async () => {
+      const fetchAppointments = async () => {
       try {
         setLoading(true);
-        const data = await bookingApi.fetchMasterBookings(masterId, filters);
-        setAppointments(data);
+        const data = await bookingService.getMasterBookings(masterId, filters);
+        setAppointments(bookingService.formatBookingData(data));
       } catch (err) {
         setError(err.message || 'Ошибка при загрузке бронирований');
         console.error('useAppointments error:', err);
@@ -49,13 +48,13 @@ const useAppointments = (masterId, initialFilters = {}) => {
   /**
    * Создать новое бронирование
    * @param {Object} bookingData - данные бронирования
-   */
-  const createBooking = async (bookingData) => {
+   */  const createBooking = async (bookingData) => {
     try {
       setLoading(true);
-      const newBooking = await bookingApi.createBooking(bookingData);
-      setAppointments(prev => [...prev, newBooking]);
-      return newBooking;
+      const newBooking = await bookingService.createBooking(bookingData);
+      const formattedBooking = bookingService.formatBookingData(newBooking);
+      setAppointments(prev => [...prev, formattedBooking]);
+      return formattedBooking;
     } catch (err) {
       setError(err.message || 'Ошибка при создании бронирования');
       console.error('createBooking error:', err);
@@ -68,13 +67,13 @@ const useAppointments = (masterId, initialFilters = {}) => {
   /**
    * Создать кастомное бронирование
    * @param {Object} bookingData - данные кастомного бронирования
-   */
-  const createCustomBooking = async (bookingData) => {
+   */  const createCustomBooking = async (bookingData) => {
     try {
       setLoading(true);
-      const newBooking = await bookingApi.createCustomBooking(masterId, bookingData);
-      setAppointments(prev => [...prev, newBooking]);
-      return newBooking;
+      const newBooking = await bookingService.createCustomBooking(masterId, bookingData);
+      const formattedBooking = bookingService.formatBookingData(newBooking);
+      setAppointments(prev => [...prev, formattedBooking]);
+      return formattedBooking;
     } catch (err) {
       setError(err.message || 'Ошибка при создании кастомного бронирования');
       console.error('createCustomBooking error:', err);
@@ -89,17 +88,17 @@ const useAppointments = (masterId, initialFilters = {}) => {
    * @param {string} type - тип бронирования (booking, custom, block)
    * @param {string|number} id - ID бронирования
    * @param {Object} data - новые данные
-   */
-  const updateAppointment = async (type, id, data) => {
+   */  const updateAppointment = async (type, id, data) => {
     try {
       setLoading(true);
-      const updatedBooking = await bookingApi.updateAppointment(type, id, data);
+      const updatedBooking = await bookingService.updateAppointment(type, id, data);
+      const formattedBooking = bookingService.formatBookingData(updatedBooking);
       setAppointments(prev => 
         prev.map(booking => 
-          booking._id === id ? { ...booking, ...updatedBooking } : booking
+          booking.id === id ? formattedBooking : booking
         )
       );
-      return updatedBooking;
+      return formattedBooking;
     } catch (err) {
       setError(err.message || 'Ошибка при обновлении бронирования');
       console.error('updateAppointment error:', err);
@@ -113,12 +112,11 @@ const useAppointments = (masterId, initialFilters = {}) => {
    * Удалить бронирование
    * @param {string} type - тип бронирования (booking, custom, block)
    * @param {string|number} id - ID бронирования
-   */
-  const deleteAppointment = async (type, id) => {
+   */  const deleteAppointment = async (type, id) => {
     try {
       setLoading(true);
-      await bookingApi.deleteAppointment(type, id);
-      setAppointments(prev => prev.filter(booking => booking._id !== id));
+      await bookingService.deleteAppointment(type, id);
+      setAppointments(prev => prev.filter(booking => booking.id !== id));
       return true;
     } catch (err) {
       setError(err.message || 'Ошибка при удалении бронирования');
@@ -132,13 +130,13 @@ const useAppointments = (masterId, initialFilters = {}) => {
   /**
    * Блокировать время в календаре
    * @param {Object} blockData - данные блокировки
-   */
-  const blockTime = async (blockData) => {
+   */  const blockTime = async (blockData) => {
     try {
       setLoading(true);
-      const newBlock = await bookingApi.blockTime(masterId, blockData);
-      setAppointments(prev => [...prev, newBlock]);
-      return newBlock;
+      const newBlock = await bookingService.blockTime(masterId, blockData);
+      const formattedBlock = bookingService.formatBookingData(newBlock);
+      setAppointments(prev => [...prev, formattedBlock]);
+      return formattedBlock;
     } catch (err) {
       setError(err.message || 'Ошибка при блокировке времени');
       console.error('blockTime error:', err);
@@ -152,10 +150,9 @@ const useAppointments = (masterId, initialFilters = {}) => {
    * Получить доступные слоты для бронирования
    * @param {string} date - дата в формате YYYY-MM-DD
    * @param {number} duration - продолжительность в минутах
-   */
-  const getAvailableSlots = async (date, duration) => {
+   */  const getAvailableSlots = async (date, duration) => {
     try {
-      return await bookingApi.getAvailableSlots(masterId, date, duration);
+      return await bookingService.getAvailableSlots(masterId, date, duration);
     } catch (err) {
       setError(err.message || 'Ошибка при получении доступных слотов');
       console.error('getAvailableSlots error:', err);
@@ -173,11 +170,10 @@ const useAppointments = (masterId, initialFilters = {}) => {
     updateAppointment,
     deleteAppointment,
     blockTime,
-    getAvailableSlots,
-    refresh: () => {
+    getAvailableSlots,    refresh: () => {
       setLoading(true);
-      bookingApi.fetchMasterBookings(masterId, filters)
-        .then(data => setAppointments(data))
+      bookingService.getMasterBookings(masterId, filters)
+        .then(data => setAppointments(bookingService.formatBookingData(data)))
         .catch(err => setError(err.message))
         .finally(() => setLoading(false));
     }
